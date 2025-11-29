@@ -7,7 +7,7 @@ class Dashboard::AddressesController < ApplicationController
   end
 
   def new
-    @address = current_user.addresses.build(address_type: :shipping)
+    @address = current_user.addresses.build(address_type: :shipping, country: "United States")
   end
 
   def create

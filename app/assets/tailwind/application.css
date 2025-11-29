@@ -10,6 +10,26 @@
 }
 
 /* Override default blue with earth tones */
+.bg-brown {
+  background-color: var(--color-primary);
+}
+
+.bg-brown\/90 {
+  background-color: rgba(78, 52, 46, 0.9);
+}
+
+.hover\:bg-brown\/90:hover {
+  background-color: rgba(78, 52, 46, 0.9);
+}
+
+.bg-green {
+  background-color: var(--color-secondary);
+}
+
+.ring-green {
+  --tw-ring-color: var(--color-secondary);
+}
+
 .bg-blue-600 {
   background-color: var(--color-primary) !important;
 }
