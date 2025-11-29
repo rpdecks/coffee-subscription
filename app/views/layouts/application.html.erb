@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Coffee" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50">
+    <nav class="bg-white shadow-sm">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-8">
+            <%= link_to "Coffee Co.", root_path, class: "text-xl font-bold text-gray-900" %>
+            <div class="hidden md:flex space-x-4">
+              <%= link_to "Products", products_path, class: "text-gray-700 hover:text-gray-900" %>
+              <%= link_to "About", about_path, class: "text-gray-700 hover:text-gray-900" %>
+              <%= link_to "FAQ", faq_path, class: "text-gray-700 hover:text-gray-900" %>
+              <%= link_to "Contact", contact_path, class: "text-gray-700 hover:text-gray-900" %>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <% if user_signed_in? %>
+              <%= link_to "Dashboard", dashboard_path, class: "text-gray-700 hover:text-gray-900" %>
+              <% if current_user.admin? %>
+                <%= link_to "Admin", admin_root_path, class: "text-blue-600 hover:text-blue-800" %>
+              <% end %>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-gray-900" %>
+            <% else %>
+              <%= link_to "Sign In", new_user_session_path, class: "text-gray-700 hover:text-gray-900" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <% if notice.present? %>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mx-4 mt-4" role="alert">
+        <span class="block sm:inline"><%= notice %></span>
+      </div>
+    <% end %>
+
+    <% if alert.present? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-4 mt-4" role="alert">
+        <span class="block sm:inline"><%= alert %></span>
+      </div>
+    <% end %>
+
+    <main class="container mx-auto px-4 py-8">
+      <%= yield %>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+      <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="font-bold mb-4">Coffee Co.</h3>
+            <p class="text-gray-400">Freshly roasted coffee, delivered to your door.</p>
+          </div>
+          <div>
+            <h3 class="font-bold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li><%= link_to "Products", products_path, class: "hover:text-white" %></li>
+              <li><%= link_to "About", about_path, class: "hover:text-white" %></li>
+              <li><%= link_to "FAQ", faq_path, class: "hover:text-white" %></li>
+              <li><%= link_to "Contact", contact_path, class: "hover:text-white" %></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold mb-4">Contact</h3>
+            <p class="text-gray-400">Questions? <%= link_to "Get in touch", contact_path, class: "hover:text-white" %></p>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+          <p>&copy; <%= Time.current.year %> Coffee Co. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

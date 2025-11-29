@@ -1,0 +1,93 @@
+<div class="max-w-5xl mx-auto">
+  <!-- Header -->
+  <div class="text-center mb-16">
+    <h1 class="text-5xl font-bold text-gray-900 mb-6">Coffee Subscriptions</h1>
+    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+      Freshly roasted coffee delivered on your schedule. Simple, flexible, and always delicious.
+    </p>
+  </div>
+
+  <!-- Benefits Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+      <div class="text-4xl mb-4">☕</div>
+      <h3 class="text-xl font-bold mb-3">Roasted to Order</h3>
+      <p class="text-gray-600">Your coffee is roasted fresh for each delivery, never sitting on shelves.</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+      <div class="text-4xl mb-4">📅</div>
+      <h3 class="text-xl font-bold mb-3">Flexible Schedule</h3>
+      <p class="text-gray-600">Choose weekly, bi-weekly, or monthly delivery. Change anytime.</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+      <div class="text-4xl mb-4">🔄</div>
+      <h3 class="text-xl font-bold mb-3">Easy to Manage</h3>
+      <p class="text-gray-600">Pause, skip a delivery, or cancel anytime. No commitments, no hassles.</p>
+    </div>
+  </div>
+
+  <!-- Value Proposition -->
+  <div class="bg-gray-50 p-12 rounded-lg mb-16 text-center">
+    <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Subscribe?</h2>
+    <ul class="text-left max-w-2xl mx-auto space-y-3 text-lg text-gray-700">
+      <li class="flex items-start">
+        <span class="text-green-600 mr-3 mt-1">✓</span>
+        <span>Save money compared to purchasing single bags</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-green-600 mr-3 mt-1">✓</span>
+        <span>Never run out of great coffee</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-green-600 mr-3 mt-1">✓</span>
+        <span>Customize your preferences anytime</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-green-600 mr-3 mt-1">✓</span>
+        <span>Free shipping on all subscription orders</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-green-600 mr-3 mt-1">✓</span>
+        <span>Pause, skip, or cancel with no penalties</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- CTA -->
+  <div class="text-center">
+    <%= link_to "Choose a Plan", subscription_plans_path, class: "bg-blue-600 text-white px-12 py-4 rounded-lg text-2xl font-semibold hover:bg-blue-700 transition-colors inline-block" %>
+  </div>
+
+  <!-- How It Works -->
+  <div class="mt-20 pt-16 border-t border-gray-200">
+    <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">How It Works</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+        <h3 class="font-bold mb-2">Choose a Plan</h3>
+        <p class="text-gray-600 text-sm">Select from our curated subscription plans</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+        <h3 class="font-bold mb-2">Customize</h3>
+        <p class="text-gray-600 text-sm">Pick your bag size, frequency, and grind</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+        <h3 class="font-bold mb-2">We Roast</h3>
+        <p class="text-gray-600 text-sm">Fresh coffee roasted just for you</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
+        <h3 class="font-bold mb-2">Delivered</h3>
+        <p class="text-gray-600 text-sm">Arrives on your schedule, always fresh</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="max-w-4xl mx-auto">
+  <%= link_to "← Back to Products", products_path, class: "text-blue-600 hover:text-blue-800 mb-4 inline-block" %>
+  
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="md:flex">
+      <div class="md:w-1/2 bg-gray-200 flex items-center justify-center" style="min-height: 400px;">
+        <span class="text-gray-400 text-9xl">☕</span>
+      </div>
+      
+      <div class="md:w-1/2 p-8">
+        <div class="flex justify-between items-start mb-4">
+          <h1 class="text-3xl font-bold text-gray-900"><%= @product.name %></h1>
+          <span class="text-2xl font-semibold text-blue-600">$<%= sprintf('%.2f', @product.price) %></span>
+        </div>
+        
+        <% if @product.coffee? %>
+          <p class="text-lg text-gray-600 mb-4"><%= @product.weight_oz %>oz bag</p>
+        <% end %>
+        
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold mb-2">Description</h2>
+          <p class="text-gray-700 leading-relaxed"><%= @product.description %></p>
+        </div>
+        
+        <% if @product.coffee? %>
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">Details</h2>
+            <ul class="list-disc list-inside text-gray-700">
+              <li>Weight: <%= @product.weight_oz %>oz</li>
+              <li>Available in multiple grind options</li>
+              <li>Roasted to order for maximum freshness</li>
+            </ul>
+          </div>
+        <% end %>
+        
+        <div class="space-y-3">
+          <% if @product.in_stock? %>
+            <% if user_signed_in? %>
+              <button class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">Add to Cart</button>
+            <% else %>
+              <%= link_to "Sign In to Order", new_user_session_path, class: "block w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700" %>
+            <% end %>
+          <% else %>
+            <span class="block w-full text-center bg-gray-400 text-white px-6 py-3 rounded-lg text-lg cursor-not-allowed">Out of Stock</span>
+          <% end %>
+          
+          <% unless user_signed_in? %>
+            <p class="text-center text-sm text-gray-600">
+              <%= link_to "Create an account", new_user_registration_path, class: "text-blue-600 hover:text-blue-800" %> to subscribe or purchase
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if @product.coffee? %>
+    <div class="mt-8 bg-blue-50 p-6 rounded-lg">
+      <h2 class="text-2xl font-bold mb-4">Subscribe & Save</h2>
+      <p class="text-gray-700 mb-4">
+        Get this coffee delivered regularly with a subscription plan. Save money and never run out!
+      </p>
+      <%= link_to "View Subscription Plans", products_path, class: "text-blue-600 hover:text-blue-800 font-semibold" %>
+    </div>
+  <% end %>
+</div>

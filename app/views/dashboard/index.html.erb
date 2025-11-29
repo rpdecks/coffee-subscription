@@ -1,0 +1,106 @@
+<div class="max-w-7xl mx-auto">
+  <h1 class="text-4xl font-bold text-gray-900 mb-8">My Dashboard</h1>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Active Subscription -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-4">My Subscription</h2>
+        <% if @subscription %>
+          <div class="bg-green-50 p-4 rounded-lg">
+            <p class="font-semibold text-lg mb-2"><%= @subscription.subscription_plan.name %></p>
+            <p class="text-gray-700">Status: <span class="capitalize"><%= @subscription.status %></span></p>
+            <% if @subscription.next_delivery_date %>
+              <p class="text-gray-700">Next Delivery: <%= @subscription.next_delivery_date.strftime("%B %d, %Y") %></p>
+            <% end %>
+            <div class="mt-4 space-x-2">
+              <%= link_to "Manage Subscription", "#", class: "text-blue-600 hover:text-blue-800" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="text-gray-700 mb-4">You don't have an active subscription yet.</p>
+            <%= link_to "Browse Subscription Plans", products_path, class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-4">Recent Orders</h2>
+        <% if @recent_orders.any? %>
+          <div class="space-y-4">
+            <% @recent_orders.each do |order| %>
+              <div class="border rounded-lg p-4">
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <p class="font-semibold"><%= order.order_number %></p>
+                    <p class="text-sm text-gray-600"><%= order.created_at.strftime("%B %d, %Y") %></p>
+                  </div>
+                  <span class="px-3 py-1 rounded text-sm capitalize <%= order.status == 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                    <%= order.status %>
+                  </span>
+                </div>
+                <p class="text-gray-700">Total: $<%= sprintf('%.2f', order.total) %></p>
+                <%= link_to "View Details", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+              </div>
+            <% end %>
+          </div>
+          <%= link_to "View All Orders", "#", class: "text-blue-600 hover:text-blue-800 mt-4 inline-block" %>
+        <% else %>
+          <p class="text-gray-600">No orders yet.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Links -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          <li><%= link_to "Edit Profile", "#", class: "text-blue-600 hover:text-blue-800" %></li>
+          <li><%= link_to "Manage Addresses", "#", class: "text-blue-600 hover:text-blue-800" %></li>
+          <li><%= link_to "Payment Methods", "#", class: "text-blue-600 hover:text-blue-800" %></li>
+          <li><%= link_to "Coffee Preferences", "#", class: "text-blue-600 hover:text-blue-800" %></li>
+          <li><%= link_to "Order History", "#", class: "text-blue-600 hover:text-blue-800" %></li>
+        </ul>
+      </div>
+
+      <!-- Account Info -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold mb-4">Account Info</h3>
+        <p class="text-gray-700 mb-1"><%= current_user.full_name %></p>
+        <p class="text-gray-600 text-sm"><%= current_user.email %></p>
+        <% if current_user.phone.present? %>
+          <p class="text-gray-600 text-sm"><%= current_user.phone %></p>
+        <% end %>
+      </div>
+
+      <!-- Addresses -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold mb-4">Saved Addresses</h3>
+        <% if @addresses.any? %>
+          <p class="text-gray-700"><%= pluralize(@addresses.count, 'address') %> on file</p>
+          <%= link_to "Manage", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+        <% else %>
+          <p class="text-gray-600 mb-2">No addresses saved</p>
+          <%= link_to "Add Address", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+        <% end %>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold mb-4">Payment Methods</h3>
+        <% if @payment_methods.any? %>
+          <p class="text-gray-700"><%= pluralize(@payment_methods.count, 'card') %> on file</p>
+          <%= link_to "Manage", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+        <% else %>
+          <p class="text-gray-600 mb-2">No payment methods saved</p>
+          <%= link_to "Add Card", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

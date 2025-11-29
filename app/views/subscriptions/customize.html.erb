@@ -1,0 +1,160 @@
+<div class="max-w-4xl mx-auto">
+  <%= link_to "← Back to Plans", subscription_plans_path, class: "text-blue-600 hover:text-blue-800 mb-8 inline-block" %>
+  
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Customize Your Subscription</h1>
+    <p class="text-xl text-gray-600">Tailor your <%= @plan.name %> to your preferences</p>
+  </div>
+
+  <%= form_with url: subscription_checkout_path, method: :post, local: true, class: "space-y-12" do |f| %>
+    <%= hidden_field_tag :plan_id, @plan.id %>
+
+    <!-- Section 1: Choose Coffee -->
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">1. Choose Your Coffee</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% @coffee_products.each do |coffee| %>
+          <label class="cursor-pointer">
+            <input type="radio" name="coffee_id" value="<%= coffee.id %>" class="peer sr-only" required />
+            <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 hover:border-gray-300 transition-colors">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-gray-900"><%= coffee.name %></h3>
+                <span class="text-sm text-gray-600">$<%= sprintf('%.2f', coffee.price) %></span>
+              </div>
+              <p class="text-sm text-gray-600"><%= truncate(coffee.description, length: 100) %></p>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Section 2: Bag Size -->
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">2. Choose Your Bag Size</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <label class="cursor-pointer">
+          <input type="radio" name="bag_size" value="12oz" class="peer sr-only" checked required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-3xl font-bold text-gray-900 mb-2">12 oz</div>
+            <div class="text-sm text-gray-600">Perfect for 1 person</div>
+            <div class="text-sm text-gray-500 mt-2">~20-25 cups</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="bag_size" value="2lb" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-3xl font-bold text-gray-900 mb-2">2 lb</div>
+            <div class="text-sm text-gray-600">Great for couples</div>
+            <div class="text-sm text-gray-500 mt-2">~60-70 cups</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="bag_size" value="5lb" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-3xl font-bold text-gray-900 mb-2">5 lb</div>
+            <div class="text-sm text-gray-600">Ideal for families</div>
+            <div class="text-sm text-gray-500 mt-2">~150+ cups</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Section 3: Delivery Frequency -->
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">3. Choose Delivery Frequency</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <label class="cursor-pointer">
+          <input type="radio" name="frequency" value="weekly" class="peer sr-only" <%= 'checked' if @plan.weekly? %> required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-2xl font-bold text-gray-900 mb-2">Weekly</div>
+            <div class="text-sm text-gray-600">Every 7 days</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="frequency" value="biweekly" class="peer sr-only" <%= 'checked' if @plan.biweekly? %> required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-2xl font-bold text-gray-900 mb-2">Bi-Weekly</div>
+            <div class="text-sm text-gray-600">Every 14 days</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="frequency" value="monthly" class="peer sr-only" <%= 'checked' if @plan.monthly? %> required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+            <div class="text-2xl font-bold text-gray-900 mb-2">Monthly</div>
+            <div class="text-sm text-gray-600">Every 30 days</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Section 4: Grind Type -->
+    <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">4. Choose Grind Type</h2>
+      
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <label class="cursor-pointer">
+          <input type="radio" name="grind_type" value="whole_bean" class="peer sr-only" checked required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 text-center hover:border-gray-300 transition-colors">
+            <div class="font-bold text-gray-900 mb-1">Whole Bean</div>
+            <div class="text-xs text-gray-600">Maximum freshness</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="grind_type" value="coarse" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 text-center hover:border-gray-300 transition-colors">
+            <div class="font-bold text-gray-900 mb-1">Coarse</div>
+            <div class="text-xs text-gray-600">French press</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="grind_type" value="medium_grind" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 text-center hover:border-gray-300 transition-colors">
+            <div class="font-bold text-gray-900 mb-1">Medium</div>
+            <div class="text-xs text-gray-600">Drip coffee</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="grind_type" value="fine" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 text-center hover:border-gray-300 transition-colors">
+            <div class="font-bold text-gray-900 mb-1">Fine</div>
+            <div class="text-xs text-gray-600">Pour over</div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input type="radio" name="grind_type" value="espresso" class="peer sr-only" required />
+          <div class="border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-lg p-4 text-center hover:border-gray-300 transition-colors">
+            <div class="font-bold text-gray-900 mb-1">Espresso</div>
+            <div class="text-xs text-gray-600">Espresso machine</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Summary & Submit -->
+    <div class="bg-blue-50 p-8 rounded-lg border-2 border-blue-200">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Your Subscription Summary</h2>
+      <div class="space-y-2 text-gray-700 mb-6">
+        <p><strong>Plan:</strong> <%= @plan.name %></p>
+        <p><strong>Base Price:</strong> $<%= sprintf('%.2f', @plan.price) %> per delivery</p>
+        <p class="text-sm text-gray-600">Final price will be calculated based on your selections above.</p>
+      </div>
+      
+      <%= f.submit "Continue to Checkout", class: "w-full bg-blue-600 text-white px-8 py-4 rounded-lg text-xl font-semibold hover:bg-blue-700 transition-colors cursor-pointer" %>
+      
+      <p class="text-center text-sm text-gray-600 mt-4">
+        You'll be able to review everything before finalizing your subscription.
+      </p>
+    </div>
+  <% end %>
+</div>
