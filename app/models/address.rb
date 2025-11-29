@@ -6,6 +6,7 @@ class Address < ApplicationRecord
   validates :street_address, :city, :state, :zip_code, :country, presence: true
   validates :address_type, presence: true
 
+  before_validation :set_default_if_first
   before_save :ensure_only_one_default, if: :is_default?
 
   scope :default, -> { where(is_default: true) }
@@ -23,7 +24,15 @@ class Address < ApplicationRecord
 
   private
 
+  def set_default_if_first
+    # If this is the first address of this type for the user, make it default
+    if user && user.addresses.where(address_type: address_type).where.not(id: id).empty?
+      self.is_default = true
+    end
+  end
+
   def ensure_only_one_default
+    # Ensure only one address per type is marked as default
     user.addresses.where(address_type: address_type, is_default: true)
         .where.not(id: id).update_all(is_default: false)
   end
