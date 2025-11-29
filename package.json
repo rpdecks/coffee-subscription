@@ -1,0 +1,14 @@
+{
+  "name": "coffee-subscription",
+  "version": "1.0.0",
+  "description": "Coffee subscription business MVP",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build needed - Tailwind is handled by Ruby gem'",
+    "postinstall": "echo 'Node.js buildpack satisfied'"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
