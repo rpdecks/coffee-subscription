@@ -1,0 +1,80 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Payment Methods</h1>
+    <%= link_to "Add Payment Method", new_dashboard_payment_method_path, class: "bg-brown text-white px-4 py-2 rounded-lg hover:bg-brown/90 transition-colors" %>
+  </div>
+
+  <% if @payment_methods.any? %>
+    <div class="space-y-4">
+      <% @payment_methods.each do |payment_method| %>
+        <div class="bg-white border-2 <%= payment_method.is_default? ? 'border-green ring-2 ring-green' : 'border-gray-200' %> rounded-lg p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <% case payment_method.card_brand.downcase %>
+                <% when "visa" %>
+                  <svg class="w-12 h-8" viewBox="0 0 48 32" fill="none">
+                    <rect width="48" height="32" rx="4" fill="#1A1F71"/>
+                    <text x="24" y="20" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">VISA</text>
+                  </svg>
+                <% when "mastercard" %>
+                  <svg class="w-12 h-8" viewBox="0 0 48 32" fill="none">
+                    <rect width="48" height="32" rx="4" fill="#EB001B"/>
+                    <text x="24" y="20" font-family="Arial" font-size="8" font-weight="bold" fill="white" text-anchor="middle">MC</text>
+                  </svg>
+                <% when "amex", "american express" %>
+                  <svg class="w-12 h-8" viewBox="0 0 48 32" fill="none">
+                    <rect width="48" height="32" rx="4" fill="#006FCF"/>
+                    <text x="24" y="20" font-family="Arial" font-size="8" font-weight="bold" fill="white" text-anchor="middle">AMEX</text>
+                  </svg>
+                <% when "discover" %>
+                  <svg class="w-12 h-8" viewBox="0 0 48 32" fill="none">
+                    <rect width="48" height="32" rx="4" fill="#FF6000"/>
+                    <text x="24" y="20" font-family="Arial" font-size="7" font-weight="bold" fill="white" text-anchor="middle">DISC</text>
+                  </svg>
+                <% else %>
+                  <div class="w-12 h-8 bg-gray-300 rounded flex items-center justify-center">
+                    <span class="text-xs text-gray-600">CARD</span>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div>
+                <p class="font-semibold text-gray-900">
+                  <%= payment_method.card_brand %> •••• <%= payment_method.last_four %>
+                </p>
+                <p class="text-sm text-gray-600">
+                  Expires <%= payment_method.exp_month.to_s.rjust(2, '0') %>/<%= payment_method.exp_year %>
+                </p>
+                <% if payment_method.expired? %>
+                  <p class="text-sm text-red-600 font-semibold">Expired</p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <% if payment_method.is_default? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green text-white">
+                  Default
+                </span>
+              <% end %>
+              
+              <%= button_to "Remove", dashboard_payment_method_path(payment_method), 
+                  method: :delete, 
+                  data: { turbo_confirm: "Are you sure you want to remove this payment method?" },
+                  class: "text-red-600 hover:text-red-800 font-medium text-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+      </svg>
+      <h3 class="mt-2 text-lg font-medium text-gray-900">No payment methods</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by adding a payment method.</p>
+    </div>
+  <% end %>
+</div>

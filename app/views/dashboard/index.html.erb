@@ -95,10 +95,10 @@
         <h3 class="text-xl font-bold mb-4">Payment Methods</h3>
         <% if @payment_methods.any? %>
           <p class="text-gray-700"><%= pluralize(@payment_methods.count, 'card') %> on file</p>
-          <%= link_to "Manage", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+          <%= link_to "Manage", dashboard_payment_methods_path, class: "text-blue-600 hover:text-blue-800 text-sm" %>
         <% else %>
           <p class="text-gray-600 mb-2">No payment methods saved</p>
-          <%= link_to "Add Card", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+          <%= link_to "Add Card", new_dashboard_payment_method_path, class: "text-blue-600 hover:text-blue-800 text-sm" %>
         <% end %>
       </div>
     </div>
