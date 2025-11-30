@@ -1,0 +1,200 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Manage Subscription</h1>
+      <p class="text-gray-600 mt-1">View and manage your coffee subscription</p>
+    </div>
+    <%= link_to dashboard_root_path, class: "text-brown hover:text-brown-dark" do %>
+      ← Back to Dashboard
+    <% end %>
+  </div>
+
+  <!-- Status Alert -->
+  <% if @subscription.paused? %>
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-yellow-700">
+            Your subscription is paused. No charges or deliveries will occur until you resume.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% elsif @subscription.cancelled? %>
+    <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-gray-700">
+            This subscription was cancelled on <%= @subscription.cancelled_at&.strftime('%B %d, %Y') %>.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6">
+    <!-- Subscription Details Card -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-brown/5 to-green/5 px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900">
+              <%= @subscription.subscription_plan.name %>
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_color_class(@subscription.status) %>">
+                <%= @subscription.status.titleize %>
+              </span>
+            </p>
+          </div>
+          <% if @subscription.active? || @subscription.paused? %>
+            <%= link_to "Edit Details", edit_dashboard_subscription_path(@subscription), class: "text-sm text-brown hover:text-brown-dark font-medium" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="px-6 py-5 space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm font-medium text-gray-500">Delivery Frequency</p>
+            <p class="text-base text-gray-900 mt-1"><%= @subscription.subscription_plan.frequency.titleize %></p>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-gray-500">Next Delivery</p>
+            <p class="text-base text-gray-900 mt-1">
+              <% if @subscription.active? %>
+                <%= @subscription.next_delivery_date.strftime('%B %d, %Y') %>
+              <% else %>
+                <span class="text-gray-400">—</span>
+              <% end %>
+            </p>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-gray-500">Bag Size</p>
+            <p class="text-base text-gray-900 mt-1"><%= @subscription.bag_size || '12 oz' %></p>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-gray-500">Quantity</p>
+            <p class="text-base text-gray-900 mt-1"><%= @subscription.quantity || 1 %> bag(s)</p>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-gray-500">Monthly Cost</p>
+            <p class="text-base text-gray-900 mt-1">
+              <%= number_to_currency(@subscription.subscription_plan.price_cents / 100.0) %>
+            </p>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-gray-500">Next Charge</p>
+            <p class="text-base text-gray-900 mt-1">
+              <% if @subscription.active? %>
+                <%= @subscription.next_delivery_date.strftime('%B %d, %Y') %>
+              <% else %>
+                <span class="text-gray-400">—</span>
+              <% end %>
+            </p>
+          </div>
+        </div>
+
+        <% if @subscription.shipping_address %>
+          <div class="pt-4 border-t border-gray-200">
+            <p class="text-sm font-medium text-gray-500">Shipping Address</p>
+            <p class="text-base text-gray-900 mt-1">
+              <%= @subscription.shipping_address.street_address %><br>
+              <% if @subscription.shipping_address.street_address_2.present? %>
+                <%= @subscription.shipping_address.street_address_2 %><br>
+              <% end %>
+              <%= @subscription.shipping_address.city %>, <%= @subscription.shipping_address.state %> <%= @subscription.shipping_address.zip_code %>
+            </p>
+          </div>
+        <% end %>
+
+        <% if @subscription.payment_method %>
+          <div class="pt-4 border-t border-gray-200">
+            <p class="text-sm font-medium text-gray-500">Payment Method</p>
+            <p class="text-base text-gray-900 mt-1">
+              <%= @subscription.payment_method.card_brand %> ending in <%= @subscription.payment_method.last_four %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Coffee Preferences Card -->
+    <% if current_user.coffee_preference %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Coffee Preferences</h3>
+        </div>
+        <div class="px-6 py-5">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Roast Level</p>
+              <p class="text-base text-gray-900 mt-1"><%= current_user.coffee_preference.roast_level.titleize.gsub('_', ' ') %></p>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Grind Type</p>
+              <p class="text-base text-gray-900 mt-1"><%= current_user.coffee_preference.grind_type.titleize.gsub('_', ' ') %></p>
+            </div>
+          </div>
+          <% if current_user.coffee_preference.flavor_notes.present? %>
+            <div class="mt-4">
+              <p class="text-sm font-medium text-gray-500">Flavor Preferences</p>
+              <p class="text-base text-gray-900 mt-1"><%= current_user.coffee_preference.flavor_notes %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Action Buttons -->
+    <% if @subscription.active? || @subscription.paused? %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Subscription Actions</h3>
+        </div>
+        <div class="px-6 py-5 space-y-3">
+          <% if @subscription.active? %>
+            <%= button_to "Skip Next Delivery", skip_delivery_dashboard_subscription_path(@subscription), 
+                method: :post,
+                class: "w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition duration-150 font-medium",
+                data: { turbo_confirm: "Are you sure you want to skip your next delivery? Your next delivery will be pushed back by one cycle." } %>
+
+            <%= button_to "Pause Subscription", pause_dashboard_subscription_path(@subscription), 
+                method: :post,
+                class: "w-full bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-150 font-medium",
+                data: { turbo_confirm: "Pause your subscription? You won't be charged or receive deliveries until you resume." } %>
+          <% end %>
+
+          <% if @subscription.paused? %>
+            <%= button_to "Resume Subscription", resume_dashboard_subscription_path(@subscription), 
+                method: :post,
+                class: "w-full bg-green text-white px-4 py-2 rounded-lg hover:bg-green-dark transition duration-150 font-medium" %>
+          <% end %>
+
+          <%= button_to "Cancel Subscription", cancel_dashboard_subscription_path(@subscription), 
+              method: :delete,
+              class: "w-full bg-white text-red-600 border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50 transition duration-150 font-medium",
+              data: { turbo_confirm: "Are you sure you want to cancel your subscription? You can always start a new one later, but your current plan and preferences will be lost." } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :page_title, "Manage Subscription" %>

@@ -1,0 +1,127 @@
+<div class="max-w-2xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Edit Subscription</h1>
+      <p class="text-gray-600 mt-1">Update your subscription details</p>
+    </div>
+    <%= link_to dashboard_subscription_path(@subscription), class: "text-brown hover:text-brown-dark" do %>
+      ← Back
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-5">
+      <%= form_with model: @subscription, url: dashboard_subscription_path(@subscription), method: :patch, local: true do |f| %>
+        <% if @subscription.errors.any? %>
+          <div class="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@subscription.errors.count, "error") %> prevented this subscription from being updated:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% @subscription.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="space-y-6">
+          <!-- Subscription Plan -->
+          <div>
+            <%= f.label :subscription_plan_id, "Delivery Frequency", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.collection_select :subscription_plan_id, 
+                SubscriptionPlan.all, 
+                :id, 
+                ->(plan) { "#{plan.frequency.titleize} - #{number_to_currency(plan.price_cents / 100.0)}/month" },
+                {},
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
+            <p class="mt-1 text-sm text-gray-500">Choose how often you'd like to receive coffee</p>
+          </div>
+
+          <!-- Bag Size -->
+          <div>
+            <%= f.label :bag_size, "Bag Size", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.select :bag_size, 
+                [['12 oz', '12 oz'], ['1 lb (16 oz)', '16 oz'], ['2 lb (32 oz)', '32 oz']],
+                {},
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
+            <p class="mt-1 text-sm text-gray-500">Select your preferred bag size</p>
+          </div>
+
+          <!-- Quantity -->
+          <div>
+            <%= f.label :quantity, "Quantity (bags per delivery)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.number_field :quantity, 
+                min: 1, 
+                max: 10,
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
+            <p class="mt-1 text-sm text-gray-500">How many bags would you like per delivery?</p>
+          </div>
+
+          <!-- Shipping Address -->
+          <div>
+            <%= f.label :shipping_address_id, "Shipping Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.collection_select :shipping_address_id, 
+                current_user.addresses, 
+                :id, 
+                ->(address) { "#{address.street_address}, #{address.city}, #{address.state} #{address.zip_code}" },
+                { include_blank: "Select an address" },
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
+            <p class="mt-1 text-sm text-gray-500">
+              <%= link_to "Manage addresses", dashboard_addresses_path, class: "text-brown hover:text-brown-dark" %>
+            </p>
+          </div>
+
+          <!-- Payment Method -->
+          <div>
+            <%= f.label :payment_method_id, "Payment Method", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.collection_select :payment_method_id, 
+                current_user.payment_methods, 
+                :id, 
+                ->(pm) { "#{pm.card_brand} ending in #{pm.last_four}" },
+                { include_blank: "Select a payment method" },
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
+            <p class="mt-1 text-sm text-gray-500">
+              <%= link_to "Manage payment methods", dashboard_payment_methods_path, class: "text-brown hover:text-brown-dark" %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="mt-8 flex gap-3">
+          <%= f.submit "Save Changes", class: "flex-1 bg-brown text-white px-6 py-2 rounded-lg hover:bg-brown-dark transition duration-150 font-medium cursor-pointer" %>
+          <%= link_to "Cancel", dashboard_subscription_path(@subscription), class: "flex-1 bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition duration-150 text-center font-medium" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Coffee Preferences Note -->
+  <div class="mt-6 bg-blue-50 border-l-4 border-blue-400 p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-blue-700">
+          To update your coffee preferences (roast level, grind type), visit your 
+          <%= link_to "Coffee Preferences", edit_dashboard_coffee_preference_path, class: "font-medium underline hover:text-blue-800" %> page.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_title, "Edit Subscription" %>

@@ -21,12 +21,19 @@ Rails.application.routes.draw do
 
   # User dashboard (authenticated)
   authenticate :user do
-    get "dashboard", to: "dashboard#index"
+    get "dashboard", to: "dashboard#index", as: :dashboard_root
     
     namespace :dashboard do
       resources :addresses
       resources :payment_methods, only: [:index, :new, :create, :destroy]
-      resource :subscription, only: [:show, :new, :create, :edit, :update]
+      resources :subscriptions, only: [:show, :edit, :update] do
+        member do
+          post :pause
+          post :resume
+          delete :cancel
+          post :skip_delivery
+        end
+      end
       resource :coffee_preference, only: [:show, :edit, :update]
       resources :orders, only: [:index, :show]
       resource :profile, only: [:edit, :update]

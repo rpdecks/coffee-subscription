@@ -1,0 +1,92 @@
+module Dashboard
+  class SubscriptionsController < DashboardController
+    before_action :set_subscription, only: [:show, :edit, :update, :pause, :resume, :cancel, :skip_delivery]
+
+    def show
+      @next_order = @subscription.orders.where('created_at >= ?', @subscription.next_delivery_date).first
+    end
+
+    def edit
+    end
+
+    def update
+      if @subscription.update(subscription_params)
+        redirect_to dashboard_subscription_path(@subscription), notice: "Subscription updated successfully."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def pause
+      if @subscription.active?
+        @subscription.update(status: :paused)
+        redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been paused. No charges or deliveries will occur until you resume."
+      else
+        redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be paused."
+      end
+    end
+
+    def resume
+      if @subscription.paused?
+        @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
+        redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
+      else
+        redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be resumed."
+      end
+    end
+
+    def cancel
+      if @subscription.active? || @subscription.paused?
+        @subscription.update(status: :cancelled, cancelled_at: Time.current)
+        redirect_to dashboard_root_path, notice: "Your subscription has been cancelled. We're sorry to see you go! You can always start a new subscription anytime."
+      else
+        redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be cancelled."
+      end
+    end
+
+    def skip_delivery
+      if @subscription.active?
+        frequency_days = case @subscription.subscription_plan.frequency
+                        when 'weekly' then 7
+                        when 'biweekly' then 14
+                        when 'monthly' then 30
+                        end
+        
+        new_delivery_date = @subscription.next_delivery_date + frequency_days.days
+        @subscription.update(next_delivery_date: new_delivery_date)
+        
+        redirect_to dashboard_subscription_path(@subscription), notice: "Next delivery skipped. Your new delivery date is #{new_delivery_date.strftime('%B %d, %Y')}."
+      else
+        redirect_to dashboard_subscription_path(@subscription), alert: "Cannot skip delivery for inactive subscription."
+      end
+    end
+
+    private
+
+    def set_subscription
+      @subscription = current_user.subscriptions.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to dashboard_root_path, alert: "Subscription not found."
+    end
+
+    def subscription_params
+      params.require(:subscription).permit(
+        :subscription_plan_id,
+        :shipping_address_id,
+        :payment_method_id,
+        :bag_size,
+        :quantity
+      )
+    end
+
+    def calculate_next_delivery_date
+      frequency_days = case @subscription.subscription_plan.frequency
+                      when 'weekly' then 7
+                      when 'biweekly' then 14
+                      when 'monthly' then 30
+                      end
+      
+      Date.today + frequency_days.days
+    end
+  end
+end
