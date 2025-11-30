@@ -33,17 +33,14 @@
 
           <% if devise_mapping.rememberable? %>
             <div class="flex items-center mt-6">
-              <%= f.input :remember_me,
-                          as: :boolean,
-                          wrapper: false,
-                          input_html: { class: "h-4 w-4 text-brown border-gray-300 rounded focus:ring-brown/20" },
-                          label_html: { class: "ml-2 block text-sm text-gray-700" } %>
+              <%= f.input_field :remember_me, as: :boolean, class: "h-4 w-4 text-brown border-gray-300 rounded focus:ring-brown/20 mr-4 flex-shrink-0" %>
+              <span class="text-sm text-gray-700 leading-none">Remember me</span>
             </div>
           <% end %>
 
           <div class="mt-6">
             <%= f.button :submit, "Sign In", 
-                        class: "w-full bg-gradient-to-r from-brown to-brown/90 text-white py-3 rounded-lg font-semibold hover:from-brown/90 hover:to-brown transition-all shadow-md hover:shadow-lg" %>
+                        class: "w-full bg-brown text-white py-3 px-6 rounded-lg font-semibold hover:bg-brown/90 transition-all shadow-md hover:shadow-lg" %>
           </div>
         <% end %>
       </div>
