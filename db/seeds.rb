@@ -28,12 +28,12 @@ admin = User.create!(
 )
 
 # Create test customers
-customer1 = User.create!(
-  email: "john@example.com",
-  password: "password123",
-  password_confirmation: "password123",
-  first_name: "John",
-  last_name: "Doe",
+robert = User.create!(
+  email: "rpdecks@gmail.com",
+  password: "seedpass",
+  password_confirmation: "seedpass",
+  first_name: "Robert",
+  last_name: "Phillips",
   phone: "555-234-5678",
   role: :customer
 )
@@ -165,7 +165,7 @@ puts "Created #{SubscriptionPlan.count} subscription plans"
 puts "Creating addresses for customers..."
 
 Address.create!(
-  user: customer1,
+  user: robert,
   address_type: :shipping,
   street_address: "123 Main St",
   city: "Portland",
@@ -188,10 +188,24 @@ Address.create!(
 
 puts "Created #{Address.count} addresses"
 
+puts "Creating payment methods..."
+
+PaymentMethod.create!(
+  user: robert,
+  card_brand: "Visa",
+  last_four: "4242",
+  exp_month: 12,
+  exp_year: 2028,
+  is_default: true,
+  stripe_payment_method_id: "pm_test_4242424242424242"
+)
+
+puts "Created #{PaymentMethod.count} payment methods"
+
 puts "Creating coffee preferences..."
 
 CoffeePreference.create!(
-  user: customer1,
+  user: robert,
   roast_level: :medium_roast,
   grind_type: :whole_bean
 )
@@ -208,5 +222,5 @@ puts "✅ Seed data created successfully!"
 puts ""
 puts "Test accounts:"
 puts "  Admin: admin@coffeeco.com / password123"
-puts "  Customer 1: john@example.com / password123"
-puts "  Customer 2: jane@example.com / password123"
+puts "  Robert: rpdecks@gmail.com / seedpass"
+puts "  Jane: jane@example.com / password123"

@@ -43,11 +43,11 @@
                   </span>
                 </div>
                 <p class="text-gray-700">Total: $<%= sprintf('%.2f', order.total) %></p>
-                <%= link_to "View Details", "#", class: "text-blue-600 hover:text-blue-800 text-sm" %>
+                <%= link_to "View Details", dashboard_order_path(order), class: "text-blue-600 hover:text-blue-800 text-sm" %>
               </div>
             <% end %>
           </div>
-          <%= link_to "View All Orders", "#", class: "text-blue-600 hover:text-blue-800 mt-4 inline-block" %>
+          <%= link_to "View All Orders", dashboard_orders_path, class: "text-blue-600 hover:text-blue-800 mt-4 inline-block" %>
         <% else %>
           <p class="text-gray-600">No orders yet.</p>
         <% end %>
