@@ -101,6 +101,54 @@
           <%= link_to "Add Card", new_dashboard_payment_method_path, class: "text-blue-600 hover:text-blue-800 text-sm" %>
         <% end %>
       </div>
+
+      <!-- Recent Orders (Mobile Only - Expandable) -->
+      <div class="lg:hidden bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Recent Orders</h3>
+          <button id="toggle-orders-mobile" class="text-gray-600 hover:text-gray-900">
+            <svg id="orders-chevron" class="w-6 h-6 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+        <div id="orders-content-mobile" class="hidden space-y-3">
+          <% if @recent_orders.any? %>
+            <% @recent_orders.first(3).each do |order| %>
+              <%= link_to dashboard_order_path(order), class: "block border rounded-lg p-3 hover:border-brown/30 transition-colors" do %>
+                <div class="flex justify-between items-start mb-1">
+                  <div>
+                    <p class="font-semibold text-sm"><%= order.order_number %></p>
+                    <p class="text-xs text-gray-600"><%= order.created_at.strftime("%B %d, %Y") %></p>
+                  </div>
+                  <span class="px-2 py-1 rounded text-xs capitalize <%= order.status == 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                    <%= order.status %>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-700">$<%= sprintf('%.2f', order.total_cents / 100.0) %></p>
+              <% end %>
+            <% end %>
+            <%= link_to "View All Orders", dashboard_orders_path, class: "block text-center text-blue-600 hover:text-blue-800 text-sm mt-3 pt-3 border-t border-gray-200" %>
+          <% else %>
+            <p class="text-gray-600 text-sm">No orders yet.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('turbo:load', () => {
+    const toggleButton = document.getElementById('toggle-orders-mobile');
+    const ordersContent = document.getElementById('orders-content-mobile');
+    const chevron = document.getElementById('orders-chevron');
+    
+    if (toggleButton && ordersContent && chevron) {
+      toggleButton.addEventListener('click', () => {
+        ordersContent.classList.toggle('hidden');
+        chevron.classList.toggle('rotate-180');
+      });
+    }
+  });
+</script>
