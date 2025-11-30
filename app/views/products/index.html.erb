@@ -1,37 +1,69 @@
-<div class="max-w-7xl mx-auto">
-  <h1 class="text-4xl font-bold text-gray-900 mb-8">Our Products</h1>
-  
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <% @products.each do |product| %>
-      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-        <div class="h-48 bg-gray-200 flex items-center justify-center">
-          <span class="text-gray-400 text-6xl">☕</span>
-        </div>
-        <div class="p-6">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="text-xl font-bold text-gray-900"><%= product.name %></h3>
-            <span class="text-lg font-semibold text-blue-600">$<%= sprintf('%.2f', product.price) %></span>
+<div class="container mx-auto px-4 py-12">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Our Coffee Collection</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Discover our curated selection of premium, ethically-sourced coffees from around the world</p>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% @products.each do |product| %>
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-brown/30 hover:shadow-lg transition-all group">
+          <!-- Coffee Image Placeholder -->
+          <div class="h-64 bg-gradient-to-br from-amber-50 via-orange-50 to-brown/5 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-30">
+              <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+                <circle cx="200" cy="150" r="80" fill="url(#coffee-gradient)" opacity="0.3"/>
+                <circle cx="150" cy="120" r="40" fill="url(#coffee-gradient)" opacity="0.2"/>
+                <circle cx="250" cy="180" r="50" fill="url(#coffee-gradient)" opacity="0.2"/>
+                <defs>
+                  <radialGradient id="coffee-gradient">
+                    <stop offset="0%" style="stop-color:#4e342e;stop-opacity:0.3" />
+                    <stop offset="100%" style="stop-color:#6d4c41;stop-opacity:0" />
+                  </radialGradient>
+                </defs>
+              </svg>
+            </div>
+            <div class="relative z-10 text-brown/40 text-8xl group-hover:scale-110 transition-transform">☕</div>
+            <% if product.weight_oz %>
+              <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">
+                <%= product.weight_oz %>oz
+              </div>
+            <% end %>
           </div>
           
-          <% if product.coffee? %>
-            <p class="text-sm text-gray-500 mb-2"><%= product.weight_oz %>oz</p>
-          <% end %>
-          
-          <p class="text-gray-700 mb-4"><%= truncate(product.description, length: 100) %></p>
-          
-          <% if product.in_stock? %>
-            <%= link_to "View Details", product_path(product), class: "block w-full text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
-          <% else %>
-            <span class="block w-full text-center bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed">Out of Stock</span>
-          <% end %>
+          <!-- Product Info -->
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-3">
+              <h3 class="text-xl font-bold text-gray-900 group-hover:text-brown transition-colors"><%= product.name %></h3>
+              <span class="text-xl font-bold text-brown whitespace-nowrap ml-4">$<%= sprintf('%.2f', product.price_cents / 100.0) %></span>
+            </div>
+            
+            <p class="text-gray-600 mb-6 line-clamp-3"><%= product.description %></p>
+            
+            <!-- Action Button -->
+            <% if product.inventory_count.nil? || product.inventory_count > 0 %>
+              <%= link_to product_path(product), class: "block w-full text-center bg-brown text-white px-6 py-3 rounded-lg hover:bg-brown/90 transition-colors font-medium" do %>
+                View Details
+              <% end %>
+            <% else %>
+              <span class="block w-full text-center bg-gray-300 text-gray-600 px-6 py-3 rounded-lg cursor-not-allowed font-medium">
+                Out of Stock
+              </span>
+            <% end %>
+          </div>
         </div>
+      <% end %>
+    </div>
+    
+    <!-- Empty State -->
+    <% if @products.empty? %>
+      <div class="text-center py-20">
+        <div class="text-6xl text-gray-300 mb-4">☕</div>
+        <h3 class="text-2xl font-semibold text-gray-900 mb-2">No Products Available</h3>
+        <p class="text-gray-600">Check back soon for our latest coffee offerings!</p>
       </div>
     <% end %>
   </div>
-  
-  <% if @products.empty? %>
-    <div class="text-center py-12">
-      <p class="text-gray-600 text-lg">No products available at this time.</p>
-    </div>
-  <% end %>
 </div>

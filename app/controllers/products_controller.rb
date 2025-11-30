@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   def index
-    @products = Product.active.includes(:product_type).order(:name)
+    @products = Product.active.coffee.order(:name)
   end
 
   def show
