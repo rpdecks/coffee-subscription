@@ -40,7 +40,7 @@
               <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-gray-900" %>
             <% else %>
               <%= link_to "Sign In", new_user_session_path, class: "text-gray-700 hover:text-gray-900" %>
-              <%= link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "bg-brown text-white px-4 py-2 rounded hover:bg-brown/90" %>
             <% end %>
           </div>
           <!-- Mobile menu button -->
@@ -76,9 +76,12 @@
               <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-left py-2 text-gray-700 hover:text-gray-900" %>
             </div>
           <% else %>
-            <div class="pt-3 border-t border-gray-200 space-y-2">
-              <%= link_to "Sign In", new_user_session_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
-              <%= link_to "Sign Up", new_user_registration_path, class: "block py-2 bg-blue-600 text-white px-4 rounded hover:bg-blue-700 text-center" %>
+            <div class="pt-3 border-t border-gray-200">
+              <div class="flex items-center py-2 text-gray-700">
+                <%= link_to "Sign In", new_user_session_path, class: "hover:text-gray-900" %>
+                <span class="mx-3 text-gray-400">|</span>
+                <%= link_to "Sign Up", new_user_registration_path, class: "hover:text-gray-900" %>
+              </div>
             </div>
           <% end %>
         </div>
@@ -91,8 +94,19 @@
         const menu = document.getElementById('mobile-menu');
         
         if (button && menu) {
-          button.addEventListener('click', () => {
+          // Remove any existing listeners to prevent duplicates
+          const newButton = button.cloneNode(true);
+          button.parentNode.replaceChild(newButton, button);
+          
+          newButton.addEventListener('click', () => {
             menu.classList.toggle('hidden');
+          });
+          
+          // Close menu when clicking any link inside it
+          menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+              menu.classList.add('hidden');
+            });
           });
         }
       });
