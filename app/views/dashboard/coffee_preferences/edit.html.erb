@@ -1,0 +1,99 @@
+<div class="container mx-auto px-4 py-12">
+  <div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-2">
+        <%= link_to dashboard_path, class: "text-brown hover:text-brown/80" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        <% end %>
+        <h1 class="text-3xl font-bold text-gray-900">Coffee Preferences</h1>
+      </div>
+      <p class="text-gray-600">Tell us about your coffee preferences to personalize your subscription</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <%= form_with(model: [:dashboard, @coffee_preference], url: dashboard_coffee_preference_path, method: :patch, class: "space-y-6") do |form| %>
+        <% if @coffee_preference.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h3 class="font-semibold text-red-800 mb-2"><%= pluralize(@coffee_preference.errors.count, "error") %> prevented this from being saved:</h3>
+            <ul class="list-disc list-inside text-red-700 text-sm">
+              <% @coffee_preference.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Roast Level -->
+        <div>
+          <%= form.label :roast_level, "Preferred Roast Level", class: "block text-sm font-semibold text-gray-900 mb-3" %>
+          <div class="grid grid-cols-2 gap-3">
+            <% CoffeePreference.roast_levels.keys.each do |level| %>
+              <label class="relative flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors has-[:checked]:border-brown has-[:checked]:bg-brown/5 border-gray-200 hover:border-brown/30">
+                <%= form.radio_button :roast_level, level, class: "w-5 h-5 text-brown border-gray-300 focus:ring-brown focus:ring-2" %>
+                <div>
+                  <div class="font-medium text-gray-900"><%= level.to_s.titleize %></div>
+                  <div class="text-xs text-gray-500">
+                    <% case level.to_s
+                       when 'light' %>Bright & fruity
+                    <% when 'medium_roast' %>Balanced & smooth
+                    <% when 'dark' %>Bold & rich
+                    <% when 'variety' %>Mix of all roasts
+                    <% end %>
+                  </div>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Grind Type -->
+        <div>
+          <%= form.label :grind_type, "Preferred Grind Type", class: "block text-sm font-semibold text-gray-900 mb-3" %>
+          <div class="grid grid-cols-2 gap-3">
+            <% CoffeePreference.grind_types.keys.each do |grind| %>
+              <label class="relative flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors has-[:checked]:border-brown has-[:checked]:bg-brown/5 border-gray-200 hover:border-brown/30">
+                <%= form.radio_button :grind_type, grind, class: "w-5 h-5 text-brown border-gray-300 focus:ring-brown focus:ring-2" %>
+                <div>
+                  <div class="font-medium text-gray-900"><%= grind.to_s.titleize %></div>
+                  <div class="text-xs text-gray-500">
+                    <% case grind.to_s
+                       when 'whole_bean' %>Keep beans whole
+                    <% when 'coarse' %>French press
+                    <% when 'medium_grind' %>Drip coffee
+                    <% when 'fine' %>Pour over
+                    <% when 'espresso' %>Espresso machine
+                    <% end %>
+                  </div>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Flavor Notes -->
+        <div>
+          <%= form.label :flavor_notes, "Flavor Notes (Optional)", class: "block text-sm font-semibold text-gray-900 mb-2" %>
+          <p class="text-sm text-gray-600 mb-3">Tell us what flavors you enjoy in your coffee</p>
+          <%= form.text_area :flavor_notes, rows: 3, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown", placeholder: "e.g., chocolate, nutty, fruity, floral..." %>
+        </div>
+
+        <!-- Special Instructions -->
+        <div>
+          <%= form.label :special_instructions, "Special Instructions (Optional)", class: "block text-sm font-semibold text-gray-900 mb-2" %>
+          <p class="text-sm text-gray-600 mb-3">Any other preferences or requirements we should know about?</p>
+          <%= form.text_area :special_instructions, rows: 3, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown", placeholder: "e.g., decaf only, organic preferred..." %>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-4 pt-4">
+          <%= form.submit "Save Preferences", class: "px-6 py-3 bg-brown text-white rounded-lg hover:bg-brown/90 transition-colors font-medium cursor-pointer" %>
+          <%= link_to "Cancel", dashboard_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
