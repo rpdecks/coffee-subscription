@@ -31,15 +31,21 @@ class PagesController < ApplicationController
       end
     end
 
-    # TODO: Implement actual email sending
-    # ContactMailer.contact_form(
-    #   name: params[:name],
-    #   email: params[:email],
-    #   subject: params[:subject],
-    #   message: params[:message]
-    # ).deliver_later
+    # Send email
+    begin
+      ContactMailer.contact_form(
+        name: params[:name],
+        email: params[:email],
+        subject: params[:subject],
+        message: params[:message]
+      ).deliver_later
 
-    flash[:notice] = "Thank you for your message. We'll get back to you soon!"
+      flash[:notice] = "Thank you for your message. We'll get back to you soon!"
+    rescue => e
+      Rails.logger.error "Failed to send contact email: #{e.message}"
+      flash[:alert] = "Sorry, there was an error sending your message. Please try again later."
+    end
+
     redirect_to contact_path
   end
 end
