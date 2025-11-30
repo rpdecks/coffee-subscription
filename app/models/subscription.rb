@@ -6,7 +6,7 @@ class Subscription < ApplicationRecord
 
   has_many :orders
 
-  enum status: { active: 0, paused: 1, cancelled: 2, past_due: 3 }
+  enum :status, { active: 0, paused: 1, cancelled: 2, past_due: 3 }
 
   validates :status, presence: true
 

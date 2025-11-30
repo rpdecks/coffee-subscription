@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  enum product_type: { coffee: 0, merch: 1 }
+  enum :product_type, { coffee: 0, merch: 1 }
 
   validates :name, :price_cents, presence: true
   validates :price_cents, numericality: { greater_than: 0 }

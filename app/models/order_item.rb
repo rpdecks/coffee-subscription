@@ -2,7 +2,7 @@ class OrderItem < ApplicationRecord
   belongs_to :order
   belongs_to :product
 
-  enum grind_type: { whole_bean: 0, coarse: 1, medium_grind: 2, fine: 3, espresso: 4 }
+  enum :grind_type, { whole_bean: 0, coarse: 1, medium_grind: 2, fine: 3, espresso: 4 }
 
   validates :quantity, :price_cents, presence: true
   validates :quantity, numericality: { greater_than: 0 }

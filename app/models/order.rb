@@ -6,8 +6,8 @@ class Order < ApplicationRecord
 
   has_many :order_items, dependent: :destroy
 
-  enum order_type: { subscription: 0, one_time: 1 }
-  enum status: { pending: 0, processing: 1, roasting: 2, shipped: 3, delivered: 4, cancelled: 5 }
+  enum :order_type, { subscription: 0, one_time: 1 }
+  enum :status, { pending: 0, processing: 1, roasting: 2, shipped: 3, delivered: 4, cancelled: 5 }
 
   validates :order_number, :order_type, :status, presence: true
   validates :order_number, uniqueness: true

@@ -1,7 +1,7 @@
 class Address < ApplicationRecord
   belongs_to :user
 
-  enum address_type: { shipping: 0, billing: 1 }
+  enum :address_type, { shipping: 0, billing: 1 }
 
   validates :street_address, :city, :state, :zip_code, :country, presence: true
   validates :address_type, presence: true

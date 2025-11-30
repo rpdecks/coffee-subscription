@@ -1,5 +1,5 @@
 class SubscriptionPlan < ApplicationRecord
-  enum frequency: { weekly: 0, biweekly: 1, monthly: 2 }
+  enum :frequency, { weekly: 0, biweekly: 1, monthly: 2 }
 
   has_many :subscriptions
 
