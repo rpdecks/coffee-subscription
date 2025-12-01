@@ -18,7 +18,7 @@ class Admin::SubscriptionsController < Admin::BaseController
       )
     end
     
-    @subscriptions = @subscriptions.limit(100)
+    @pagy, @subscriptions = pagy(@subscriptions, items: 25)
   end
 
   def show

@@ -22,7 +22,7 @@ class Admin::CustomersController < Admin::BaseController
       end
     end
     
-    @customers = @customers.limit(100)
+    @pagy, @customers = pagy(@customers, items: 25)
   end
 
   def show

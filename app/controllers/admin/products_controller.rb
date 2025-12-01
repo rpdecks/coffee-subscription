@@ -25,7 +25,7 @@ class Admin::ProductsController < Admin::BaseController
       end
     end
     
-    @products = @products.limit(100)
+    @pagy, @products = pagy(@products, items: 25)
   end
 
   def show

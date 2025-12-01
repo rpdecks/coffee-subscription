@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include Pagy::Frontend
+
   def status_color_class(status)
     case status.to_s
     when 'active'

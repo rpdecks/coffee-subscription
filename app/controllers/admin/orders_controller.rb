@@ -18,7 +18,7 @@ class Admin::OrdersController < Admin::BaseController
       )
     end
     
-    @orders = @orders.limit(100) # Show up to 100 orders
+    @pagy, @orders = pagy(@orders, items: 25)
   end
 
   def show
