@@ -1,13 +1,27 @@
 FactoryBot.define do
   factory :subscription do
-    user { nil }
-    subscription_plan { nil }
-    status { 1 }
-    stripe_subscription_id { "MyString" }
-    current_period_start { "2025-11-29 14:56:30" }
-    current_period_end { "2025-11-29 14:56:30" }
-    next_delivery_date { "2025-11-29" }
-    shipping_address_id { 1 }
-    payment_method_id { 1 }
+    association :user
+    association :subscription_plan
+    status { :active }
+    stripe_subscription_id { nil }
+    current_period_start { nil }
+    current_period_end { nil }
+    next_delivery_date { 7.days.from_now.to_date }
+    quantity { 1 }
+    shipping_address_id { nil }
+    payment_method_id { nil }
+    
+    trait :active do
+      status { :active }
+    end
+    
+    trait :paused do
+      status { :paused }
+    end
+    
+    trait :cancelled do
+      status { :cancelled }
+      cancelled_at { 1.day.ago }
+    end
   end
 end
