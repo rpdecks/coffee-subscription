@@ -15,6 +15,10 @@ class SubscriptionOrderGenerator
     if order.save
       update_subscription_delivery_date
       Rails.logger.info("Generated order #{order.order_number} for subscription #{subscription.id}")
+      
+      # Send order confirmation email
+      OrderMailer.order_confirmation(order).deliver_later
+      
       order
     else
       Rails.logger.error("Failed to create order for subscription #{subscription.id}: #{order.errors.full_messages}")

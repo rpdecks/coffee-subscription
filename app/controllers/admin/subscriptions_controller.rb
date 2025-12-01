@@ -40,6 +40,7 @@ class Admin::SubscriptionsController < Admin::BaseController
   def pause
     if @subscription.active?
       @subscription.update(status: :paused)
+      SubscriptionMailer.subscription_paused(@subscription).deliver_later
       redirect_to admin_subscription_path(@subscription), notice: "Subscription paused."
     else
       redirect_to admin_subscription_path(@subscription), alert: "Subscription cannot be paused."
@@ -49,6 +50,7 @@ class Admin::SubscriptionsController < Admin::BaseController
   def resume
     if @subscription.paused?
       @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
+      SubscriptionMailer.subscription_resumed(@subscription).deliver_later
       redirect_to admin_subscription_path(@subscription), notice: "Subscription resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
     else
       redirect_to admin_subscription_path(@subscription), alert: "Subscription cannot be resumed."
@@ -58,6 +60,7 @@ class Admin::SubscriptionsController < Admin::BaseController
   def cancel
     if @subscription.active? || @subscription.paused?
       @subscription.update(status: :cancelled, cancelled_at: Time.current)
+      SubscriptionMailer.subscription_cancelled(@subscription).deliver_later
       redirect_to admin_subscription_path(@subscription), notice: "Subscription cancelled."
     else
       redirect_to admin_subscription_path(@subscription), alert: "Subscription cannot be cancelled."

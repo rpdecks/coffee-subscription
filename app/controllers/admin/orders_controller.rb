@@ -33,8 +33,10 @@ class Admin::OrdersController < Admin::BaseController
       case @order.status
       when 'shipped'
         @order.update(shipped_at: Time.current) unless @order.shipped_at
+        OrderMailer.order_shipped(@order).deliver_later
       when 'delivered'
         @order.update(delivered_at: Time.current) unless @order.delivered_at
+        OrderMailer.order_delivered(@order).deliver_later
       end
       
       flash[:notice] = "Order status updated from #{old_status} to #{@order.status}."

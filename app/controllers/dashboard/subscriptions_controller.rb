@@ -20,6 +20,7 @@ module Dashboard
     def pause
       if @subscription.active?
         @subscription.update(status: :paused)
+        SubscriptionMailer.subscription_paused(@subscription).deliver_later
         redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been paused. No charges or deliveries will occur until you resume."
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be paused."
@@ -29,6 +30,7 @@ module Dashboard
     def resume
       if @subscription.paused?
         @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
+        SubscriptionMailer.subscription_resumed(@subscription).deliver_later
         redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be resumed."
@@ -38,6 +40,7 @@ module Dashboard
     def cancel
       if @subscription.active? || @subscription.paused?
         @subscription.update(status: :cancelled, cancelled_at: Time.current)
+        SubscriptionMailer.subscription_cancelled(@subscription).deliver_later
         redirect_to dashboard_root_path, notice: "Your subscription has been cancelled. We're sorry to see you go! You can always start a new subscription anytime."
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be cancelled."
