@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# This script is meant to be run by Heroku Scheduler
+# Configure it to run daily at your preferred time (e.g., 6:00 AM)
+
+require_relative '../config/environment'
+
+puts "Starting daily subscription order generation at #{Time.current}"
+GenerateSubscriptionOrdersJob.perform_now
+puts "Completed at #{Time.current}"
