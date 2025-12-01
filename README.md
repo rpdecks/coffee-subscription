@@ -1,86 +1,62 @@
-# Coffee Subscription Business - Rails Application
+# Coffee Co. - Subscription Coffee Service
 
-A full-stack Ruby on Rails application for managing a coffee subscription business. Built with a focus on user experience, following industry best practices from leading coffee subscription companies.
+A full-featured coffee subscription platform built with Rails 8.1.1, enabling customers to manage recurring coffee deliveries and administrators to oversee the entire operation.
 
-## 🎯 Project Overview
+## 🎯 Overview
 
-This MVP supports a small-batch coffee roasting business with:
+Coffee Co. is a production-ready subscription platform for coffee roasting businesses with:
 
-- **Target Scale**: 1,000-2,000 lbs/month, 30-50 subscribers
-- **Core Business**: Coffee subscriptions with future support for one-time purchases and merchandise
-- **Design Philosophy**: Minimal, calm aesthetic with guided user flows
+- **Automated Operations**: Daily order generation, email notifications, subscription management
+- **Admin Tools**: Comprehensive dashboard with pagination, search, filtering, and CSV export
+- **Customer Experience**: Self-service subscription management, order tracking, email updates
+- **Scale Ready**: Built for 30-2,000+ active subscriptions with efficient data handling
 
-## ✨ Features Implemented
+## ✨ Features
 
-### 🔐 Authentication & User Management
+### Customer Features
 
-- Devise authentication with custom user fields
-- Role-based access control (customer, admin)
-- Pundit authorization framework
-- User registration with first name, last name, phone
+- 🔐 User authentication and account management
+- ☕ Browse and purchase coffee products
+- 📦 Subscription management (create, pause, resume, cancel)
+- 🗓️ Flexible delivery schedules (weekly, bi-weekly, monthly)
+- 💳 Secure payment processing with Stripe
+- 📍 Multiple shipping addresses
+- ⚙️ Coffee preferences (roast level, grind type)
+- 📧 Email notifications for orders and subscriptions
+- 📊 Order history and tracking
 
-### 📦 Product Management
+### Admin Features
 
-- Coffee and merchandise product catalog
-- Inventory tracking
-- Active/inactive product status
-- Multiple product types support
+- 📊 Comprehensive dashboard with key metrics
+- 👥 Customer management with search and filtering
+- 📦 Order management with status updates
+- 🔄 Subscription oversight and management
+- ☕ Product catalog management (coffee and merch)
+- 📋 Subscription plan configuration
+- 📈 Pagination for large datasets (25 items per page)
+- 📥 CSV export for orders and customers
+- ✉️ Automated email notifications
+- 🤖 Automated daily order generation
 
-### 🔄 Subscription System
+### Automated Features
 
-- **Landing Page**: Explains subscription benefits and value proposition
-- **Plan Selection**: Browse available subscription plans
-- **Linear Customization Flow**:
-  1. Choose your coffee
-  2. Select bag size (12oz, 2lb, 5lb)
-  3. Pick delivery frequency (weekly, bi-weekly, monthly)
-  4. Choose grind type (whole bean, coarse, medium, fine, espresso)
-- Subscription plans with flexible frequencies
-- Coffee preference management (roast level, grind type)
-
-### 👤 User Dashboard
-
-- Subscription status overview
-- Recent orders display
-- Quick links to account management
-- Address and payment method summaries
-- Profile information
-
-### 📄 Static Pages
-
-- Homepage with hero section, features, and "How It Works"
-- About page with brand story
-- Comprehensive FAQ
-- Contact form
-- Professional footer
-
-### 🎨 Design & Styling
-
-- Tailwind CSS with custom earth-tone color palette
-- Responsive, mobile-friendly layouts
-- Minimal, calm aesthetic following design guide principles
-- Generous white space and clean typography
+- **Daily Order Generation**: Automatic order creation for active subscriptions at 6 AM UTC
+- **Email Notifications**: Order confirmations, status updates, subscription lifecycle events
+- **Smart Scheduling**: Next delivery date calculations based on plan frequency
+- **Error Handling**: Graceful error handling with detailed logging
 
 ## 🛠 Tech Stack
 
-### Core Framework
-
-- **Ruby on Rails 7.2.2** - Latest stable Rails
-- **PostgreSQL** - Production-grade database
-- **Puma** - Application server
-- **Tailwind CSS** - Utility-first styling
-
-### Key Gems
-
-- **devise** - User authentication
-- **pundit** - Authorization
-- **stripe** - Payment processing (ready to configure)
-- **sidekiq** - Background jobs (ready to configure)
-- **simple_form** - Form builder
-- **pagy** - Pagination
-- **rspec-rails** - Testing framework
-- **factory_bot_rails** - Test fixtures
-- **faker** - Test data generation
+- **Framework:** Ruby on Rails 8.1.1
+- **Ruby Version:** 3.3.10
+- **Database:** PostgreSQL
+- **CSS Framework:** Tailwind CSS 4.1
+- **Payment Processing:** Stripe
+- **Email Service:** SendGrid (production), Mailcatcher (development)
+- **Authentication:** Devise
+- **Pagination:** Pagy
+- **Job Scheduling:** Heroku Scheduler
+- **Hosting:** Heroku
 
 ## 🚀 Getting Started
 
