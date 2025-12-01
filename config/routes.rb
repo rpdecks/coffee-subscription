@@ -50,13 +50,17 @@ Rails.application.routes.draw do
     end
     resources :subscriptions, only: [:index, :show, :edit, :update] do
       member do
-        post :pause
-        post :resume
-        delete :cancel
+        patch :pause
+        patch :resume
+        patch :cancel
       end
     end
     resources :customers, only: [:index, :show]
-    resources :products
+    resources :products do
+      member do
+        patch :toggle_active
+      end
+    end
     resources :subscription_plans
   end
 

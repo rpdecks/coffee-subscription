@@ -1,0 +1,158 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Products</h1>
+      <p class="text-gray-600 mt-1">Manage coffee and merchandise inventory</p>
+    </div>
+    <div>
+      <%= link_to new_admin_product_path, class: "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add Product</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Filters & Search -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <%= form_with url: admin_products_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
+      <!-- Search -->
+      <div class="flex-1">
+        <%= f.text_field :search, 
+            value: params[:search],
+            placeholder: "Search by product name...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <!-- Product Type Filter -->
+      <div>
+        <%= f.select :product_type,
+            options_for_select(
+              [['All Types', '']] + Product.product_types.keys.map { |t| [t.titleize, t] },
+              params[:product_type]
+            ),
+            {},
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <!-- Status Filter -->
+      <div>
+        <%= f.select :status,
+            options_for_select(
+              [['All Status', ''], ['Active', 'active'], ['Inactive', 'inactive'], ['In Stock', 'in_stock'], ['Out of Stock', 'out_of_stock']],
+              params[:status]
+            ),
+            {},
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        <%= link_to "Clear", admin_products_path, class: "px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Products Table -->
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @products.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inventory</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @products.each do |product| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900"><%= product.name %></div>
+                      <% if product.description.present? %>
+                        <div class="text-sm text-gray-500"><%= truncate(product.description, length: 60) %></div>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% type_colors = {
+                    'coffee' => 'bg-brown-100 text-brown-800',
+                    'merch' => 'bg-purple-100 text-purple-800'
+                  } %>
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <%= type_colors[product.product_type] || 'bg-gray-100 text-gray-800' %>">
+                    <%= product.product_type.titleize %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_to_currency(product.price) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= product.weight_oz ? "#{product.weight_oz} oz" : 'N/A' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if product.inventory_count.nil? %>
+                    <span class="text-sm text-gray-500">Unlimited</span>
+                  <% elsif product.inventory_count > 10 %>
+                    <span class="text-sm text-green-600 font-medium"><%= product.inventory_count %></span>
+                  <% elsif product.inventory_count > 0 %>
+                    <span class="text-sm text-yellow-600 font-medium"><%= product.inventory_count %></span>
+                  <% else %>
+                    <span class="text-sm text-red-600 font-medium">Out of Stock</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <%= product.active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+                    <%= product.active? ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex items-center justify-end gap-3">
+                    <%= link_to "View", admin_product_path(product), class: "text-blue-600 hover:text-blue-900" %>
+                    <%= link_to "Edit", edit_admin_product_path(product), class: "text-indigo-600 hover:text-indigo-900" %>
+                    <%= button_to toggle_active_admin_product_path(product), method: :patch, class: "text-yellow-600 hover:text-yellow-900" do %>
+                      <%= product.active? ? 'Deactivate' : 'Activate' %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No products found</h3>
+        <p class="mt-2 text-gray-500">
+          <% if params[:search].present? || params[:product_type].present? || params[:status].present? %>
+            Try adjusting your filters.
+          <% else %>
+            Get started by adding your first product.
+          <% end %>
+        </p>
+        <% if params[:search].blank? && params[:product_type].blank? && params[:status].blank? %>
+          <div class="mt-6">
+            <%= link_to new_admin_product_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add Product</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
