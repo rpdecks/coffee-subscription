@@ -10,6 +10,7 @@ class SubscriptionPlan < ApplicationRecord
   scope :active, -> { where(active: true) }
 
   def price
+    return 0.0 if price_cents.nil?
     price_cents / 100.0
   end
 

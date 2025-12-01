@@ -11,6 +11,7 @@ class Product < ApplicationRecord
   scope :in_stock, -> { where("inventory_count IS NULL OR inventory_count > 0") }
 
   def price
+    return 0.0 if price_cents.nil?
     price_cents / 100.0
   end
 

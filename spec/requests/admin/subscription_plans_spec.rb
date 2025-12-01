@@ -116,7 +116,7 @@ RSpec.describe "Admin::SubscriptionPlans", type: :request do
   end
 
   describe "DELETE /admin/subscription_plans/:id" do
-    let(:plan) { create(:subscription_plan) }
+    let!(:plan) { create(:subscription_plan) }
 
     it "destroys the plan" do
       expect {

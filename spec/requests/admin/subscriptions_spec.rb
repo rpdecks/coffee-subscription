@@ -35,9 +35,12 @@ RSpec.describe "Admin::Subscriptions", type: :request do
     end
 
     context "with status filter" do
-      let!(:active_subscription) { create(:subscription, :active, user: customer, subscription_plan: subscription_plan) }
-      let!(:paused_subscription) { create(:subscription, :paused, user: customer, subscription_plan: subscription_plan) }
-      let!(:cancelled_subscription) { create(:subscription, :cancelled, user: customer, subscription_plan: subscription_plan) }
+      let!(:active_customer) { create(:customer_user) }
+      let!(:paused_customer) { create(:customer_user) }
+      let!(:cancelled_customer) { create(:customer_user) }
+      let!(:active_subscription) { create(:subscription, :active, user: active_customer, subscription_plan: subscription_plan) }
+      let!(:paused_subscription) { create(:subscription, :paused, user: paused_customer, subscription_plan: subscription_plan) }
+      let!(:cancelled_subscription) { create(:subscription, :cancelled, user: cancelled_customer, subscription_plan: subscription_plan) }
 
       it "filters by active status" do
         get admin_subscriptions_path, params: { status: "active" }

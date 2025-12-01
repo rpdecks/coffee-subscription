@@ -23,10 +23,21 @@ class Admin::OrdersController < Admin::BaseController
 
   def update_status
     old_status = @order.status
+    new_status = params[:status]
     
-    if @order.update(order_params)
-      # Set timestamps based on status changes
+    if new_status.blank?
+      flash[:alert] = "Status parameter is required."
+      redirect_to admin_order_path(@order)
+      return
+    end
+    
+    if @order.update(status: new_status)
+      # Send email notifications based on status changes
       case @order.status
+      when 'processing'
+        OrderMailer.order_confirmation(@order).deliver_later
+      when 'roasting'
+        OrderMailer.order_roasting(@order).deliver_later
       when 'shipped'
         @order.update(shipped_at: Time.current) unless @order.shipped_at
         OrderMailer.order_shipped(@order).deliver_later
@@ -46,7 +57,7 @@ class Admin::OrdersController < Admin::BaseController
   private
 
   def build_orders_query
-    orders = Order.includes(:user, :subscription).order(created_at: :desc)
+    orders = Order.includes(:user, :subscription, :shipping_address).order(created_at: :desc)
     
     # Filter by status if provided
     if params[:status].present? && Order.statuses.key?(params[:status])
@@ -56,7 +67,7 @@ class Admin::OrdersController < Admin::BaseController
     # Search by order number or customer name
     if params[:search].present?
       search_term = "%#{params[:search]}%"
-      orders = orders.joins(:user).where(
+      orders = orders.references(:user).where(
         "orders.order_number LIKE ? OR users.first_name LIKE ? OR users.last_name LIKE ? OR users.email LIKE ?",
         search_term, search_term, search_term, search_term
       )
