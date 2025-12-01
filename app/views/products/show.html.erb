@@ -100,23 +100,16 @@
             <% end %>
             
             <% unless user_signed_in? %>
-              <p class="text-center text-gray-600">
-                Don't have an account? 
-                <%= link_to "Sign up", new_user_registration_path, class: "text-brown hover:text-brown/80 font-medium" %> to get started
-              </p>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+            <p class="text-center text-gray-600">
+              Don't have an account? 
+              <%= link_to "Sign up", new_user_registration_path, class: "text-brown hover:text-brown/80 font-medium" %> to get started
+            </p>
           <% end %>
         </div>
       </div>
     </div>
   </div>
-  
+
   <% if @product.coffee? %>
     <div class="mt-8 bg-blue-50 p-6 rounded-lg">
       <h2 class="text-2xl font-bold mb-4">Subscribe & Save</h2>

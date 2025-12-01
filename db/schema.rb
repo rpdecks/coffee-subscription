@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_30_230522) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_01_014117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -115,12 +115,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_30_230522) do
   end
 
   create_table "subscriptions", force: :cascade do |t|
+    t.string "bag_size"
     t.datetime "cancelled_at"
     t.datetime "created_at", null: false
     t.datetime "current_period_end"
     t.datetime "current_period_start"
     t.date "next_delivery_date"
     t.integer "payment_method_id"
+    t.integer "quantity"
     t.integer "shipping_address_id"
     t.integer "status"
     t.string "stripe_subscription_id"

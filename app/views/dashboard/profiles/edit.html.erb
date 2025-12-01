@@ -5,7 +5,7 @@
   </div>
 
   <%= form_with model: @user, url: dashboard_profile_path, method: :patch, class: "space-y-8" do |form| %>
-    <-d Account Information Section -->
+    <!-- Account Information Section -->
     <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-900 mb-4">Account Information</h2>
       
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <-d Change Password Section -->
+    <!-- Change Password Section -->
     <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-900 mb-2">Change Password</h2>
       <p class="text-sm text-gray-600 mb-4">Leave blank if you don't want to change your password</p>
@@ -87,9 +87,9 @@
       </div>
     </div>
 
-    <-d Actions -->
+    <!-- Actions -->
     <div class="flex items-center justify-between pt-4">
-      <%= link_to "Cancel", dashboard_path, class: "text-gray-600 hover:text-gray-800 font-medium" %>
+      <%= link_to "Cancel", dashboard_root_path, class: "text-gray-600 hover:text-gray-800 font-medium" %>
       <%= form.submit "Update Profile", class: "bg-brown text-white px-6 py-2 rounded-lg hover:bg-brown/90 transition-colors" %>
     </div>
   <% end %>

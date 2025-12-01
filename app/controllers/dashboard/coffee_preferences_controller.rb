@@ -7,7 +7,7 @@ class Dashboard::CoffeePreferencesController < ApplicationController
 
   def update
     if @coffee_preference.update(coffee_preference_params)
-      redirect_to dashboard_path, notice: "Coffee preferences updated successfully."
+      redirect_to dashboard_root_path, notice: "Coffee preferences updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
