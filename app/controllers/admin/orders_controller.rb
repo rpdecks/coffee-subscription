@@ -17,9 +17,35 @@ class Admin::OrdersController < Admin::BaseController
     export_orders_csv
   end
 
+  def show
+    @order_items = @order.order_items.includes(:product)
+  end
+
+  def update_status
+    old_status = @order.status
+    
+    if @order.update(order_params)
+      # Set timestamps based on status changes
+      case @order.status
+      when 'shipped'
+        @order.update(shipped_at: Time.current) unless @order.shipped_at
+        OrderMailer.order_shipped(@order).deliver_later
+      when 'delivered'
+        @order.update(delivered_at: Time.current) unless @order.delivered_at
+        OrderMailer.order_delivered(@order).deliver_later
+      end
+      
+      flash[:notice] = "Order status updated from #{old_status} to #{@order.status}."
+      redirect_to admin_order_path(@order)
+    else
+      flash[:alert] = "Unable to update order status: #{@order.errors.full_messages.join(', ')}"
+      redirect_to admin_order_path(@order)
+    end
+  end
+
   private
 
-  def build_orders_query_orders_query
+  def build_orders_query
     orders = Order.includes(:user, :subscription).order(created_at: :desc)
     
     # Filter by status if provided
@@ -59,46 +85,18 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def format_address(order)
-    return 'N/A' unless order.shipping_address_line1.present?
+    return 'N/A' unless order.shipping_address
     
+    address = order.shipping_address
     parts = [
-      order.shipping_address_line1,
-      order.shipping_address_line2,
-      order.shipping_city,
-      order.shipping_state,
-      order.shipping_zip
+      address.street_address,
+      address.city,
+      address.state,
+      address.zip_code
     ].compact
     
     parts.join(', ')
   end
-
-  def show
-    @order_items = @order.order_items.includes(:product)
-  end
-
-  def update_status
-    old_status = @order.status
-    
-    if @order.update(order_params)
-      # Set timestamps based on status changes
-      case @order.status
-      when 'shipped'
-        @order.update(shipped_at: Time.current) unless @order.shipped_at
-        OrderMailer.order_shipped(@order).deliver_later
-      when 'delivered'
-        @order.update(delivered_at: Time.current) unless @order.delivered_at
-        OrderMailer.order_delivered(@order).deliver_later
-      end
-      
-      flash[:notice] = "Order status updated from #{old_status} to #{@order.status}."
-      redirect_to admin_order_path(@order)
-    else
-      flash[:alert] = "Unable to update order status: #{@order.errors.full_messages.join(', ')}"
-      redirect_to admin_order_path(@order)
-    end
-  end
-
-  private
 
   def set_order
     @order = Order.find(params[:id])
