@@ -28,7 +28,7 @@ RSpec.describe "Admin::Customers", type: :request do
 
       it "paginates results" do
         get admin_customers_path
-        expect(response.body).to include("pagination")
+        expect(response.body).to match(/pagination/i)
       end
     end
 

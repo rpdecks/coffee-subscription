@@ -12,6 +12,16 @@ class OrderMailer < ApplicationMailer
     )
   end
 
+  def order_roasting(order)
+    @order = order
+    @customer = order.user
+    
+    mail(
+      to: @customer.email,
+      subject: "Your coffee is being roasted! - #{@order.order_number}"
+    )
+  end
+
   def order_shipped(order)
     @order = order
     @customer = order.user

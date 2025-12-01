@@ -71,7 +71,7 @@ RSpec.describe "Admin::Orders", type: :request do
     end
 
     context "when not logged in as admin" do
-      before { sign_out admin, scope: :user }
+      before { sign_out admin }
 
       it "redirects to sign in" do
         get admin_orders_path
