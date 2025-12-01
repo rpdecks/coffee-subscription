@@ -75,7 +75,7 @@ RSpec.describe "Admin::SubscriptionPlans", type: :request do
         description: "A new subscription plan",
         frequency: "monthly",
         bags_per_delivery: 2,
-        price_cents: 3200,
+        price: 32.00,
         active: true
       }
     end

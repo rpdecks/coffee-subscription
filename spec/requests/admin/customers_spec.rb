@@ -95,7 +95,7 @@ RSpec.describe "Admin::Customers", type: :request do
 
     it "includes headers" do
       get export_admin_customers_path(format: :csv)
-      expect(response.body).to include("ID")
+      expect(response.body).to include("Name")
       expect(response.body).to include("Email")
       expect(response.body).to include("Subscriptions")
     end

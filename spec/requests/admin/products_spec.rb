@@ -91,7 +91,7 @@ RSpec.describe "Admin::Products", type: :request do
         name: "New Coffee",
         description: "Delicious new coffee",
         product_type: "coffee",
-        price_cents: 2000,
+        price: 20.00,
         weight_oz: 12,
         inventory_count: 50,
         active: true

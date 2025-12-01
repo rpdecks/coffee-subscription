@@ -28,7 +28,8 @@ RSpec.describe "Admin::Dashboard", type: :request do
 
     it "displays total customers count" do
       get admin_root_path
-      expect(response.body).to match(/1.*customer/i)
+      expect(response.body).to include("Total Customers")
+      expect(response.body).to include(">1<")
     end
 
     it "displays recent orders" do
@@ -38,7 +39,7 @@ RSpec.describe "Admin::Dashboard", type: :request do
     end
 
     context "when not logged in" do
-      before { sign_out admin, scope: :user }
+      before { sign_out admin }
 
       it "redirects to sign in" do
         get admin_root_path
@@ -48,7 +49,7 @@ RSpec.describe "Admin::Dashboard", type: :request do
 
     context "when logged in as customer" do
       before do
-        sign_out admin, scope: :user
+        sign_out admin
         sign_in customer, scope: :user
       end
 

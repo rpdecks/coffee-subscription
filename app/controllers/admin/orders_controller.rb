@@ -68,7 +68,7 @@ class Admin::OrdersController < Admin::BaseController
     if params[:search].present?
       search_term = "%#{params[:search]}%"
       orders = orders.references(:user).where(
-        "orders.order_number LIKE ? OR users.first_name LIKE ? OR users.last_name LIKE ? OR users.email LIKE ?",
+        "LOWER(orders.order_number) LIKE LOWER(?) OR LOWER(users.first_name) LIKE LOWER(?) OR LOWER(users.last_name) LIKE LOWER(?) OR LOWER(users.email) LIKE LOWER(?)",
         search_term, search_term, search_term, search_term
       )
     end

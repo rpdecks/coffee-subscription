@@ -35,6 +35,6 @@ class Order < ApplicationRecord
   private
 
   def generate_order_number
-    self.order_number = "ORD-#{Time.current.to_i}-#{SecureRandom.hex(3).upcase}"
+    self.order_number ||= "ORD-#{Time.current.to_i}-#{SecureRandom.hex(3).upcase}"
   end
 end

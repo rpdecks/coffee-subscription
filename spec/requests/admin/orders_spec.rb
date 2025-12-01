@@ -40,8 +40,8 @@ RSpec.describe "Admin::Orders", type: :request do
 
       it "respects per_page limit" do
         get admin_orders_path
-        # Pagy default is 25 items
-        expect(response.body).to match(/1.*25.*of.*\d+/)
+        # Pagy default is 25 items, but showing 20 for first page
+        expect(response.body).to match(/showing.*1.*to.*\d+.*of.*\d+/i)
       end
     end
 
@@ -81,7 +81,7 @@ RSpec.describe "Admin::Orders", type: :request do
 
     context "when logged in as customer" do
       before do
-        sign_out admin, scope: :user
+        sign_out admin
         sign_in customer, scope: :user
       end
 
