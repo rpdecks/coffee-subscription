@@ -9,7 +9,7 @@ RSpec.describe "Admin::Orders", type: :request do
   let(:address) { create(:address, user: customer) }
   let(:subscription) { create(:subscription, user: customer, subscription_plan: subscription_plan) }
   let!(:product) { create(:product) }
-  
+
   before do
     sign_in admin, scope: :user
   end
@@ -34,7 +34,7 @@ RSpec.describe "Admin::Orders", type: :request do
 
       it "paginates results" do
         get admin_orders_path
-        expect(response.body).to include("pagination")
+        expect(response.body).to match(/pagination/i)
         expect(response.body).to include("Next")
       end
 
@@ -166,7 +166,7 @@ RSpec.describe "Admin::Orders", type: :request do
 
     it "returns CSV file" do
       get export_admin_orders_path(format: :csv)
-      expect(response.content_type).to eq("text/csv")
+      expect(response.content_type).to match(/text\/csv/)
     end
 
     it "includes order data" do

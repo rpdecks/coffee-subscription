@@ -44,6 +44,9 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "dashboard#index"
     resources :orders do
+      collection do
+        get :export
+      end
       member do
         patch :update_status
       end
@@ -55,7 +58,11 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
-    resources :customers, only: [:index, :show]
+    resources :customers, only: [:index, :show] do
+      collection do
+        get :export
+      end
+    end
     resources :products do
       member do
         patch :toggle_active
