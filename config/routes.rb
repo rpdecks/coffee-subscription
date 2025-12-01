@@ -61,7 +61,11 @@ Rails.application.routes.draw do
         patch :toggle_active
       end
     end
-    resources :subscription_plans
+    resources :subscription_plans do
+      member do
+        patch :toggle_active
+      end
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

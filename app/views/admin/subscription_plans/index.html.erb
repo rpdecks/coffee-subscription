@@ -1,0 +1,87 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Subscription Plans</h1>
+      <p class="text-gray-600 mt-1">Manage available subscription options</p>
+    </div>
+    <div>
+      <%= link_to new_admin_subscription_plan_path, class: "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add Plan</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Plans Grid -->
+  <% if @subscription_plans.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @subscription_plans.each do |plan| %>
+        <div class="bg-white rounded-lg border <%= plan.active? ? 'border-green-300' : 'border-gray-200' %> overflow-hidden">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-gray-900"><%= plan.name %></h3>
+              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= plan.active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+                <%= plan.active? ? 'Active' : 'Inactive' %>
+              </span>
+            </div>
+            
+            <div class="mb-4">
+              <div class="text-3xl font-bold text-gray-900"><%= number_to_currency(plan.price) %></div>
+              <div class="text-sm text-gray-500">per <%= plan.frequency %> delivery</div>
+            </div>
+            
+            <div class="space-y-2 mb-6 text-sm">
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><%= plan.bags_per_delivery %> bag(s) per delivery</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><%= plan.frequency.titleize %> deliveries</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><%= plan.subscriptions.active.count %> active subscriptions</span>
+              </div>
+            </div>
+            
+            <% if plan.description.present? %>
+              <p class="text-sm text-gray-600 mb-4"><%= truncate(plan.description, length: 100) %></p>
+            <% end %>
+            
+            <div class="flex gap-2">
+              <%= link_to "View", admin_subscription_plan_path(plan), class: "flex-1 text-center px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-medium" %>
+              <%= link_to "Edit", edit_admin_subscription_plan_path(plan), class: "flex-1 text-center px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm font-medium" %>
+              <%= button_to toggle_active_admin_subscription_plan_path(plan), method: :patch, class: "flex-1 px-3 py-2 #{plan.active? ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} rounded transition-colors text-sm font-medium" do %>
+                <%= plan.active? ? 'Deactivate' : 'Activate' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No subscription plans yet</h3>
+      <p class="text-gray-500 mb-6">Get started by creating your first subscription plan.</p>
+      <%= link_to new_admin_subscription_plan_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add Plan</span>
+      <% end %>
+    </div>
+  <% end %>
+</div>
