@@ -1,0 +1,117 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to admin_subscription_path(@subscription), class: "text-gray-600 hover:text-gray-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Edit Subscription #<%= @subscription.id %></h1>
+        <p class="text-gray-600 mt-1"><%= @subscription.user.full_name %> - <%= @subscription.user.email %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <%= form_with model: [:admin, @subscription], class: "space-y-6" do |f| %>
+      <% if @subscription.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">
+                <%= pluralize(@subscription.errors.count, "error") %> prohibited this subscription from being saved:
+              </h3>
+              <div class="mt-2 text-sm text-red-700">
+                <ul class="list-disc pl-5 space-y-1">
+                  <% @subscription.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Subscription Plan -->
+        <div>
+          <%= f.label :subscription_plan_id, "Subscription Plan", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.collection_select :subscription_plan_id, 
+              SubscriptionPlan.all, 
+              :id, 
+              :name_with_frequency,
+              { prompt: "Select a plan" },
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Bag Size -->
+        <div>
+          <%= f.label :bag_size, "Bag Size", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :bag_size,
+              [['8 oz', '8 oz'], ['12 oz', '12 oz'], ['16 oz', '16 oz'], ['2 lb', '2 lb']],
+              { include_blank: "Select size" },
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Quantity -->
+        <div>
+          <%= f.label :quantity, "Quantity (bags per delivery)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.number_field :quantity,
+              min: 1,
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Next Delivery Date -->
+        <div>
+          <%= f.label :next_delivery_date, "Next Delivery Date", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.date_field :next_delivery_date,
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+          <p class="mt-1 text-sm text-gray-500">Leave blank to auto-calculate based on frequency</p>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div>
+        <%= f.label :shipping_address_id, "Shipping Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= f.collection_select :shipping_address_id,
+            @subscription.user.addresses,
+            :id,
+            :full_address,
+            { prompt: "Select address" },
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        <p class="mt-1 text-sm text-gray-500">Only addresses belonging to this customer are shown</p>
+      </div>
+
+      <!-- Payment Method -->
+      <div>
+        <%= f.label :payment_method_id, "Payment Method", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= f.collection_select :payment_method_id,
+            @subscription.user.payment_methods,
+            :id,
+            :display_name,
+            { prompt: "Select payment method" },
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        <p class="mt-1 text-sm text-gray-500">Only payment methods belonging to this customer are shown</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+        <div>
+          <%= link_to "Cancel", admin_subscription_path(@subscription), class: "px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+        </div>
+        <div class="flex gap-3">
+          <%= f.submit "Save Changes", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

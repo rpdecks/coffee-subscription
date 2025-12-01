@@ -1,0 +1,205 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to admin_orders_path, class: "text-gray-600 hover:text-gray-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Order <%= @order.order_number %></h1>
+        <p class="text-gray-600 mt-1">
+          Placed <%= @order.created_at.strftime("%B %d, %Y at %l:%M %p") %>
+        </p>
+      </div>
+    </div>
+    
+    <% status_colors = {
+      'pending' => 'bg-yellow-100 text-yellow-800',
+      'processing' => 'bg-blue-100 text-blue-800',
+      'roasting' => 'bg-orange-100 text-orange-800',
+      'shipped' => 'bg-purple-100 text-purple-800',
+      'delivered' => 'bg-green-100 text-green-800',
+      'cancelled' => 'bg-red-100 text-red-800'
+    } %>
+    <span class="px-4 py-2 inline-flex text-sm font-semibold rounded-full <%= status_colors[@order.status] || 'bg-gray-100 text-gray-800' %>">
+      <%= @order.status.titleize %>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Order Items -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Order Items</h2>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <% @order_items.each do |item| %>
+              <div class="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                <div class="flex-1">
+                  <h3 class="font-medium text-gray-900"><%= item.product.name %></h3>
+                  <div class="mt-1 space-y-1">
+                    <p class="text-sm text-gray-600">Quantity: <%= item.quantity %></p>
+                    <% if item.grind_type.present? %>
+                      <p class="text-sm text-gray-600">Grind: <%= item.grind_type.titleize %></p>
+                    <% end %>
+                    <% if item.special_instructions.present? %>
+                      <p class="text-sm text-gray-600">Notes: <%= item.special_instructions %></p>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="font-medium text-gray-900">$<%= sprintf("%.2f", item.price_cents / 100.0) %></p>
+                  <p class="text-sm text-gray-500">each</p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- Order Totals -->
+          <div class="mt-6 pt-6 border-t border-gray-200 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Subtotal</span>
+              <span class="text-gray-900">$<%= sprintf("%.2f", @order.subtotal_cents / 100.0) %></span>
+            </div>
+            <% if @order.tax_cents && @order.tax_cents > 0 %>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Tax</span>
+                <span class="text-gray-900">$<%= sprintf("%.2f", @order.tax_cents / 100.0) %></span>
+              </div>
+            <% end %>
+            <% if @order.shipping_cents && @order.shipping_cents > 0 %>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Shipping</span>
+                <span class="text-gray-900">$<%= sprintf("%.2f", @order.shipping_cents / 100.0) %></span>
+              </div>
+            <% end %>
+            <div class="flex justify-between text-lg font-semibold pt-2 border-t border-gray-200">
+              <span class="text-gray-900">Total</span>
+              <span class="text-gray-900">$<%= sprintf("%.2f", @order.total_cents / 100.0) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Status -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Update Order Status</h2>
+        </div>
+        <div class="p-6">
+          <%= form_with model: @order, url: update_status_admin_order_path(@order), method: :patch, class: "space-y-4" do |f| %>
+            <div>
+              <%= f.label :status, "Order Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.select :status,
+                  options_for_select(Order.statuses.keys.map { |s| [s.titleize, s] }, @order.status),
+                  {},
+                  class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+            </div>
+            
+            <div>
+              <%= f.label :tracking_number, "Tracking Number (optional)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.text_field :tracking_number,
+                  placeholder: "Enter tracking number...",
+                  class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+            </div>
+            
+            <%= f.submit "Update Status", class: "w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Customer Info -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Customer</h2>
+        </div>
+        <div class="p-6 space-y-3">
+          <div>
+            <p class="text-sm font-medium text-gray-500">Name</p>
+            <p class="text-sm text-gray-900"><%= @order.user.full_name %></p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-500">Email</p>
+            <p class="text-sm text-gray-900"><%= @order.user.email %></p>
+          </div>
+          <% if @order.user.phone.present? %>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Phone</p>
+              <p class="text-sm text-gray-900"><%= @order.user.phone %></p>
+            </div>
+          <% end %>
+          <%= link_to "View Customer", admin_customer_path(@order.user), class: "block mt-4 text-sm text-blue-600 hover:text-blue-800" %>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <% if @order.shipping_address_id %>
+        <% address = Address.find_by(id: @order.shipping_address_id) %>
+        <% if address %>
+          <div class="bg-white rounded-lg border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">Shipping Address</h2>
+            </div>
+            <div class="p-6">
+              <p class="text-sm text-gray-900"><%= address.street_address %></p>
+              <% if address.street_address_2.present? %>
+                <p class="text-sm text-gray-900"><%= address.street_address_2 %></p>
+              <% end %>
+              <p class="text-sm text-gray-900"><%= address.city %>, <%= address.state %> <%= address.zip_code %></p>
+              <p class="text-sm text-gray-900"><%= address.country %></p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <!-- Tracking Info -->
+      <% if @order.tracking_number.present? %>
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Tracking</h2>
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gray-500">Tracking Number</p>
+            <p class="text-sm font-mono text-gray-900 mt-1"><%= @order.tracking_number %></p>
+            <%= link_to "Track Package →", "https://tools.usps.com/go/TrackConfirmAction?tLabels=#{@order.tracking_number}", 
+                target: "_blank", 
+                class: "block mt-3 text-sm text-blue-600 hover:text-blue-800" %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Order Timeline -->
+      <div class="bg-white rounded-lg border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Timeline</h2>
+        </div>
+        <div class="p-6 space-y-3">
+          <div>
+            <p class="text-sm font-medium text-gray-500">Created</p>
+            <p class="text-sm text-gray-900"><%= @order.created_at.strftime("%b %d, %Y %l:%M %p") %></p>
+          </div>
+          <% if @order.shipped_at %>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Shipped</p>
+              <p class="text-sm text-gray-900"><%= @order.shipped_at.strftime("%b %d, %Y %l:%M %p") %></p>
+            </div>
+          <% end %>
+          <% if @order.delivered_at %>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Delivered</p>
+              <p class="text-sm text-gray-900"><%= @order.delivered_at.strftime("%b %d, %Y %l:%M %p") %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

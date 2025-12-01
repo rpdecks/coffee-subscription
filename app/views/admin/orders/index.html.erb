@@ -1,0 +1,112 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Orders</h1>
+      <p class="text-gray-600 mt-1">Manage and fulfill customer orders</p>
+    </div>
+  </div>
+
+  <!-- Filters & Search -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <%= form_with url: admin_orders_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
+      <!-- Search -->
+      <div class="flex-1">
+        <%= f.text_field :search, 
+            value: params[:search],
+            placeholder: "Search by order number, customer name, or email...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <!-- Status Filter -->
+      <div>
+        <%= f.select :status,
+            options_for_select(
+              [['All Statuses', '']] + Order.statuses.keys.map { |s| [s.titleize, s] },
+              params[:status]
+            ),
+            {},
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        <%= link_to "Clear", admin_orders_path, class: "px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @orders.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @orders.each do |order| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= order.order_number %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= order.user.full_name %></div>
+                  <div class="text-sm text-gray-500"><%= order.user.email %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900"><%= order.created_at.strftime("%b %d, %Y") %></div>
+                  <div class="text-sm text-gray-500"><%= order.created_at.strftime("%l:%M %p") %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">$<%= sprintf("%.2f", order.total_cents / 100.0) %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% status_colors = {
+                    'pending' => 'bg-yellow-100 text-yellow-800',
+                    'processing' => 'bg-blue-100 text-blue-800',
+                    'roasting' => 'bg-orange-100 text-orange-800',
+                    'shipped' => 'bg-purple-100 text-purple-800',
+                    'delivered' => 'bg-green-100 text-green-800',
+                    'cancelled' => 'bg-red-100 text-red-800'
+                  } %>
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_colors[order.status] || 'bg-gray-100 text-gray-800' %>">
+                    <%= order.status.titleize %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900"><%= order.order_type.titleize %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <%= link_to "View", admin_order_path(order), class: "text-blue-600 hover:text-blue-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No orders found</h3>
+        <p class="mt-2 text-gray-500">
+          <% if params[:search].present? || params[:status].present? %>
+            Try adjusting your filters.
+          <% else %>
+            Orders will appear here once customers place them.
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

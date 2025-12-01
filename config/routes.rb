@@ -48,6 +48,13 @@ Rails.application.routes.draw do
         patch :update_status
       end
     end
+    resources :subscriptions, only: [:index, :show, :edit, :update] do
+      member do
+        post :pause
+        post :resume
+        delete :cancel
+      end
+    end
     resources :customers, only: [:index, :show]
     resources :products
     resources :subscription_plans

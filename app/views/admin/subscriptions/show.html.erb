@@ -1,0 +1,218 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to admin_subscriptions_path, class: "text-gray-600 hover:text-gray-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Subscription #<%= @subscription.id %></h1>
+        <p class="text-gray-600 mt-1"><%= @subscription.subscription_plan.name %> - <%= @subscription.subscription_plan.frequency.titleize %></p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_subscription_path(@subscription), class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+    </div>
+  </div>
+
+  <!-- Status Badge & Quick Actions -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div>
+          <div class="text-sm text-gray-500 mb-1">Status</div>
+          <% status_colors = {
+            'active' => 'bg-green-100 text-green-800',
+            'paused' => 'bg-yellow-100 text-yellow-800',
+            'cancelled' => 'bg-red-100 text-red-800',
+            'expired' => 'bg-gray-100 text-gray-800',
+            'past_due' => 'bg-orange-100 text-orange-800'
+          } %>
+          <span class="px-3 py-1.5 inline-flex text-sm font-semibold rounded-full <%= status_colors[@subscription.status] || 'bg-gray-100 text-gray-800' %>">
+            <%= @subscription.status.titleize %>
+          </span>
+        </div>
+        <div class="border-l border-gray-200 pl-4">
+          <div class="text-sm text-gray-500 mb-1">Next Delivery</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <% if @subscription.next_delivery_date %>
+              <%= @subscription.next_delivery_date.strftime("%B %d, %Y") %>
+            <% else %>
+              <span class="text-gray-400">Not scheduled</span>
+            <% end %>
+          </div>
+        </div>
+        <div class="border-l border-gray-200 pl-4">
+          <div class="text-sm text-gray-500 mb-1">Monthly Value</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= number_to_currency(@subscription.subscription_plan.price * @subscription.quantity) %>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Actions -->
+      <div class="flex gap-2">
+        <% if @subscription.active? %>
+          <%= button_to "Pause", pause_admin_subscription_path(@subscription), method: :patch, class: "px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors" %>
+          <%= button_to "Cancel", cancel_admin_subscription_path(@subscription), method: :patch, data: { confirm: "Are you sure you want to cancel this subscription?" }, class: "px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 transition-colors" %>
+        <% elsif @subscription.paused? %>
+          <%= button_to "Resume", resume_admin_subscription_path(@subscription), method: :patch, class: "px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition-colors" %>
+          <%= button_to "Cancel", cancel_admin_subscription_path(@subscription), method: :patch, data: { confirm: "Are you sure you want to cancel this subscription?" }, class: "px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Details -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Subscription Details -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Subscription Details</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-sm text-gray-500">Plan</div>
+            <div class="font-medium text-gray-900"><%= @subscription.subscription_plan.name %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Frequency</div>
+            <div class="font-medium text-gray-900"><%= @subscription.subscription_plan.frequency.titleize %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Bag Size</div>
+            <div class="font-medium text-gray-900"><%= @subscription.bag_size || 'N/A' %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Quantity</div>
+            <div class="font-medium text-gray-900"><%= @subscription.quantity %> bag(s)</div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Price per Delivery</div>
+            <div class="font-medium text-gray-900"><%= number_to_currency(@subscription.subscription_plan.price * @subscription.quantity) %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Created</div>
+            <div class="font-medium text-gray-900"><%= @subscription.created_at.strftime("%b %d, %Y") %></div>
+          </div>
+        </div>
+        
+        <% if @subscription.cancelled? %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="text-sm text-gray-500">Cancelled At</div>
+            <div class="font-medium text-gray-900"><%= @subscription.cancelled_at&.strftime("%B %d, %Y at %I:%M %p") || 'N/A' %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Order History -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
+        <% if @subscription.orders.any? %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <% @subscription.orders.order(created_at: :desc).each do |order| %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">#<%= order.order_number %></td>
+                    <td class="px-4 py-3 text-sm text-gray-500"><%= order.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="px-4 py-3 text-sm text-gray-900"><%= number_to_currency(order.total) %></td>
+                    <td class="px-4 py-3 text-sm">
+                      <% order_status_colors = {
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'processing' => 'bg-blue-100 text-blue-800',
+                        'roasting' => 'bg-purple-100 text-purple-800',
+                        'shipped' => 'bg-indigo-100 text-indigo-800',
+                        'delivered' => 'bg-green-100 text-green-800',
+                        'cancelled' => 'bg-red-100 text-red-800'
+                      } %>
+                      <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full <%= order_status_colors[order.status] || 'bg-gray-100 text-gray-800' %>">
+                        <%= order.status.titleize %>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right">
+                      <%= link_to "View", admin_order_path(order), class: "text-blue-600 hover:text-blue-900" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-8 text-gray-500">
+            <p>No orders have been generated from this subscription yet.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Customer Info -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Customer</h2>
+        <div class="space-y-3">
+          <div>
+            <div class="text-sm text-gray-500">Name</div>
+            <div class="font-medium text-gray-900"><%= @subscription.user.full_name %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Email</div>
+            <div class="text-sm text-gray-900"><%= @subscription.user.email %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Phone</div>
+            <div class="text-sm text-gray-900"><%= @subscription.user.phone || 'N/A' %></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h2>
+        <% if @subscription.shipping_address %>
+          <div class="text-sm text-gray-900 leading-relaxed">
+            <%= @subscription.shipping_address.street_address %><br>
+            <% if @subscription.shipping_address.street_address_2.present? %>
+              <%= @subscription.shipping_address.street_address_2 %><br>
+            <% end %>
+            <%= @subscription.shipping_address.city %>, <%= @subscription.shipping_address.state %> <%= @subscription.shipping_address.zip_code %><br>
+            <%= @subscription.shipping_address.country %>
+          </div>
+        <% else %>
+          <div class="text-sm text-gray-500">No shipping address on file</div>
+        <% end %>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
+        <% if @subscription.payment_method %>
+          <div class="flex items-center gap-3">
+            <div class="flex-1">
+              <div class="text-sm font-medium text-gray-900">
+                •••• •••• •••• <%= @subscription.payment_method.last_four %>
+              </div>
+              <div class="text-xs text-gray-500">
+                Expires <%= @subscription.payment_method.exp_month %>/<%= @subscription.payment_method.exp_year %>
+              </div>
+            </div>
+            <div class="text-2xl"><%= @subscription.payment_method.card_brand.capitalize %></div>
+          </div>
+        <% else %>
+          <div class="text-sm text-gray-500">No payment method on file</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

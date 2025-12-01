@@ -24,4 +24,8 @@ class SubscriptionPlan < ApplicationRecord
     when "monthly" then 30
     end
   end
+
+  def name_with_frequency
+    "#{name} (#{frequency.titleize})"
+  end
 end
