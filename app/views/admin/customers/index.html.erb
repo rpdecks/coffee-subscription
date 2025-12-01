@@ -1,0 +1,113 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Customers</h1>
+      <p class="text-gray-600 mt-1">Manage customer accounts and subscriptions</p>
+    </div>
+  </div>
+
+  <!-- Filters & Search -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <%= form_with url: admin_customers_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
+      <!-- Search -->
+      <div class="flex-1">
+        <%= f.text_field :search, 
+            value: params[:search],
+            placeholder: "Search by name or email...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <!-- Status Filter -->
+      <div>
+        <%= f.select :status,
+            options_for_select(
+              [['All Customers', ''], ['Active Subscription', 'active_subscription'], ['No Subscription', 'no_subscription']],
+              params[:status]
+            ),
+            {},
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        <%= link_to "Clear", admin_customers_path, class: "px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Customers Table -->
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @customers.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscriptions</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lifetime Value</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @customers.each do |customer| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900"><%= customer.full_name %></div>
+                      <div class="text-sm text-gray-500"><%= customer.email %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% active_subs = customer.subscriptions.active.count %>
+                  <% total_subs = customer.subscriptions.count %>
+                  <% if active_subs > 0 %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <%= active_subs %> Active
+                    </span>
+                  <% elsif total_subs > 0 %>
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                      <%= total_subs %> Inactive
+                    </span>
+                  <% else %>
+                    <span class="text-sm text-gray-500">None</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= customer.orders.count %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_to_currency(customer.orders.sum(:total_cents) / 100.0) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= customer.created_at.strftime("%b %d, %Y") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <%= link_to "View", admin_customer_path(customer), class: "text-blue-600 hover:text-blue-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No customers found</h3>
+        <p class="mt-2 text-gray-500">
+          <% if params[:search].present? || params[:status].present? %>
+            Try adjusting your filters.
+          <% else %>
+            Customers will appear here once they register.
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

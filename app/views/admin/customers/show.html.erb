@@ -1,0 +1,258 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to admin_customers_path, class: "text-gray-600 hover:text-gray-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900"><%= @customer.full_name %></h1>
+        <p class="text-gray-600 mt-1"><%= @customer.email %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Active Subscriptions</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @customer.subscriptions.active.count %></p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Total Orders</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @customer.orders.count %></p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Lifetime Value</p>
+          <p class="text-2xl font-bold text-gray-900"><%= number_to_currency(@customer.orders.sum(:total_cents) / 100.0) %></p>
+        </div>
+        <div class="p-3 bg-purple-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Member Since</p>
+          <p class="text-lg font-bold text-gray-900"><%= @customer.created_at.strftime("%b %Y") %></p>
+        </div>
+        <div class="p-3 bg-gray-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Subscriptions -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">Subscriptions</h2>
+          <span class="text-sm text-gray-500"><%= @subscriptions.count %> total</span>
+        </div>
+        
+        <% if @subscriptions.any? %>
+          <div class="space-y-3">
+            <% @subscriptions.each do |subscription| %>
+              <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3">
+                      <h3 class="font-medium text-gray-900"><%= subscription.subscription_plan.name %></h3>
+                      <% status_colors = {
+                        'active' => 'bg-green-100 text-green-800',
+                        'paused' => 'bg-yellow-100 text-yellow-800',
+                        'cancelled' => 'bg-red-100 text-red-800',
+                        'expired' => 'bg-gray-100 text-gray-800'
+                      } %>
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full <%= status_colors[subscription.status] || 'bg-gray-100 text-gray-800' %>">
+                        <%= subscription.status.titleize %>
+                      </span>
+                    </div>
+                    <div class="mt-1 text-sm text-gray-500">
+                      <%= subscription.subscription_plan.frequency.titleize %> • 
+                      <%= subscription.quantity %> bag(s) • 
+                      <%= number_to_currency(subscription.subscription_plan.price * subscription.quantity) %>/delivery
+                    </div>
+                    <% if subscription.next_delivery_date %>
+                      <div class="mt-1 text-sm text-gray-500">
+                        Next delivery: <%= subscription.next_delivery_date.strftime("%b %d, %Y") %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div>
+                    <%= link_to "View", admin_subscription_path(subscription), class: "text-blue-600 hover:text-blue-900 text-sm font-medium" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-8 text-gray-500">
+            <p>No subscriptions yet</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">Recent Orders</h2>
+          <span class="text-sm text-gray-500"><%= @customer.orders.count %> total</span>
+        </div>
+        
+        <% if @orders.any? %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <% @orders.each do |order| %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">#<%= order.order_number %></td>
+                    <td class="px-4 py-3 text-sm text-gray-500"><%= order.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="px-4 py-3 text-sm text-gray-900"><%= number_to_currency(order.total_cents / 100.0) %></td>
+                    <td class="px-4 py-3 text-sm">
+                      <% order_status_colors = {
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'processing' => 'bg-blue-100 text-blue-800',
+                        'roasting' => 'bg-purple-100 text-purple-800',
+                        'shipped' => 'bg-indigo-100 text-indigo-800',
+                        'delivered' => 'bg-green-100 text-green-800',
+                        'cancelled' => 'bg-red-100 text-red-800'
+                      } %>
+                      <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full <%= order_status_colors[order.status] || 'bg-gray-100 text-gray-800' %>">
+                        <%= order.status.titleize %>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right">
+                      <%= link_to "View", admin_order_path(order), class: "text-blue-600 hover:text-blue-900" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-8 text-gray-500">
+            <p>No orders yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Contact Info -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
+        <div class="space-y-3">
+          <div>
+            <div class="text-sm text-gray-500">Name</div>
+            <div class="font-medium text-gray-900"><%= @customer.full_name %></div>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">Email</div>
+            <div class="text-sm text-gray-900"><%= @customer.email %></div>
+          </div>
+          <% if @customer.phone %>
+            <div>
+              <div class="text-sm text-gray-500">Phone</div>
+              <div class="text-sm text-gray-900"><%= @customer.phone %></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Addresses -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Addresses</h2>
+        <% if @addresses.any? %>
+          <div class="space-y-3">
+            <% @addresses.each do |address| %>
+              <div class="border-l-2 <%= address.is_default? ? 'border-blue-500' : 'border-gray-200' %> pl-3">
+                <% if address.is_default? %>
+                  <span class="text-xs font-semibold text-blue-600 uppercase">Default</span>
+                <% end %>
+                <div class="text-sm text-gray-900 leading-relaxed">
+                  <%= address.street_address %><br>
+                  <% if address.street_address_2.present? %>
+                    <%= address.street_address_2 %><br>
+                  <% end %>
+                  <%= address.city %>, <%= address.state %> <%= address.zip_code %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-sm text-gray-500">No addresses on file</div>
+        <% end %>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Methods</h2>
+        <% if @payment_methods.any? %>
+          <div class="space-y-3">
+            <% @payment_methods.each do |payment_method| %>
+              <div class="flex items-center gap-3 <%= payment_method.is_default? ? 'border-l-2 border-blue-500 pl-3' : '' %>">
+                <div class="flex-1">
+                  <% if payment_method.is_default? %>
+                    <span class="text-xs font-semibold text-blue-600 uppercase">Default</span>
+                  <% end %>
+                  <div class="text-sm font-medium text-gray-900">
+                    •••• •••• •••• <%= payment_method.last_four %>
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    <%= payment_method.card_brand.capitalize %> • Exp <%= payment_method.exp_month %>/<%= payment_method.exp_year %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-sm text-gray-500">No payment methods on file</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
