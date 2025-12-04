@@ -18,7 +18,25 @@ class User < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_one :coffee_preference, dependent: :destroy
 
+  # Callbacks
+  after_create :create_stripe_customer, if: :customer?
+
   def full_name
     "#{first_name} #{last_name}".strip
+  end
+
+  def ensure_stripe_customer
+    return stripe_customer_id if stripe_customer_id.present?
+    StripeService.create_customer(self)
+  end
+
+  private
+
+  def create_stripe_customer
+    # Create Stripe customer asynchronously to not block signup
+    CreateStripeCustomerJob.perform_later(id)
+  rescue => e
+    Rails.logger.error("Failed to queue Stripe customer creation: #{e.message}")
+    # Don't raise - signup should still succeed even if Stripe fails
   end
 end

@@ -18,6 +18,10 @@ Rails.application.routes.draw do
   get "subscribe/plans", to: "subscriptions#plans", as: :subscription_plans
   get "subscribe/customize/:plan_id", to: "subscriptions#customize", as: :customize_subscription
   post "subscribe/checkout", to: "subscriptions#checkout", as: :subscription_checkout
+  get "subscribe/success", to: "subscriptions#success", as: :subscription_success
+
+  # Stripe webhooks
+  post "webhooks/stripe", to: "webhooks#stripe"
 
   # User dashboard (authenticated)
   authenticate :user do
