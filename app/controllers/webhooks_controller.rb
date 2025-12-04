@@ -37,6 +37,18 @@ class WebhooksController < ApplicationController
     sig_header = request.env['HTTP_STRIPE_SIGNATURE']
     endpoint_secret = Rails.application.credentials.dig(:stripe, :webhook_secret)
 
+    # In development without webhook secret, parse the event directly
+    if endpoint_secret.blank? && Rails.env.development?
+      begin
+        @event = Stripe::Event.construct_from(JSON.parse(payload, symbolize_names: true))
+        return
+      rescue JSON::ParserError => e
+        Rails.logger.error("Stripe webhook JSON parse error: #{e.message}")
+        render json: { status: 'error', message: 'Invalid payload' }, status: :bad_request
+        return
+      end
+    end
+
     begin
       @event = Stripe::Webhook.construct_event(
         payload, sig_header, endpoint_secret
