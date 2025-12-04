@@ -1,5 +1,5 @@
 class Admin::SubscriptionPlansController < Admin::BaseController
-  before_action :set_subscription_plan, only: [:show, :edit, :update, :destroy, :toggle_active]
+  before_action :set_subscription_plan, only: [ :show, :edit, :update, :destroy, :toggle_active ]
 
   def index
     @subscription_plans = SubscriptionPlan.all.order(frequency: :asc, created_at: :desc)
@@ -16,7 +16,7 @@ class Admin::SubscriptionPlansController < Admin::BaseController
 
   def create
     @subscription_plan = SubscriptionPlan.new(subscription_plan_params)
-    
+
     if @subscription_plan.save
       redirect_to admin_subscription_plan_path(@subscription_plan), notice: "Subscription plan created successfully."
     else

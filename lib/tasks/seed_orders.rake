@@ -2,7 +2,7 @@ namespace :db do
   desc "Seed test orders for a user"
   task seed_orders: :environment do
     user = User.find_by(email: "rpdecks@gmail.com")
-    
+
     unless user
       puts "User rpdecks@gmail.com not found!"
       exit
@@ -50,41 +50,41 @@ namespace :db do
 
     # Create 5 orders with different statuses
     order_data = [
-      { 
-        status: :delivered, 
+      {
+        status: :delivered,
         created_at: 3.months.ago,
         shipped_at: 3.months.ago + 1.day,
         delivered_at: 3.months.ago + 4.days,
-        products: [products[0], products[1]]
+        products: [ products[0], products[1] ]
       },
-      { 
-        status: :delivered, 
+      {
+        status: :delivered,
         created_at: 2.months.ago,
         shipped_at: 2.months.ago + 1.day,
         delivered_at: 2.months.ago + 3.days,
-        products: [products[1]]
+        products: [ products[1] ]
       },
-      { 
-        status: :shipped, 
+      {
+        status: :shipped,
         created_at: 1.month.ago,
         shipped_at: 1.month.ago + 1.day,
-        products: [products[0], products[2]]
+        products: [ products[0], products[2] ]
       },
-      { 
-        status: :roasting, 
+      {
+        status: :roasting,
         created_at: 5.days.ago,
-        products: [products[2]]
+        products: [ products[2] ]
       },
-      { 
-        status: :processing, 
+      {
+        status: :processing,
         created_at: 1.day.ago,
-        products: [products[0]]
+        products: [ products[0] ]
       }
     ]
 
     order_data.each_with_index do |data, index|
       # Generate tracking number for shipped/delivered orders
-      tracking_number = if data[:status].in?([:shipped, :delivered])
+      tracking_number = if data[:status].in?([ :shipped, :delivered ])
         "1Z999AA1#{rand(10000000000..99999999999)}"
       else
         nil
@@ -116,7 +116,7 @@ namespace :db do
           product: product,
           quantity: 1,
           price_cents: product.price_cents,
-          grind_type: [:whole_bean, :coarse, :medium_grind, :fine, :espresso].sample
+          grind_type: [ :whole_bean, :coarse, :medium_grind, :fine, :espresso ].sample
         )
         subtotal += product.price_cents
       end

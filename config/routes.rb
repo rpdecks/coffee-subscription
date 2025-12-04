@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    registrations: 'users/registrations'
+    registrations: "users/registrations"
   }
 
   # Public pages
@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   post "contact", to: "pages#create_contact"
 
   # Products
-  resources :products, only: [:index, :show]
+  resources :products, only: [ :index, :show ]
 
   # Subscription flow (public)
   get "subscribe", to: "subscriptions#landing", as: :subscribe
@@ -26,15 +26,15 @@ Rails.application.routes.draw do
   # User dashboard (authenticated)
   authenticate :user do
     get "dashboard", to: "dashboard#index", as: :dashboard_root
-    
+
     namespace :dashboard do
       resources :addresses
-      resources :payment_methods, only: [:index, :new, :create, :destroy] do
+      resources :payment_methods, only: [ :index, :new, :create, :destroy ] do
         member do
           post :set_default
         end
       end
-      resources :subscriptions, only: [:show, :edit, :update] do
+      resources :subscriptions, only: [ :show, :edit, :update ] do
         member do
           post :pause
           post :resume
@@ -42,9 +42,9 @@ Rails.application.routes.draw do
           post :skip_delivery
         end
       end
-      resource :coffee_preference, only: [:show, :edit, :update]
-      resources :orders, only: [:index, :show]
-      resource :profile, only: [:edit, :update]
+      resource :coffee_preference, only: [ :show, :edit, :update ]
+      resources :orders, only: [ :index, :show ]
+      resource :profile, only: [ :edit, :update ]
     end
   end
 
@@ -59,14 +59,14 @@ Rails.application.routes.draw do
         patch :update_status
       end
     end
-    resources :subscriptions, only: [:index, :show, :edit, :update] do
+    resources :subscriptions, only: [ :index, :show, :edit, :update ] do
       member do
         patch :pause
         patch :resume
         patch :cancel
       end
     end
-    resources :customers, only: [:index, :show] do
+    resources :customers, only: [ :index, :show ] do
       collection do
         get :export
       end

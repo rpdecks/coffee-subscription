@@ -9,11 +9,11 @@ FactoryBot.define do
     active { true }
     stripe_product_id { nil }
     stripe_price_id { nil }
-    
+
     trait :coffee do
       product_type { :coffee }
     end
-    
+
     trait :merch do
       product_type { :merch }
       sequence(:name) { |n| "Merch Item #{n}" }
@@ -21,7 +21,7 @@ FactoryBot.define do
       price_cents { 1200 }
       weight_oz { nil }
     end
-    
+
     trait :inactive do
       active { false }
     end

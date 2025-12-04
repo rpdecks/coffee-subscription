@@ -9,11 +9,11 @@ FactoryBot.define do
     zip_code { "97201" }
     country { "USA" }
     is_default { true }
-    
+
     trait :shipping do
       address_type { :shipping }
     end
-    
+
     trait :billing do
       address_type { :billing }
     end

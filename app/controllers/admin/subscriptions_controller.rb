@@ -1,14 +1,14 @@
 class Admin::SubscriptionsController < Admin::BaseController
-  before_action :set_subscription, only: [:show, :edit, :update, :pause, :resume, :cancel]
+  before_action :set_subscription, only: [ :show, :edit, :update, :pause, :resume, :cancel ]
 
   def index
     @subscriptions = Subscription.includes(:user, :subscription_plan).order(created_at: :desc)
-    
+
     # Filter by status if provided
     if params[:status].present? && Subscription.statuses.key?(params[:status])
       @subscriptions = @subscriptions.where(status: params[:status])
     end
-    
+
     # Search by customer name or email
     if params[:search].present?
       search_term = "%#{params[:search]}%"
@@ -17,7 +17,7 @@ class Admin::SubscriptionsController < Admin::BaseController
         search_term, search_term, search_term
       )
     end
-    
+
     @pagy, @subscriptions = pagy(@subscriptions, items: 25)
   end
 
@@ -88,11 +88,11 @@ class Admin::SubscriptionsController < Admin::BaseController
 
   def calculate_next_delivery_date
     frequency_days = case @subscription.subscription_plan.frequency
-                    when 'weekly' then 7
-                    when 'biweekly' then 14
-                    when 'monthly' then 30
-                    end
-    
+    when "weekly" then 7
+    when "biweekly" then 14
+    when "monthly" then 30
+    end
+
     Date.today + frequency_days.days
   end
 end

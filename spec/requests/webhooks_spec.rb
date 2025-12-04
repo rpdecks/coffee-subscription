@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe WebhooksController, type: :request do
   let(:endpoint_secret) { 'whsec_test123' }
-  
+
   before do
     allow(Rails.application.credentials).to receive(:dig).with(:stripe, :webhook_secret).and_return(endpoint_secret)
   end
@@ -29,7 +29,7 @@ RSpec.describe WebhooksController, type: :request do
       let(:plan) { create(:subscription_plan) }
       let!(:address) { create(:address, user: user) }
       let!(:payment_method) { create(:payment_method, user: user, is_default: true) }
-      
+
       let(:stripe_object) do
         double(
           id: 'cs_test123',
@@ -59,7 +59,7 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'returns success status' do
         post '/webhooks/stripe', params: { type: event_type }, as: :json
-        
+
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['status']).to eq('success')
       end
@@ -68,7 +68,7 @@ RSpec.describe WebhooksController, type: :request do
     context 'customer.subscription.updated event' do
       let(:event_type) { 'customer.subscription.updated' }
       let!(:subscription) { create(:subscription, :active, stripe_subscription_id: 'sub_test123') }
-      
+
       let(:stripe_object) do
         double(
           id: 'sub_test123',
@@ -78,7 +78,7 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'updates the subscription status' do
         post '/webhooks/stripe', params: { type: event_type }, as: :json
-        
+
         expect(subscription.reload.status).to eq('cancelled')
       end
     end
@@ -86,14 +86,14 @@ RSpec.describe WebhooksController, type: :request do
     context 'customer.subscription.deleted event' do
       let(:event_type) { 'customer.subscription.deleted' }
       let!(:subscription) { create(:subscription, :active, stripe_subscription_id: 'sub_test123') }
-      
+
       let(:stripe_object) do
         double(id: 'sub_test123')
       end
 
       it 'marks subscription as cancelled' do
         post '/webhooks/stripe', params: { type: event_type }, as: :json
-        
+
         expect(subscription.reload.status).to eq('cancelled')
       end
     end
@@ -101,7 +101,7 @@ RSpec.describe WebhooksController, type: :request do
     context 'invoice.payment_succeeded event' do
       let(:event_type) { 'invoice.payment_succeeded' }
       let!(:subscription) { create(:subscription, :active, stripe_subscription_id: 'sub_test123') }
-      
+
       let(:stripe_object) do
         double(
           id: 'in_test123',
@@ -111,7 +111,7 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'enqueues order creation job' do
         expect(CreateSubscriptionOrderJob).to receive(:perform_later).with(subscription.id, 'in_test123')
-        
+
         post '/webhooks/stripe', params: { type: event_type }, as: :json
       end
     end
@@ -119,7 +119,7 @@ RSpec.describe WebhooksController, type: :request do
     context 'invoice.payment_failed event' do
       let(:event_type) { 'invoice.payment_failed' }
       let!(:subscription) { create(:subscription, :active, stripe_subscription_id: 'sub_test123') }
-      
+
       let(:stripe_object) do
         double(
           id: 'in_test123',
@@ -129,7 +129,7 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'marks subscription as past_due' do
         post '/webhooks/stripe', params: { type: event_type }, as: :json
-        
+
         expect(subscription.reload.status).to eq('past_due')
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'returns bad request' do
         post '/webhooks/stripe', params: {}, as: :json
-        
+
         expect(response).to have_http_status(:bad_request)
       end
     end
@@ -154,9 +154,9 @@ RSpec.describe WebhooksController, type: :request do
 
       it 'returns success but logs the unhandled event' do
         expect(Rails.logger).to receive(:info).with(/Unhandled Stripe event type/)
-        
+
         post '/webhooks/stripe', params: { type: event_type }, as: :json
-        
+
         expect(response).to have_http_status(:ok)
       end
     end

@@ -7,7 +7,7 @@ class Dashboard::ProfilesController < ApplicationController
 
   def update
     @user = current_user
-    
+
     if user_params[:password].present?
       # If updating password, require current password
       if @user.update_with_password(user_params)

@@ -1,6 +1,6 @@
 class Dashboard::AddressesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_address, only: [:edit, :update, :destroy]
+  before_action :set_address, only: [ :edit, :update, :destroy ]
 
   def index
     @addresses = current_user.addresses.order(is_default: :desc, created_at: :desc)
@@ -12,7 +12,7 @@ class Dashboard::AddressesController < ApplicationController
 
   def create
     @address = current_user.addresses.build(address_params)
-    
+
     if @address.save
       redirect_to dashboard_addresses_path, notice: "Address added successfully."
     else
@@ -44,7 +44,7 @@ class Dashboard::AddressesController < ApplicationController
 
   def address_params
     params.require(:address).permit(
-      :address_type, :street_address, :street_address_2, 
+      :address_type, :street_address, :street_address_2,
       :city, :state, :zip_code, :country, :is_default
     )
   end

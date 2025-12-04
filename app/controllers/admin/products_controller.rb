@@ -1,30 +1,30 @@
 class Admin::ProductsController < Admin::BaseController
-  before_action :set_product, only: [:show, :edit, :update, :destroy, :toggle_active]
+  before_action :set_product, only: [ :show, :edit, :update, :destroy, :toggle_active ]
 
   def index
     @products = Product.all.order(created_at: :desc)
-    
+
     if params[:search].present?
       @products = @products.where("name ILIKE ?", "%#{params[:search]}%")
     end
-    
+
     if params[:product_type].present?
       @products = @products.where(product_type: params[:product_type])
     end
-    
+
     if params[:status].present?
       case params[:status]
-      when 'active'
+      when "active"
         @products = @products.where(active: true)
-      when 'inactive'
+      when "inactive"
         @products = @products.where(active: false)
-      when 'in_stock'
+      when "in_stock"
         @products = @products.where("inventory_count IS NULL OR inventory_count > 0")
-      when 'out_of_stock'
+      when "out_of_stock"
         @products = @products.where("inventory_count IS NOT NULL AND inventory_count <= 0")
       end
     end
-    
+
     @pagy, @products = pagy(@products, items: 25)
   end
 
@@ -37,7 +37,7 @@ class Admin::ProductsController < Admin::BaseController
 
   def create
     @product = Product.new(product_params)
-    
+
     if @product.save
       redirect_to admin_product_path(@product), notice: "Product created successfully."
     else

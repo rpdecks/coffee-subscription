@@ -2,12 +2,12 @@ namespace :subscriptions do
   desc "Generate orders for subscriptions due for delivery"
   task generate_orders: :environment do
     puts "Checking for subscriptions due for delivery..."
-    
+
     count = Subscription.active.where("next_delivery_date <= ?", Date.today).count
     puts "Found #{count} subscriptions due for delivery"
-    
+
     GenerateSubscriptionOrdersJob.perform_now
-    
+
     puts "Finished generating subscription orders"
   end
 
@@ -16,9 +16,9 @@ namespace :subscriptions do
     subscriptions = Subscription.active
                                 .where("next_delivery_date <= ?", Date.today)
                                 .includes(:user, :subscription_plan)
-    
+
     puts "\n=== Subscriptions Due for Delivery (#{subscriptions.count}) ===\n"
-    
+
     if subscriptions.any?
       subscriptions.each do |sub|
         puts "ID: #{sub.id}"

@@ -32,23 +32,23 @@ class StripeService
     # Create checkout session
     session = Stripe::Checkout::Session.create({
       customer: stripe_customer_id,
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [{
+      mode: "subscription",
+      payment_method_types: [ "card" ],
+      line_items: [ {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
             name: plan.name,
             description: plan.description
           },
           recurring: {
-            interval: 'month',
+            interval: "month",
             interval_count: 1
           },
           unit_amount: plan.price_cents
         },
         quantity: 1
-      }],
+      } ],
       success_url: success_url,
       cancel_url: cancel_url,
       metadata: metadata.merge({
@@ -104,20 +104,20 @@ class StripeService
 
     subscription = Stripe::Subscription.create({
       customer: stripe_customer_id,
-      items: [{
+      items: [ {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
             name: plan.name,
             description: plan.description
           },
           recurring: {
-            interval: 'month',
+            interval: "month",
             interval_count: 1
           },
           unit_amount: plan.price_cents
         }
-      }],
+      } ],
       default_payment_method: payment_method_id,
       metadata: metadata.merge({
         user_id: user.id,
@@ -151,7 +151,7 @@ class StripeService
     Stripe::Subscription.update(
       stripe_subscription_id,
       pause_collection: {
-        behavior: 'void'
+        behavior: "void"
       }
     )
   rescue Stripe::StripeError => e
@@ -163,7 +163,7 @@ class StripeService
   def self.resume_subscription(stripe_subscription_id)
     Stripe::Subscription.update(
       stripe_subscription_id,
-      pause_collection: ''
+      pause_collection: ""
     )
   rescue Stripe::StripeError => e
     Rails.logger.error("Failed to resume subscription: #{e.message}")

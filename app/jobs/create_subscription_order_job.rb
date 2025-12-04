@@ -5,7 +5,7 @@ class CreateSubscriptionOrderJob < ApplicationJob
 
   def perform(subscription_id, invoice_id = nil)
     subscription = Subscription.find(subscription_id)
-    
+
     # Create order for this subscription billing period
     order = subscription.orders.build(
       user: subscription.user,
@@ -19,7 +19,7 @@ class CreateSubscriptionOrderJob < ApplicationJob
 
     if order.save
       Rails.logger.info("Created order #{order.id} for subscription #{subscription.id}")
-      
+
       # Update next delivery date
       subscription.update(
         next_delivery_date: subscription.next_delivery_date + subscription.frequency.days

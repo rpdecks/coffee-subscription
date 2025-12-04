@@ -1,5 +1,5 @@
 class ContactMailer < ApplicationMailer
-  default from: ENV['SENDGRID_FROM_EMAIL'] || 'rpdecks@gmail.com'
+  default from: ENV["SENDGRID_FROM_EMAIL"] || "rpdecks@gmail.com"
 
   def contact_form(name:, email:, subject:, message:)
     @name = name
@@ -8,7 +8,7 @@ class ContactMailer < ApplicationMailer
     @message = message
 
     mail(
-      to: ENV['CONTACT_EMAIL'] || 'hello@coffeeco.com',
+      to: ENV["CONTACT_EMAIL"] || "hello@coffeeco.com",
       reply_to: email,
       subject: "Contact Form: #{subject}"
     )

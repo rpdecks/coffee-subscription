@@ -1,9 +1,9 @@
 module Dashboard
   class SubscriptionsController < DashboardController
-    before_action :set_subscription, only: [:show, :edit, :update, :pause, :resume, :cancel, :skip_delivery]
+    before_action :set_subscription, only: [ :show, :edit, :update, :pause, :resume, :cancel, :skip_delivery ]
 
     def show
-      @next_order = @subscription.orders.where('created_at >= ?', @subscription.next_delivery_date).first
+      @next_order = @subscription.orders.where("created_at >= ?", @subscription.next_delivery_date).first
     end
 
     def edit
@@ -24,7 +24,7 @@ module Dashboard
           if @subscription.stripe_subscription_id.present?
             StripeService.pause_subscription(@subscription.stripe_subscription_id)
           end
-          
+
           @subscription.update(status: :paused)
           # SubscriptionMailer.subscription_paused(@subscription).deliver_later
           redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been paused. No charges or deliveries will occur until you resume."
@@ -43,7 +43,7 @@ module Dashboard
           if @subscription.stripe_subscription_id.present?
             StripeService.resume_subscription(@subscription.stripe_subscription_id)
           end
-          
+
           @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
           # SubscriptionMailer.subscription_resumed(@subscription).deliver_later
           redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
@@ -62,7 +62,7 @@ module Dashboard
           if @subscription.stripe_subscription_id.present?
             StripeService.cancel_subscription(@subscription.stripe_subscription_id, cancel_at_period_end: true)
           end
-          
+
           @subscription.update(status: :cancelled, cancelled_at: Time.current)
           # SubscriptionMailer.subscription_cancelled(@subscription).deliver_later
           redirect_to dashboard_root_path, notice: "Your subscription will be cancelled at the end of the current billing period. You can still enjoy your coffee until then!"
@@ -77,14 +77,14 @@ module Dashboard
     def skip_delivery
       if @subscription.active?
         frequency_days = case @subscription.subscription_plan.frequency
-                        when 'weekly' then 7
-                        when 'biweekly' then 14
-                        when 'monthly' then 30
-                        end
-        
+        when "weekly" then 7
+        when "biweekly" then 14
+        when "monthly" then 30
+        end
+
         new_delivery_date = @subscription.next_delivery_date + frequency_days.days
         @subscription.update(next_delivery_date: new_delivery_date)
-        
+
         redirect_to dashboard_subscription_path(@subscription), notice: "Next delivery skipped. Your new delivery date is #{new_delivery_date.strftime('%B %d, %Y')}."
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Cannot skip delivery for inactive subscription."
@@ -111,11 +111,11 @@ module Dashboard
 
     def calculate_next_delivery_date
       frequency_days = case @subscription.subscription_plan.frequency
-                      when 'weekly' then 7
-                      when 'biweekly' then 14
-                      when 'monthly' then 30
-                      end
-      
+      when "weekly" then 7
+      when "biweekly" then 14
+      when "monthly" then 30
+      end
+
       Date.today + frequency_days.days
     end
   end

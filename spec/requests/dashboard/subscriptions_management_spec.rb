@@ -7,7 +7,7 @@ RSpec.describe "Dashboard::Subscriptions", type: :request do
   let(:plan) { create(:subscription_plan) }
   let!(:address) { create(:address, user: user) }
   let!(:payment_method) { create(:payment_method, user: user) }
-  
+
   before do
     sign_in user, scope: :user
   end

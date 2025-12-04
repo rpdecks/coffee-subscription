@@ -1,11 +1,11 @@
 class SubscriptionMailer < ApplicationMailer
-  default from: ENV.fetch('SENDGRID_FROM_EMAIL', 'subscriptions@coffeeshop.com')
+  default from: ENV.fetch("SENDGRID_FROM_EMAIL", "subscriptions@coffeeshop.com")
 
   def subscription_created(subscription)
     @subscription = subscription
     @customer = subscription.user
     @plan = subscription.subscription_plan
-    
+
     mail(
       to: @customer.email,
       subject: "Welcome to your coffee subscription!"
@@ -16,7 +16,7 @@ class SubscriptionMailer < ApplicationMailer
     @subscription = subscription
     @customer = subscription.user
     @plan = subscription.subscription_plan
-    
+
     mail(
       to: @customer.email,
       subject: "Your subscription has been paused"
@@ -27,7 +27,7 @@ class SubscriptionMailer < ApplicationMailer
     @subscription = subscription
     @customer = subscription.user
     @plan = subscription.subscription_plan
-    
+
     mail(
       to: @customer.email,
       subject: "Your subscription has been resumed"
@@ -38,7 +38,7 @@ class SubscriptionMailer < ApplicationMailer
     @subscription = subscription
     @customer = subscription.user
     @plan = subscription.subscription_plan
-    
+
     mail(
       to: @customer.email,
       subject: "Your subscription has been cancelled"
@@ -50,7 +50,7 @@ class SubscriptionMailer < ApplicationMailer
     @customer = subscription.user
     @plan = subscription.subscription_plan
     @delivery_date = subscription.next_delivery_date
-    
+
     mail(
       to: @customer.email,
       subject: "Your next coffee delivery is coming soon!"

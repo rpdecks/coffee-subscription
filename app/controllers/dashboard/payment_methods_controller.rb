@@ -1,6 +1,6 @@
 class Dashboard::PaymentMethodsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_payment_method, only: [:destroy, :set_default]
+  before_action :set_payment_method, only: [ :destroy, :set_default ]
 
   def index
     @payment_methods = current_user.payment_methods.order(is_default: :desc, created_at: :desc)
@@ -14,7 +14,7 @@ class Dashboard::PaymentMethodsController < ApplicationController
 
   def create
     stripe_pm_id = params[:stripe_payment_method_id]
-    
+
     unless stripe_pm_id.present?
       redirect_to new_dashboard_payment_method_path, alert: "Please provide payment method details."
       return
@@ -28,7 +28,7 @@ class Dashboard::PaymentMethodsController < ApplicationController
         payment_method_id: stripe_pm_id,
         set_as_default: set_as_default
       )
-      
+
       redirect_to dashboard_payment_methods_path, notice: "Payment method added successfully."
     rescue StripeService::StripeError => e
       redirect_to new_dashboard_payment_method_path, alert: "Unable to add payment method: #{e.message}"
@@ -64,10 +64,10 @@ class Dashboard::PaymentMethodsController < ApplicationController
     begin
       # Use StripeService to detach payment method
       StripeService.detach_payment_method(@payment_method.stripe_payment_method_id)
-      
+
       # Delete local record
       @payment_method.destroy
-      
+
       redirect_to dashboard_payment_methods_path, notice: "Payment method removed successfully."
     rescue StripeService::StripeError => e
       redirect_to dashboard_payment_methods_path, alert: "Error removing payment method: #{e.message}"

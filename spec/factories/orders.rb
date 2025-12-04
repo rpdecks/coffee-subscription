@@ -14,30 +14,30 @@ FactoryBot.define do
     payment_method_id { nil }
     shipped_at { nil }
     delivered_at { nil }
-    
+
     trait :pending do
       status { :pending }
     end
-    
+
     trait :processing do
       status { :processing }
     end
-    
+
     trait :roasting do
       status { :roasting }
     end
-    
+
     trait :shipped do
       status { :shipped }
       shipped_at { 2.days.ago }
     end
-    
+
     trait :delivered do
       status { :delivered }
       shipped_at { 7.days.ago }
       delivered_at { 3.days.ago }
     end
-    
+
     trait :one_time do
       order_type { :one_time }
       subscription { nil }

@@ -15,10 +15,10 @@ class SubscriptionOrderGenerator
     if order.save
       update_subscription_delivery_date
       Rails.logger.info("Generated order #{order.order_number} for subscription #{subscription.id}")
-      
+
       # Send order confirmation email
       OrderMailer.order_confirmation(order).deliver_later
-      
+
       order
     else
       Rails.logger.error("Failed to create order for subscription #{subscription.id}: #{order.errors.full_messages}")
@@ -62,13 +62,13 @@ class SubscriptionOrderGenerator
 
   def add_order_items(order)
     products = select_products_for_subscription
-    
+
     products.each do |product|
       order.order_items.build(
         product: product,
         quantity: 1,
         price_cents: product.price_cents,
-        bag_size: subscription.bag_size || '12 oz',
+        bag_size: subscription.bag_size || "12 oz",
         grind_type: grind_type_for_user
       )
     end
@@ -77,19 +77,19 @@ class SubscriptionOrderGenerator
   def select_products_for_subscription
     # Get the number of bags from subscription
     bag_count = subscription.quantity || subscription.subscription_plan.bags_per_delivery || 1
-    
+
     # Get user's coffee preferences if available
     coffee_preference = subscription.user.coffee_preference
-    
+
     # Select active coffee products
     products = Product.coffee.active.in_stock
-    
+
     # If user has preferences, try to match them
     if coffee_preference&.preferred_roast_level
       preferred = products.where(roast_level: coffee_preference.preferred_roast_level).limit(bag_count)
       return preferred if preferred.count == bag_count
     end
-    
+
     # Fall back to any active coffee products
     products.limit(bag_count)
   end

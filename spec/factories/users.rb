@@ -7,17 +7,17 @@ FactoryBot.define do
     last_name { "Doe" }
     phone { "555-123-4567" }
     role { :customer }
-    
+
     trait :admin do
       role { :admin }
       sequence(:email) { |n| "admin#{n}@example.com" }
     end
-    
+
     trait :customer do
       role { :customer }
     end
-    
-    factory :admin_user, traits: [:admin]
-    factory :customer_user, traits: [:customer]
+
+    factory :admin_user, traits: [ :admin ]
+    factory :customer_user, traits: [ :customer ]
   end
 end

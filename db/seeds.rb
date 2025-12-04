@@ -50,14 +50,14 @@ kris_admin = User.create!(
 
 # Create 30 test customers for realistic pagination testing
 customer_names = [
-  ["Emma", "Johnson"], ["Liam", "Williams"], ["Olivia", "Brown"], ["Noah", "Davis"],
-  ["Ava", "Miller"], ["Ethan", "Wilson"], ["Sophia", "Moore"], ["Mason", "Taylor"],
-  ["Isabella", "Anderson"], ["William", "Thomas"], ["Mia", "Jackson"], ["James", "White"],
-  ["Charlotte", "Harris"], ["Benjamin", "Martin"], ["Amelia", "Thompson"], ["Lucas", "Garcia"],
-  ["Harper", "Martinez"], ["Henry", "Robinson"], ["Evelyn", "Clark"], ["Alexander", "Rodriguez"],
-  ["Abigail", "Lewis"], ["Michael", "Lee"], ["Emily", "Walker"], ["Daniel", "Hall"],
-  ["Elizabeth", "Allen"], ["Matthew", "Young"], ["Sofia", "King"], ["Joseph", "Wright"],
-  ["Avery", "Lopez"], ["David", "Hill"]
+  [ "Emma", "Johnson" ], [ "Liam", "Williams" ], [ "Olivia", "Brown" ], [ "Noah", "Davis" ],
+  [ "Ava", "Miller" ], [ "Ethan", "Wilson" ], [ "Sophia", "Moore" ], [ "Mason", "Taylor" ],
+  [ "Isabella", "Anderson" ], [ "William", "Thomas" ], [ "Mia", "Jackson" ], [ "James", "White" ],
+  [ "Charlotte", "Harris" ], [ "Benjamin", "Martin" ], [ "Amelia", "Thompson" ], [ "Lucas", "Garcia" ],
+  [ "Harper", "Martinez" ], [ "Henry", "Robinson" ], [ "Evelyn", "Clark" ], [ "Alexander", "Rodriguez" ],
+  [ "Abigail", "Lewis" ], [ "Michael", "Lee" ], [ "Emily", "Walker" ], [ "Daniel", "Hall" ],
+  [ "Elizabeth", "Allen" ], [ "Matthew", "Young" ], [ "Sofia", "King" ], [ "Joseph", "Wright" ],
+  [ "Avery", "Lopez" ], [ "David", "Hill" ]
 ]
 
 customers = customer_names.map.with_index do |(first, last), i|
@@ -203,17 +203,17 @@ puts "Creating addresses for customers..."
 # Give most customers addresses
 customers.sample(25).each do |customer|
   cities = [
-    ["Portland", "OR", "97201"], ["Seattle", "WA", "98101"], ["San Francisco", "CA", "94102"],
-    ["Denver", "CO", "80202"], ["Austin", "TX", "78701"], ["Chicago", "IL", "60601"],
-    ["Boston", "MA", "02108"], ["New York", "NY", "10001"], ["Los Angeles", "CA", "90001"]
+    [ "Portland", "OR", "97201" ], [ "Seattle", "WA", "98101" ], [ "San Francisco", "CA", "94102" ],
+    [ "Denver", "CO", "80202" ], [ "Austin", "TX", "78701" ], [ "Chicago", "IL", "60601" ],
+    [ "Boston", "MA", "02108" ], [ "New York", "NY", "10001" ], [ "Los Angeles", "CA", "90001" ]
   ]
-  
+
   city, state, zip = cities.sample
-  
+
   Address.create!(
     user: customer,
     address_type: :shipping,
-    street_address: "#{rand(100..9999)} #{['Main', 'Oak', 'Pine', 'Elm', 'Maple'].sample} #{['St', 'Ave', 'Rd', 'Ln'].sample}",
+    street_address: "#{rand(100..9999)} #{[ 'Main', 'Oak', 'Pine', 'Elm', 'Maple' ].sample} #{[ 'St', 'Ave', 'Rd', 'Ln' ].sample}",
     city: city,
     state: state,
     zip_code: zip,
@@ -231,7 +231,7 @@ puts "Creating payment methods..."
 Address.all.map(&:user).uniq.each do |customer|
   PaymentMethod.create!(
     user: customer,
-    card_brand: ["Visa", "Mastercard", "Amex"].sample,
+    card_brand: [ "Visa", "Mastercard", "Amex" ].sample,
     last_four: rand(1000..9999).to_s,
     exp_month: rand(1..12),
     exp_year: rand(2025..2030),
@@ -249,8 +249,8 @@ puts "Creating coffee preferences..."
 customers.sample(20).each do |customer|
   CoffeePreference.create!(
     user: customer,
-    roast_level: [:light, :medium_roast, :dark].sample,
-    grind_type: [:whole_bean, :coarse, :medium_grind, :fine, :espresso].sample,
+    roast_level: [ :light, :medium_roast, :dark ].sample,
+    grind_type: [ :whole_bean, :coarse, :medium_grind, :fine, :espresso ].sample,
     created_at: customer.created_at + rand(1..30).days
   )
 end
@@ -260,19 +260,19 @@ puts "Created #{CoffeePreference.count} coffee preferences"
 puts "Creating subscriptions..."
 
 # Create subscriptions for customers with payment methods
-subscription_plans = [weekly_plan, biweekly_plan, monthly_plan, monthly_large_plan]
+subscription_plans = [ weekly_plan, biweekly_plan, monthly_plan, monthly_large_plan ]
 customers_with_payment = PaymentMethod.all.map(&:user).uniq
 
 # Active subscriptions (60%)
 customers_with_payment.sample((customers_with_payment.count * 0.6).to_i).each do |customer|
   plan = subscription_plans.sample
   created_date = rand(90.days.ago..30.days.ago)
-  
+
   Subscription.create!(
     user: customer,
     subscription_plan: plan,
     status: :active,
-    quantity: [1, 2].sample,
+    quantity: [ 1, 2 ].sample,
     next_delivery_date: created_date + plan.frequency_in_days.days,
     created_at: created_date
   )
@@ -281,15 +281,15 @@ end
 # Paused subscriptions (10%)
 customers_with_payment.sample((customers_with_payment.count * 0.1).to_i).each do |customer|
   next if customer.subscriptions.any? # Don't duplicate
-  
+
   plan = subscription_plans.sample
   created_date = rand(90.days.ago..60.days.ago)
-  
+
   Subscription.create!(
     user: customer,
     subscription_plan: plan,
     status: :paused,
-    quantity: [1, 2].sample,
+    quantity: [ 1, 2 ].sample,
     next_delivery_date: created_date + plan.frequency_in_days.days,
     created_at: created_date
   )
@@ -298,16 +298,16 @@ end
 # Cancelled subscriptions (15%)
 customers_with_payment.sample((customers_with_payment.count * 0.15).to_i).each do |customer|
   next if customer.subscriptions.any?
-  
+
   plan = subscription_plans.sample
   created_date = rand(180.days.ago..90.days.ago)
   cancelled_date = created_date + rand(30..60).days
-  
+
   Subscription.create!(
     user: customer,
     subscription_plan: plan,
     status: :cancelled,
-    quantity: [1, 2].sample,
+    quantity: [ 1, 2 ].sample,
     next_delivery_date: cancelled_date,
     cancelled_at: cancelled_date,
     created_at: created_date
@@ -319,7 +319,7 @@ puts "Created #{Subscription.count} subscriptions (#{Subscription.active.count} 
 puts "Creating orders..."
 
 coffee_products = Product.where(product_type: :coffee).to_a
-all_statuses = [:pending, :processing, :roasting, :shipped, :delivered]
+all_statuses = [ :pending, :processing, :roasting, :shipped, :delivered ]
 
 # Create historical orders for active subscriptions
 Subscription.active.each do |subscription|
@@ -328,9 +328,9 @@ Subscription.active.each do |subscription|
   num_orders.times do |i|
     order_date = subscription.created_at + (i * subscription.subscription_plan.frequency_in_days).days
     break if order_date > Date.today
-    
+
     status = order_date < 14.days.ago ? :delivered : all_statuses.sample
-    
+
     order = Order.create!(
       user: subscription.user,
       subscription: subscription,
@@ -344,7 +344,7 @@ Subscription.active.each do |subscription|
       shipping_address_id: subscription.user.addresses.first&.id,
       created_at: order_date
     )
-    
+
     # Add order items
     subscription.subscription_plan.bags_per_delivery.times do
       OrderItem.create!(
@@ -363,9 +363,9 @@ end
 #   order_date = rand(60.days.ago..Time.now)
 #   status = order_date < 14.days.ago ? :delivered : all_statuses.sample
 #   num_items = rand(1..4)
-#   
+#
 #   items_total = num_items * 1800
-#   
+#
 #   order = Order.create!(
 #     user: customer,
 #     order_number: "ORD-#{Date.today.year}-#{sprintf('%04d', Order.count + 1)}",
@@ -378,7 +378,7 @@ end
 #     shipping_address_id: customer.addresses.first&.id,
 #     created_at: order_date
 #   )
-#   
+#
 #   num_items.times do
 #     OrderItem.create!(
 #       order: order,
@@ -401,7 +401,7 @@ puts "Users: #{User.count} (#{User.admin.count} admins, #{User.customer.count} c
 puts "Products: #{Product.count} (#{Product.where(product_type: :coffee).count} coffee, #{Product.where(product_type: :merch).count} merch)"
 puts "Subscription Plans: #{SubscriptionPlan.count} (#{SubscriptionPlan.where(active: true).count} active)"
 puts "Subscriptions: #{Subscription.count} (#{Subscription.active.count} active, #{Subscription.paused.count} paused, #{Subscription.cancelled.count} cancelled)"
-puts "Orders: #{Order.count} (#{Order.where(status: :delivered).count} delivered, #{Order.where(status: :shipped).count} shipped, #{Order.where(status: [:pending, :processing, :roasting]).count} in progress)"
+puts "Orders: #{Order.count} (#{Order.where(status: :delivered).count} delivered, #{Order.where(status: :shipped).count} shipped, #{Order.where(status: [ :pending, :processing, :roasting ]).count} in progress)"
 puts "Addresses: #{Address.count}"
 puts "Payment Methods: #{PaymentMethod.count}"
 puts "Coffee Preferences: #{CoffeePreference.count}"

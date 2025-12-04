@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe StripeService do
   let(:user) { create(:customer_user) }
   let(:plan) { create(:subscription_plan, price_cents: 2500) }
-  
+
   # Mock Stripe responses
   let(:stripe_customer) do
     double(
@@ -198,7 +198,7 @@ RSpec.describe StripeService do
 
     it 'sets as default when requested' do
       allow(Stripe::PaymentMethod).to receive(:attach).and_return(stripe_payment_method)
-      
+
       expect(Stripe::Customer).to receive(:update).with(
         'cus_test123',
         hash_including(

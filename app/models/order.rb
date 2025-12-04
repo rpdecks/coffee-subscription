@@ -15,7 +15,7 @@ class Order < ApplicationRecord
   before_validation :generate_order_number, on: :create
 
   scope :recent, -> { order(created_at: :desc) }
-  scope :pending_fulfillment, -> { where(status: [:pending, :processing, :roasting]) }
+  scope :pending_fulfillment, -> { where(status: [ :pending, :processing, :roasting ]) }
 
   def total
     total_cents / 100.0

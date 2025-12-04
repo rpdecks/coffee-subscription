@@ -44,7 +44,7 @@ class SubscriptionsController < ApplicationController
     # Store subscription preferences in session for webhook to use
     session[:pending_subscription] = {
       plan_id: plan.id,
-      bag_size: params[:bag_size] || '12oz',
+      bag_size: params[:bag_size] || "12oz",
       frequency: params[:frequency] || plan.frequency,
       grind_type: params[:grind_type],
       coffee_id: params[:coffee_id]
@@ -58,7 +58,7 @@ class SubscriptionsController < ApplicationController
         success_url: subscription_success_url,
         cancel_url: subscription_plans_url,
         metadata: {
-          bag_size: params[:bag_size] || '12oz',
+          bag_size: params[:bag_size] || "12oz",
           frequency: params[:frequency] || plan.frequency,
           grind_type: params[:grind_type],
           coffee_id: params[:coffee_id]
@@ -76,7 +76,7 @@ class SubscriptionsController < ApplicationController
   # Success callback after Stripe checkout
   def success
     session_id = params[:session_id]
-    
+
     if session_id.blank?
       flash[:alert] = "Invalid checkout session"
       redirect_to subscription_plans_path
@@ -86,7 +86,7 @@ class SubscriptionsController < ApplicationController
     # Retrieve the checkout session from Stripe
     begin
       checkout_session = Stripe::Checkout::Session.retrieve(session_id)
-      
+
       # Find or create the subscription based on Stripe subscription ID
       subscription = current_user.subscriptions.find_by(
         stripe_subscription_id: checkout_session.subscription

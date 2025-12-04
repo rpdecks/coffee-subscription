@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Dashboard::PaymentMethods", type: :request do
   let(:user) { create(:customer_user, stripe_customer_id: 'cus_test123') }
-  
+
   before do
     sign_in user, scope: :user
   end
@@ -86,7 +86,7 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     context "without payment method ID" do
       it "redirects with error" do
         post dashboard_payment_methods_path, params: {}
-        
+
         expect(response).to redirect_to(new_dashboard_payment_method_path)
         expect(flash[:alert]).to be_present
       end
@@ -99,7 +99,7 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
         )
 
         post dashboard_payment_methods_path, params: { stripe_payment_method_id: 'pm_test123' }
-        
+
         expect(response).to redirect_to(new_dashboard_payment_method_path)
         expect(flash[:alert]).to include('Card declined')
       end
@@ -175,7 +175,7 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
         )
 
         delete dashboard_payment_method_path(payment_method)
-        
+
         expect(flash[:alert]).to include('Payment method not found')
       end
     end
