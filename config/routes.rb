@@ -29,7 +29,11 @@ Rails.application.routes.draw do
     
     namespace :dashboard do
       resources :addresses
-      resources :payment_methods, only: [:index, :new, :create, :destroy]
+      resources :payment_methods, only: [:index, :new, :create, :destroy] do
+        member do
+          post :set_default
+        end
+      end
       resources :subscriptions, only: [:show, :edit, :update] do
         member do
           post :pause

@@ -1,61 +1,75 @@
 class Dashboard::PaymentMethodsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_payment_method, only: [:destroy]
+  before_action :set_payment_method, only: [:destroy, :set_default]
 
   def index
     @payment_methods = current_user.payment_methods.order(is_default: :desc, created_at: :desc)
+    @stripe_publishable_key = Rails.configuration.stripe[:publishable_key]
   end
 
   def new
     @payment_method = current_user.payment_methods.new
+    @stripe_publishable_key = Rails.configuration.stripe[:publishable_key]
   end
 
   def create
-    # Stripe payment method ID comes from the frontend
     stripe_pm_id = params[:stripe_payment_method_id]
     
+    unless stripe_pm_id.present?
+      redirect_to new_dashboard_payment_method_path, alert: "Please provide payment method details."
+      return
+    end
+
     begin
-      # Retrieve payment method details from Stripe
-      stripe_pm = Stripe::PaymentMethod.retrieve(stripe_pm_id)
-      
-      # Attach to customer if not already
-      unless stripe_pm.customer
-        customer_id = current_user.stripe_customer_id || create_stripe_customer
-        # Just attach the payment method - don't validate funds at this point
-        # Funds will be checked when actually processing a payment
-        stripe_pm.attach(customer: customer_id)
-      end
-      
-      # Create local payment method record
-      @payment_method = current_user.payment_methods.create!(
-        stripe_payment_method_id: stripe_pm.id,
-        card_brand: stripe_pm.card.brand.capitalize,
-        last_four: stripe_pm.card.last4,
-        exp_month: stripe_pm.card.exp_month,
-        exp_year: stripe_pm.card.exp_year,
-        is_default: params[:is_default] == "1" || current_user.payment_methods.none?
+      # Use StripeService to attach payment method
+      set_as_default = params[:is_default] == "1" || current_user.payment_methods.none?
+      StripeService.attach_payment_method(
+        user: current_user,
+        payment_method_id: stripe_pm_id,
+        set_as_default: set_as_default
       )
       
       redirect_to dashboard_payment_methods_path, notice: "Payment method added successfully."
-    rescue Stripe::CardError => e
-      # Card errors (like insufficient funds during attach) shouldn't block saving the card
-      # The card is still valid, just may not have funds right now
-      redirect_to new_dashboard_payment_method_path, alert: "Unable to add this card. Please try a different card."
-    rescue Stripe::StripeError => e
-      redirect_to new_dashboard_payment_method_path, alert: "Error adding payment method: #{e.message}"
+    rescue StripeService::StripeError => e
+      redirect_to new_dashboard_payment_method_path, alert: "Unable to add payment method: #{e.message}"
+    end
+  end
+
+  def set_default
+    begin
+      # Update Stripe customer default payment method
+      StripeService.attach_payment_method(
+        user: current_user,
+        payment_method_id: @payment_method.stripe_payment_method_id,
+        set_as_default: true
+      )
+
+      # Update local records
+      current_user.payment_methods.update_all(is_default: false)
+      @payment_method.update(is_default: true)
+
+      redirect_to dashboard_payment_methods_path, notice: "Default payment method updated."
+    rescue StripeService::StripeError => e
+      redirect_to dashboard_payment_methods_path, alert: "Error updating default payment method: #{e.message}"
     end
   end
 
   def destroy
+    # Don't allow deleting the default payment method if there's an active subscription
+    if @payment_method.is_default? && current_user.subscriptions.active.exists?
+      redirect_to dashboard_payment_methods_path, alert: "Cannot remove default payment method while you have an active subscription."
+      return
+    end
+
     begin
-      # Detach from Stripe
-      Stripe::PaymentMethod.detach(@payment_method.stripe_payment_method_id)
+      # Use StripeService to detach payment method
+      StripeService.detach_payment_method(@payment_method.stripe_payment_method_id)
       
       # Delete local record
       @payment_method.destroy
       
       redirect_to dashboard_payment_methods_path, notice: "Payment method removed successfully."
-    rescue Stripe::StripeError => e
+    rescue StripeService::StripeError => e
       redirect_to dashboard_payment_methods_path, alert: "Error removing payment method: #{e.message}"
     end
   end
@@ -64,14 +78,5 @@ class Dashboard::PaymentMethodsController < ApplicationController
 
   def set_payment_method
     @payment_method = current_user.payment_methods.find(params[:id])
-  end
-
-  def create_stripe_customer
-    customer = Stripe::Customer.create(
-      email: current_user.email,
-      name: current_user.email.split("@").first
-    )
-    current_user.update!(stripe_customer_id: customer.id)
-    customer.id
   end
 end

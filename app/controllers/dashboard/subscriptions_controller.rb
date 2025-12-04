@@ -19,9 +19,18 @@ module Dashboard
 
     def pause
       if @subscription.active?
-        @subscription.update(status: :paused)
-        SubscriptionMailer.subscription_paused(@subscription).deliver_later
-        redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been paused. No charges or deliveries will occur until you resume."
+        begin
+          # Pause in Stripe
+          if @subscription.stripe_subscription_id.present?
+            StripeService.pause_subscription(@subscription.stripe_subscription_id)
+          end
+          
+          @subscription.update(status: :paused)
+          # SubscriptionMailer.subscription_paused(@subscription).deliver_later
+          redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been paused. No charges or deliveries will occur until you resume."
+        rescue StripeService::StripeError => e
+          redirect_to dashboard_subscription_path(@subscription), alert: "Unable to pause subscription: #{e.message}"
+        end
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be paused."
       end
@@ -29,9 +38,18 @@ module Dashboard
 
     def resume
       if @subscription.paused?
-        @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
-        SubscriptionMailer.subscription_resumed(@subscription).deliver_later
-        redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
+        begin
+          # Resume in Stripe
+          if @subscription.stripe_subscription_id.present?
+            StripeService.resume_subscription(@subscription.stripe_subscription_id)
+          end
+          
+          @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
+          # SubscriptionMailer.subscription_resumed(@subscription).deliver_later
+          redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
+        rescue StripeService::StripeError => e
+          redirect_to dashboard_subscription_path(@subscription), alert: "Unable to resume subscription: #{e.message}"
+        end
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be resumed."
       end
@@ -39,9 +57,18 @@ module Dashboard
 
     def cancel
       if @subscription.active? || @subscription.paused?
-        @subscription.update(status: :cancelled, cancelled_at: Time.current)
-        SubscriptionMailer.subscription_cancelled(@subscription).deliver_later
-        redirect_to dashboard_root_path, notice: "Your subscription has been cancelled. We're sorry to see you go! You can always start a new subscription anytime."
+        begin
+          # Cancel in Stripe (at period end to allow finishing current billing cycle)
+          if @subscription.stripe_subscription_id.present?
+            StripeService.cancel_subscription(@subscription.stripe_subscription_id, cancel_at_period_end: true)
+          end
+          
+          @subscription.update(status: :cancelled, cancelled_at: Time.current)
+          # SubscriptionMailer.subscription_cancelled(@subscription).deliver_later
+          redirect_to dashboard_root_path, notice: "Your subscription will be cancelled at the end of the current billing period. You can still enjoy your coffee until then!"
+        rescue StripeService::StripeError => e
+          redirect_to dashboard_subscription_path(@subscription), alert: "Unable to cancel subscription: #{e.message}"
+        end
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Subscription cannot be cancelled."
       end
