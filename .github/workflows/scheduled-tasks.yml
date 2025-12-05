@@ -1,0 +1,19 @@
+name: Scheduled Tasks
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC (9 PM ET / 6 PM PT)
+    - cron: "0 2 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  generate-subscription-orders:
+    name: Generate Subscription Orders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Run subscription order generation
+        run: |
+          flyctl ssh console -a coffee-snowy-log-1028 -C "bin/rails subscriptions:generate_orders"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
