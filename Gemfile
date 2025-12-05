@@ -82,3 +82,5 @@ group :development do
   # Heroku environment management
   gem "parity"
 end
+
+gem "dockerfile-rails", ">= 1.7", :group => :development
