@@ -80,13 +80,20 @@ class WebhooksController < ApplicationController
     )
 
     if subscription.new_record?
+      # Get shipping address from metadata or use first address
+      shipping_address = if metadata["shipping_address_id"]
+        user.addresses.find_by(id: metadata["shipping_address_id"])
+      else
+        user.addresses.shipping.first || user.addresses.first
+      end
+
       subscription.assign_attributes(
         subscription_plan: plan,
         bag_size: metadata["bag_size"] || "12oz",
         quantity: 1,
         status: :active,
         next_delivery_date: Date.today + (metadata["frequency"] || plan.frequency).to_i.days,
-        shipping_address: user.addresses.first,
+        shipping_address: shipping_address,
         payment_method: user.payment_methods.default.first || user.payment_methods.first
       )
 

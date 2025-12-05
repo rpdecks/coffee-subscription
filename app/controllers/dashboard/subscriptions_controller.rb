@@ -1,6 +1,6 @@
 module Dashboard
   class SubscriptionsController < DashboardController
-    before_action :set_subscription, only: [ :show, :edit, :update, :pause, :resume, :cancel, :skip_delivery ]
+    before_action :set_subscription, only: [ :show, :edit, :update, :pause, :resume, :cancel, :skip_delivery, :update_address ]
 
     def show
       @next_order = @subscription.orders.where("created_at >= ?", @subscription.next_delivery_date).first
@@ -14,6 +14,17 @@ module Dashboard
         redirect_to dashboard_subscription_path(@subscription), notice: "Subscription updated successfully."
       else
         render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def update_address
+      address = current_user.addresses.find_by(id: params[:address_id])
+      
+      if address
+        @subscription.update(shipping_address: address)
+        redirect_to dashboard_subscription_path(@subscription), notice: "Shipping address updated successfully."
+      else
+        redirect_to dashboard_subscription_path(@subscription), alert: "Address not found."
       end
     end
 

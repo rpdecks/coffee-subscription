@@ -40,6 +40,7 @@ Rails.application.routes.draw do
           post :resume
           delete :cancel
           post :skip_delivery
+          patch :update_address
         end
       end
       resource :coffee_preference, only: [ :show, :edit, :update ]

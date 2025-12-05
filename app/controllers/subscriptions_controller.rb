@@ -41,13 +41,22 @@ class SubscriptionsController < ApplicationController
       return
     end
 
+    # Handle shipping address
+    shipping_address = handle_shipping_address
+    unless shipping_address
+      flash[:alert] = "Please provide a valid shipping address"
+      redirect_to customize_subscription_path(plan_id: plan.id)
+      return
+    end
+
     # Store subscription preferences in session for webhook to use
     session[:pending_subscription] = {
       plan_id: plan.id,
       bag_size: params[:bag_size] || "12oz",
       frequency: params[:frequency] || plan.frequency,
       grind_type: params[:grind_type],
-      coffee_id: params[:coffee_id]
+      coffee_id: params[:coffee_id],
+      shipping_address_id: shipping_address.id
     }
 
     # Create Stripe checkout session
@@ -61,7 +70,8 @@ class SubscriptionsController < ApplicationController
           bag_size: params[:bag_size] || "12oz",
           frequency: params[:frequency] || plan.frequency,
           grind_type: params[:grind_type],
-          coffee_id: params[:coffee_id]
+          coffee_id: params[:coffee_id],
+          shipping_address_id: shipping_address.id.to_s
         }
       )
 
@@ -104,5 +114,32 @@ class SubscriptionsController < ApplicationController
       flash[:alert] = "There was an issue confirming your subscription. Please contact support if you were charged."
       redirect_to dashboard_root_path
     end
+  end
+
+  private
+
+  def handle_shipping_address
+    if params[:address_id] == "new" || !params[:address_id].present?
+      # Create new address
+      return nil unless params[:address].present?
+      
+      address = current_user.addresses.build(address_params)
+      address.address_type = :shipping
+      address.save ? address : nil
+    else
+      # Use existing address
+      current_user.addresses.find_by(id: params[:address_id])
+    end
+  end
+
+  def address_params
+    params.require(:address).permit(
+      :street_address,
+      :street_address_2,
+      :city,
+      :state,
+      :zip_code,
+      :country
+    )
   end
 end
