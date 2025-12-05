@@ -47,6 +47,9 @@ gem "pagy", "~> 9.0"
 # Rate limiting and spam protection
 gem "rack-attack"
 
+# URL rewriting and redirects
+gem "rack-rewrite"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
