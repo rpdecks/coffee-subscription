@@ -3,6 +3,7 @@
 class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :verify_stripe_signature
+  before_action :check_event_idempotency
 
   def stripe
     case @event.type
@@ -27,10 +28,29 @@ class WebhooksController < ApplicationController
     render json: { status: "success" }, status: :ok
   rescue => e
     Rails.logger.error("Stripe webhook error: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
     render json: { status: "error", message: e.message }, status: :bad_request
+  ensure
+    # Mark event as processed
+    @webhook_event&.update(processed_at: Time.current) if @webhook_event && !@webhook_event.processed_at
   end
 
   private
+
+  def check_event_idempotency
+    # Check if we've already processed this event
+    @webhook_event = WebhookEvent.find_or_initialize_by(stripe_event_id: @event.id)
+    
+    if @webhook_event.persisted? && @webhook_event.processed_at.present?
+      Rails.logger.info("Webhook event #{@event.id} already processed at #{@webhook_event.processed_at}")
+      render json: { status: "success", message: "Event already processed" }, status: :ok
+      return
+    end
+    
+    # Save the event record
+    @webhook_event.event_type = @event.type
+    @webhook_event.save!
+  end
 
   def verify_stripe_signature
     payload = request.body.read
@@ -160,9 +180,10 @@ class WebhooksController < ApplicationController
     subscription = Subscription.find_by(stripe_subscription_id: stripe_subscription.id)
     return unless subscription
 
-    subscription.update(status: :cancelled)
-    # Send cancellation email
-    # SubscriptionMailer.cancelled(subscription).deliver_later
+    subscription.update(status: :cancelled, cancelled_at: Time.current)
+    
+    # Send cancellation confirmation email
+    SubscriptionMailer.subscription_cancelled(subscription).deliver_later
   end
 
   def handle_invoice_payment_succeeded(invoice)
@@ -170,6 +191,12 @@ class WebhooksController < ApplicationController
 
     subscription = Subscription.find_by(stripe_subscription_id: invoice.subscription)
     return unless subscription
+
+    # Reset failed payment count on successful payment
+    subscription.update(failed_payment_count: 0) if subscription.failed_payment_count > 0
+    
+    # Reactivate if it was past_due
+    subscription.update(status: :active) if subscription.past_due?
 
     # Create order for this billing period
     CreateSubscriptionOrderJob.perform_later(subscription.id, invoice.id)
@@ -181,9 +208,22 @@ class WebhooksController < ApplicationController
     subscription = Subscription.find_by(stripe_subscription_id: invoice.subscription)
     return unless subscription
 
+    # Update subscription status
     subscription.update(status: :past_due)
-    # Send payment failed email
-    # SubscriptionMailer.payment_failed(subscription).deliver_later
+    
+    # Track failed payment attempt
+    subscription.increment!(:failed_payment_count) if subscription.respond_to?(:failed_payment_count)
+    
+    # Send payment failed email to customer
+    SubscriptionMailer.payment_failed(subscription, invoice).deliver_later
+    
+    # After 3 failed attempts, consider suspending
+    if subscription.failed_payment_count.to_i >= 3
+      Rails.logger.error("Subscription #{subscription.id} has #{subscription.failed_payment_count} failed payments - consider suspension")
+      # Optionally auto-cancel after multiple failures
+      # subscription.update(status: :cancelled)
+      # SubscriptionMailer.suspended_due_to_payment(subscription).deliver_later
+    end
   end
 
   def handle_payment_method_attached(payment_method)

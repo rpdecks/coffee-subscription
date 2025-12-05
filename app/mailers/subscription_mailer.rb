@@ -56,4 +56,18 @@ class SubscriptionMailer < ApplicationMailer
       subject: "Your next coffee delivery is coming soon!"
     )
   end
+
+  def payment_failed(subscription, invoice = nil)
+    @subscription = subscription
+    @customer = subscription.user
+    @plan = subscription.subscription_plan
+    @invoice = invoice
+    @failed_count = subscription.failed_payment_count
+    @update_payment_url = edit_dashboard_payment_methods_url
+
+    mail(
+      to: @customer.email,
+      subject: "Payment failed for your coffee subscription"
+    )
+  end
 end

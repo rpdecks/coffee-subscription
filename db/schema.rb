@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_225148) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_021620) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -121,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_225148) do
     t.datetime "created_at", null: false
     t.datetime "current_period_end"
     t.datetime "current_period_start"
+    t.integer "failed_payment_count", default: 0, null: false
     t.date "next_delivery_date"
     t.integer "payment_method_id"
     t.integer "quantity"
@@ -149,6 +150,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_225148) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "webhook_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "event_type"
+    t.datetime "processed_at"
+    t.string "stripe_event_id"
+    t.datetime "updated_at", null: false
+    t.index ["stripe_event_id"], name: "index_webhook_events_on_stripe_event_id", unique: true
   end
 
   add_foreign_key "addresses", "users"
