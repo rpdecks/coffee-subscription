@@ -2,13 +2,28 @@ require 'rails_helper'
 
 RSpec.describe "Webhook Shipping Address Handling", type: :request do
   let(:user) { create(:customer_user, stripe_customer_id: 'cus_test123') }
-  let(:plan) { create(:subscription_plan, stripe_price_id: 'price_test123') }
+  let(:plan) { create(:subscription_plan, stripe_plan_id: 'price_test123') }
   let(:address) { create(:address, user: user, address_type: :shipping) }
   let(:payment_method) { create(:payment_method, user: user, is_default: true) }
 
+  let(:event_payload) do
+    {
+      id: 'evt_test123',
+      type: event_type,
+      data: { object: event_data }
+    }
+  end
+
   before do
-    # Stub Stripe verification
-    allow(Stripe::Webhook).to receive(:construct_event).and_return(stripe_event)
+    # Stub Stripe verification to bypass signature check and return our event
+    allow(Stripe::Webhook).to receive(:construct_event).and_return(
+      Stripe::Event.construct_from(event_payload)
+    )
+    
+    # Stub WebhookEvent to bypass idempotency check
+    allow(WebhookEvent).to receive(:find_or_initialize_by).and_return(
+      double(WebhookEvent, persisted?: false, processed_at: nil, event_type: nil, 'event_type=': nil, save!: true, update: true)
+    )
   end
 
   describe "POST /webhooks/stripe with checkout.session.completed" do
