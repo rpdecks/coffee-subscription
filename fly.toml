@@ -44,3 +44,12 @@ console_command = '/rails/bin/rails console'
 [[statics]]
   guest_path = '/rails/public'
   url_prefix = '/'
+
+# Scheduled tasks
+[[services]]
+  processes = ["task"]
+  
+  [[services.schedule]]
+    # Generate subscription orders daily at 2 AM UTC (9 PM ET / 6 PM PT)
+    cron = "0 2 * * *"
+    command = "/rails/bin/rails subscriptions:generate_orders"
