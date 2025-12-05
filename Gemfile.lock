@@ -171,7 +171,9 @@ GEM
     nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    pagy (9.4.0)
+    pagy (43.2.0)
+      json
+      yaml
     parallel (1.27.0)
     parity (3.5.0)
     parser (3.3.10.0)
@@ -349,6 +351,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    yaml (0.4.0)
     zeitwerk (2.6.18)
 
 PLATFORMS
@@ -368,7 +371,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
-  pagy (~> 9.0)
+  pagy (~> 43.2)
   parity
   pg (~> 1.1)
   puma (>= 5.0)

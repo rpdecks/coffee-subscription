@@ -42,7 +42,7 @@ gem "sidekiq"
 gem "simple_form"
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.2"
 
 # Rate limiting and spam protection
 gem "rack-attack"
