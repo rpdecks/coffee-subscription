@@ -41,9 +41,9 @@
           
           <div class="total">
             <div>Subtotal: <%= number_to_currency(@order.subtotal) %></div>
-            <div>Shipping: <%= number_to_currency(@order.shipping_cents / 100.0) %></div>
+            <div>Shipping: <%= number_to_currency(@order.shipping) %></div>
             <% if @order.tax_cents > 0 %>
-              <div>Tax: <%= number_to_currency(@order.tax_cents / 100.0) %></div>
+              <div>Tax: <%= number_to_currency(@order.tax) %></div>
             <% end %>
             <div style="margin-top: 10px;">Total: <%= number_to_currency(@order.total) %></div>
           </div>

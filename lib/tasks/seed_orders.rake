@@ -129,7 +129,7 @@ namespace :db do
         total_cents: subtotal + order.shipping_cents + tax
       )
 
-      puts "Created order #{order.order_number} - #{order.status} - $#{order.total_cents / 100.0}"
+      puts "Created order #{order.order_number} - #{order.status} - $#{order.total}"
     end
 
     puts "\n✅ Successfully created #{order_data.length} orders for #{user.email}"

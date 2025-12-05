@@ -64,23 +64,23 @@
           <div class="mt-6 pt-6 border-t border-gray-200 space-y-2">
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Subtotal</span>
-              <span class="text-gray-900">$<%= sprintf("%.2f", @order.subtotal_cents / 100.0) %></span>
+              <span class="text-gray-900">$<%= sprintf("%.2f", @order.subtotal) %></span>
             </div>
             <% if @order.tax_cents && @order.tax_cents > 0 %>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Tax</span>
-                <span class="text-gray-900">$<%= sprintf("%.2f", @order.tax_cents / 100.0) %></span>
+                <span class="text-gray-900">$<%= sprintf("%.2f", @order.tax) %></span>
               </div>
             <% end %>
             <% if @order.shipping_cents && @order.shipping_cents > 0 %>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Shipping</span>
-                <span class="text-gray-900">$<%= sprintf("%.2f", @order.shipping_cents / 100.0) %></span>
+                <span class="text-gray-900">$<%= sprintf("%.2f", @order.shipping) %></span>
               </div>
             <% end %>
             <div class="flex justify-between text-lg font-semibold pt-2 border-t border-gray-200">
               <span class="text-gray-900">Total</span>
-              <span class="text-gray-900">$<%= sprintf("%.2f", @order.total_cents / 100.0) %></span>
+              <span class="text-gray-900">$<%= sprintf("%.2f", @order.total) %></span>
             </div>
           </div>
         </div>

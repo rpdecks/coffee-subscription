@@ -88,7 +88,7 @@ class Admin::OrdersController < Admin::BaseController
           order.created_at.strftime("%Y-%m-%d"),
           order.status.titleize,
           order.order_type.titleize,
-          sprintf("%.2f", order.total_cents / 100.0),
+          sprintf("%.2f", order.total),
           format_address(order)
         ]
       end

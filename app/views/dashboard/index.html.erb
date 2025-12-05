@@ -137,7 +137,7 @@
                     <%= order.status %>
                   </span>
                 </div>
-                <p class="text-sm text-gray-700">$<%= sprintf('%.2f', order.total_cents / 100.0) %></p>
+                <p class="text-sm text-gray-700">$<%= sprintf('%.2f', order.total) %></p>
               <% end %>
             <% end %>
             <%= link_to "View All Orders", dashboard_orders_path, class: "block text-center text-blue-600 hover:text-blue-800 text-sm mt-3 pt-3 border-t border-gray-200" %>

@@ -18,11 +18,19 @@ class Order < ApplicationRecord
   scope :pending_fulfillment, -> { where(status: [ :pending, :processing, :roasting ]) }
 
   def total
-    total_cents / 100.0
+    (total_cents || 0) / 100.0
   end
 
   def subtotal
-    subtotal_cents / 100.0
+    (subtotal_cents || 0) / 100.0
+  end
+
+  def shipping
+    (shipping_cents || 0) / 100.0
+  end
+
+  def tax
+    (tax_cents || 0) / 100.0
   end
 
   def calculate_totals
