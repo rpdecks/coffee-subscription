@@ -67,11 +67,11 @@ staging status
 
 ## Comparison to Heroku Parity
 
-| Heroku Parity | Fly Parity |
-|---------------|------------|
-| `staging console` | `staging console` or `sc` |
+| Heroku Parity        | Fly Parity                   |
+| -------------------- | ---------------------------- |
+| `staging console`    | `staging console` or `sc`    |
 | `production console` | `production console` or `pc` |
-| `staging tail` | `staging logs` or `sl` |
-| `production tail` | `production logs` or `pl` |
+| `staging tail`       | `staging logs` or `sl`       |
+| `production tail`    | `production logs` or `pl`    |
 
 The syntax is nearly identical to the parity gem you're used to!

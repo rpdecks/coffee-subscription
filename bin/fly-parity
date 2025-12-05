@@ -15,7 +15,7 @@
 #   production db:migrate - Run migrations on production
 
 STAGING_APP="coffee-staging"
-PRODUCTION_APP="coffee-snowy-log-1028"
+PRODUCTION_APP="coffee-production"
 
 staging() {
   case "$1" in
