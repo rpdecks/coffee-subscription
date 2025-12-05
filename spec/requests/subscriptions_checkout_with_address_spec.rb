@@ -79,7 +79,7 @@ RSpec.describe "Subscription Checkout with Shipping Address", type: :request do
         )
 
         post subscription_checkout_path, params: checkout_params
-        
+
         expect(response).to redirect_to("https://checkout.stripe.com/test")
       end
     end
@@ -138,7 +138,7 @@ RSpec.describe "Subscription Checkout with Shipping Address", type: :request do
 
       it "does not call Stripe" do
         expect(StripeService).not_to receive(:create_checkout_session)
-        
+
         post subscription_checkout_path, params: checkout_params
       end
     end

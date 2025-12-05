@@ -39,16 +39,16 @@ class WebhooksController < ApplicationController
 
   def check_event_idempotency
     return unless @event # Skip if event wasn't parsed
-    
+
     # Check if we've already processed this event
     @webhook_event = WebhookEvent.find_or_initialize_by(stripe_event_id: @event.id)
-    
+
     if @webhook_event.persisted? && @webhook_event.processed_at.present?
       Rails.logger.info("Webhook event #{@event.id} already processed at #{@webhook_event.processed_at}")
       render json: { status: "success", message: "Event already processed" }, status: :ok
       return
     end
-    
+
     # Save the event record
     @webhook_event.event_type = @event.type
     @webhook_event.save!
@@ -186,7 +186,7 @@ class WebhooksController < ApplicationController
     return unless subscription
 
     subscription.update(status: :cancelled, cancelled_at: Time.current)
-    
+
     # Send cancellation confirmation email
     SubscriptionMailer.subscription_cancelled(subscription).deliver_later
   end
@@ -199,7 +199,7 @@ class WebhooksController < ApplicationController
 
     # Reset failed payment count on successful payment
     subscription.update(failed_payment_count: 0) if subscription.failed_payment_count > 0
-    
+
     # Reactivate if it was past_due
     subscription.update(status: :active) if subscription.past_due?
 
@@ -215,13 +215,13 @@ class WebhooksController < ApplicationController
 
     # Update subscription status
     subscription.update(status: :past_due)
-    
+
     # Track failed payment attempt
     subscription.increment!(:failed_payment_count) if subscription.respond_to?(:failed_payment_count)
-    
+
     # Send payment failed email to customer
     SubscriptionMailer.payment_failed(subscription, invoice.to_hash).deliver_later
-    
+
     # After 3 failed attempts, consider suspending
     if subscription.failed_payment_count.to_i >= 3
       Rails.logger.error("Subscription #{subscription.id} has #{subscription.failed_payment_count} failed payments - consider suspension")

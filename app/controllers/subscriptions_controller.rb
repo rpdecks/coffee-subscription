@@ -122,7 +122,7 @@ class SubscriptionsController < ApplicationController
     if params[:address_id] == "new" || !params[:address_id].present?
       # Create new address
       return nil unless params[:address].present?
-      
+
       address = current_user.addresses.build(address_params)
       address.address_type = :shipping
       address.save ? address : nil

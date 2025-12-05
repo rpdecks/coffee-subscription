@@ -19,7 +19,7 @@ module Dashboard
 
     def update_address
       address = current_user.addresses.find_by(id: params[:address_id])
-      
+
       if address
         @subscription.update(shipping_address: address)
         redirect_to dashboard_subscription_path(@subscription), notice: "Shipping address updated successfully."

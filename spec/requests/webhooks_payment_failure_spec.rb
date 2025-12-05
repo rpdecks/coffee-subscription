@@ -26,7 +26,7 @@ RSpec.describe 'Webhook Payment Failure Handling', type: :request do
 
     it 'marks subscription as past_due' do
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(response).to have_http_status(:success), "Expected success but got #{response.status}: #{response.body}"
       expect(subscription.reload.status).to eq('past_due')
     end
@@ -40,17 +40,16 @@ RSpec.describe 'Webhook Payment Failure Handling', type: :request do
     it 'sends payment failed email' do
       expect {
         post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      }.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('SubscriptionMailer', 'payment_failed', 'deliver_now', { args: [subscription, anything] })
-    end
+      }.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('SubscriptionMailer', 'payment_failed', 'deliver_now', { args: [ subscription, anything ] })
     end
 
     it 'logs warning after 3 failures' do
       subscription.update(failed_payment_count: 2)
-      
+
       allow(Rails.logger).to receive(:error).and_call_original
-      
+
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(subscription.reload.failed_payment_count).to eq(3)
     end
   end
@@ -75,13 +74,13 @@ RSpec.describe 'Webhook Payment Failure Handling', type: :request do
 
     it 'reactivates subscription' do
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(subscription.reload.status).to eq('active')
     end
 
     it 'resets failed_payment_count' do
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(subscription.reload.failed_payment_count).to eq(0)
     end
 

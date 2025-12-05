@@ -24,7 +24,7 @@ RSpec.describe 'Webhook Subscription Lifecycle', type: :request do
       }
 
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(response).to have_http_status(:success)
       expect(subscription.reload.status).to eq('past_due')
     end
@@ -43,7 +43,7 @@ RSpec.describe 'Webhook Subscription Lifecycle', type: :request do
       }
 
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(subscription.reload.status).to eq('cancelled')
     end
   end
@@ -62,7 +62,7 @@ RSpec.describe 'Webhook Subscription Lifecycle', type: :request do
       }
 
       post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      
+
       expect(response).to have_http_status(:success)
       expect(subscription.reload.status).to eq('cancelled')
       expect(subscription.cancelled_at).to be_present
@@ -82,7 +82,7 @@ RSpec.describe 'Webhook Subscription Lifecycle', type: :request do
 
       expect {
         post webhooks_stripe_path, params: event_data.to_json, headers: { 'Content-Type' => 'application/json' }
-      }.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('SubscriptionMailer', 'subscription_cancelled', 'deliver_now', { args: [subscription] })
+      }.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('SubscriptionMailer', 'subscription_cancelled', 'deliver_now', { args: [ subscription ] })
     end
   end
 end

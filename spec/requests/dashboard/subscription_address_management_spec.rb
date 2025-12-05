@@ -30,7 +30,7 @@ RSpec.describe "Dashboard::Subscription Address Management", type: :request do
 
       it "shows change button when multiple addresses exist" do
         address2 # Create second address
-        
+
         get dashboard_subscription_path(subscription)
 
         expect(response.body).to include("Change")
@@ -74,7 +74,7 @@ RSpec.describe "Dashboard::Subscription Address Management", type: :request do
 
         expect(response).to redirect_to(dashboard_subscription_path(subscription))
         expect(flash[:notice]).to eq("Shipping address updated successfully.")
-        
+
         subscription.reload
         expect(subscription.shipping_address_id).to eq(address2.id)
       end
@@ -96,7 +96,7 @@ RSpec.describe "Dashboard::Subscription Address Management", type: :request do
 
         expect(response).to redirect_to(dashboard_subscription_path(subscription))
         expect(flash[:alert]).to eq("Address not found.")
-        
+
         subscription.reload
         expect(subscription.shipping_address_id).to eq(address1.id) # Unchanged
       end
@@ -109,7 +109,7 @@ RSpec.describe "Dashboard::Subscription Address Management", type: :request do
 
         expect(response).to redirect_to(dashboard_subscription_path(subscription))
         expect(flash[:alert]).to eq("Address not found.")
-        
+
         subscription.reload
         expect(subscription.shipping_address_id).to eq(address1.id) # Unchanged
       end

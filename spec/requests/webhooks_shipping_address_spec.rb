@@ -19,7 +19,7 @@ RSpec.describe "Webhook Shipping Address Handling", type: :request do
     allow(Stripe::Webhook).to receive(:construct_event).and_return(
       Stripe::Event.construct_from(event_payload)
     )
-    
+
     # Stub WebhookEvent to bypass idempotency check
     allow(WebhookEvent).to receive(:find_or_initialize_by).and_return(
       double(WebhookEvent, persisted?: false, processed_at: nil, event_type: nil, 'event_type=': nil, save!: true, update: true)

@@ -62,11 +62,11 @@ class Rack::Attack
       /crawl/i,
       /spider/i
     ]
-    
+
     user_agent = req.user_agent.to_s
     # Allow legitimate bots (Google, Bing, etc.)
     is_legitimate = user_agent.match?(/googlebot|bingbot|yandexbot/i)
-    
+
     !is_legitimate && suspicious_agents.any? { |pattern| user_agent.match?(pattern) }
   end
 

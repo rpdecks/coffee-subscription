@@ -2,6 +2,25 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
+# PRODUCTION DATABASE PROTECTION
+# Prevent accidental seeding of production database with test data
+if Rails.env.production?
+  puts "\n" + ("=" * 80)
+  puts "WARNING: You are about to seed the PRODUCTION database!"
+  puts "This will DELETE ALL existing data and create test/demo records."
+  puts ("=" * 80)
+  print "\nType 'DELETE ALL PRODUCTION DATA' (exactly) to continue: "
+
+  confirmation = STDIN.gets.chomp
+
+  unless confirmation == "DELETE ALL PRODUCTION DATA"
+    puts "\n❌ Seeding cancelled. Production database was NOT modified."
+    exit 0
+  end
+
+  puts "\n⚠️  Proceeding with production database seed..."
+end
+
 # Clear existing data in correct order to avoid FK constraints
 puts "Clearing existing data..."
 OrderItem.destroy_all
