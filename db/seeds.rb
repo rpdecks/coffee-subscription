@@ -129,7 +129,7 @@ Product.create!([
 # Create merch products
 Product.create!([
   {
-    name: "Coffee Co. Mug",
+    name: "Acer Coffee Mug",
     description: "Ceramic mug with our logo. 12oz capacity.",
     product_type: :merch,
     price_cents: 1200,
@@ -137,8 +137,8 @@ Product.create!([
     active: true
   },
   {
-    name: "Coffee Co. T-Shirt",
-    description: "100% cotton t-shirt with Coffee Co. logo.",
+    name: "Acer Coffee T-Shirt",
+    description: "100% cotton t-shirt with Acer Coffee logo.",
     product_type: :merch,
     price_cents: 2400,
     inventory_count: 30,
