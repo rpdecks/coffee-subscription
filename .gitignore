@@ -39,3 +39,6 @@
 
 # Ignore IDE specific files
 .vscode/
+
+# Ignore node modules
+node_modules/

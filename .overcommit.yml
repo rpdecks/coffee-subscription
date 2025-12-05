@@ -21,13 +21,24 @@ PreCommit:
     enabled: true
     on_warn: fail # Treat all warnings as failures
     command: ["bundle", "exec", "rubocop"]
-    flags: ["--format", "emacs", "--force-exclusion", "--display-cop-names"]
+    flags: ["--autocorrect", "--format", "emacs", "--force-exclusion", "--display-cop-names"]
     include:
       - "**/*.rb"
       - "**/*.rake"
       - "**/Gemfile"
       - "**/Rakefile"
       - "**/config.ru"
+
+  Prettier:
+    enabled: true
+    required_executable: "npx"
+    command: ["npx", "prettier"]
+    flags: ["--write", "--ignore-unknown"]
+    include:
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.md"
+      - "**/*.json"
 
   TrailingWhitespace:
     enabled: true

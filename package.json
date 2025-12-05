@@ -10,5 +10,24 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpdecks/coffee-subscription.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rpdecks/coffee-subscription/issues"
+  },
+  "homepage": "https://github.com/rpdecks/coffee-subscription#readme",
+  "devDependencies": {
+    "prettier": "^3.7.4"
   }
 }

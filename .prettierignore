@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+public/assets/
+tmp/
+log/
+
+# Database
+db/structure.sql
+db/schema.rb
+
+# Generated files
+*.lock
+Gemfile.lock
+package-lock.json
+yarn.lock
+
+# Rails specific
+.byebug_history
+.env*
+!.env.example
