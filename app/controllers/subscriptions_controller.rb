@@ -55,7 +55,7 @@ class SubscriptionsController < ApplicationController
       checkout_session = StripeService.create_checkout_session(
         user: current_user,
         plan: plan,
-        success_url: subscription_success_url,
+        success_url: "#{subscription_success_url}?session_id={CHECKOUT_SESSION_ID}",
         cancel_url: subscription_plans_url,
         metadata: {
           bag_size: params[:bag_size] || "12oz",

@@ -6,7 +6,7 @@
     <p class="text-xl text-gray-600">Tailor your <%= @plan.name %> to your preferences</p>
   </div>
 
-  <%= form_with url: subscription_checkout_path, method: :post, local: true, class: "space-y-12" do |f| %>
+  <%= form_with url: subscription_checkout_path, method: :post, local: true, data: { turbo: false }, class: "space-y-12" do |f| %>
     <%= hidden_field_tag :plan_id, @plan.id %>
 
     <!-- Section 1: Choose Coffee -->
