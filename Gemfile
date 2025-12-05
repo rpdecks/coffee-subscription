@@ -81,6 +81,9 @@ group :development do
 
   # Heroku environment management
   gem "parity"
+
+  # Git hooks for code quality
+  gem "overcommit", require: false
 end
 
 gem "dockerfile-rails", ">= 1.7", group: :development
