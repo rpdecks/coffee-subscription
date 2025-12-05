@@ -1,1 +1,9 @@
 <%= yield %>
+
+-- 
+<%= ENV["BUSINESS_NAME"] || "" %>
+<%= ENV["BUSINESS_ADDRESS_LINE1"] || "" %><% if ENV["BUSINESS_ADDRESS_LINE2"].present? %>, <%= ENV["BUSINESS_ADDRESS_LINE2"] %><% end %>
+<%= ENV["BUSINESS_CITY_STATE_ZIP"] || "" %>
+
+You’re receiving this email from <%= ENV["BUSINESS_NAME"] || "our business" %>.
+Our mailing address is listed above to comply with CAN-SPAM.
