@@ -20,32 +20,32 @@ PreCommit:
   RuboCop:
     enabled: true
     on_warn: fail # Treat all warnings as failures
-    command: ['bundle', 'exec', 'rubocop']
-    flags: ['--format', 'emacs', '--force-exclusion', '--display-cop-names']
+    command: ["bundle", "exec", "rubocop"]
+    flags: ["--format", "emacs", "--force-exclusion", "--display-cop-names"]
     include:
-      - '**/*.rb'
-      - '**/*.rake'
-      - '**/Gemfile'
-      - '**/Rakefile'
-      - '**/config.ru'
+      - "**/*.rb"
+      - "**/*.rake"
+      - "**/Gemfile"
+      - "**/Rakefile"
+      - "**/config.ru"
 
   TrailingWhitespace:
     enabled: true
     exclude:
-      - '**/db/structure.sql' # Ignore trailing whitespace in structure dumps
+      - "**/db/structure.sql" # Ignore trailing whitespace in structure dumps
 
   BundleCheck:
     enabled: true
-    description: 'Check Gemfile dependencies'
+    description: "Check Gemfile dependencies"
 
 CommitMsg:
   CapitalizedSubject:
     enabled: true
-    description: 'Check subject capitalization'
+    description: "Check subject capitalization"
 
   EmptyMessage:
     enabled: true
-    description: 'Check for empty commit message'
+    description: "Check for empty commit message"
 
   TextWidth:
     enabled: true
