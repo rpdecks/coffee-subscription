@@ -87,6 +87,9 @@ group :development do
 
   # Git hooks for code quality
   gem "overcommit", require: false
+
+  # Preview emails in browser instead of sending
+  gem "letter_opener"
 end
 
 gem "dockerfile-rails", ">= 1.7", group: :development

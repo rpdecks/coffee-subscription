@@ -36,59 +36,58 @@ User.destroy_all
 puts "Creating users..."
 
 # Create admin users
-admin = User.create!(
-  email: "admin@coffeeco.com",
-  password: "password123",
-  password_confirmation: "password123",
-  first_name: "Admin",
-  last_name: "User",
-  phone: "555-123-4567",
-  role: :admin
-)
-
-# Real admin accounts for production/staging
 robert_admin = User.create!(
-  email: "rpdecks@gmail.com",
-  password: "seedpass",
-  password_confirmation: "seedpass",
+  email: "rp@acercoffee.com",
+  password: "ChangeMe123!",
+  password_confirmation: "ChangeMe123!",
   first_name: "Robert",
   last_name: "Phillips",
   phone: "555-234-5678",
   role: :admin
 )
 
-kris_admin = User.create!(
-  email: "krilew@gmail.com",
-  password: "seedpass",
-  password_confirmation: "seedpass",
-  first_name: "Kris",
-  last_name: "Lew",
-  phone: "555-345-6789",
+katie_admin = User.create!(
+  email: "kp@acercoffee.com",
+  password: "ChangeMe123!",
+  password_confirmation: "ChangeMe123!",
+  first_name: "Katie",
+  last_name: "Phillips",
+  phone: "555-234-5679",
   role: :admin
 )
 
-# Create 30 test customers for realistic pagination testing
-customer_names = [
-  [ "Emma", "Johnson" ], [ "Liam", "Williams" ], [ "Olivia", "Brown" ], [ "Noah", "Davis" ],
-  [ "Ava", "Miller" ], [ "Ethan", "Wilson" ], [ "Sophia", "Moore" ], [ "Mason", "Taylor" ],
-  [ "Isabella", "Anderson" ], [ "William", "Thomas" ], [ "Mia", "Jackson" ], [ "James", "White" ],
-  [ "Charlotte", "Harris" ], [ "Benjamin", "Martin" ], [ "Amelia", "Thompson" ], [ "Lucas", "Garcia" ],
-  [ "Harper", "Martinez" ], [ "Henry", "Robinson" ], [ "Evelyn", "Clark" ], [ "Alexander", "Rodriguez" ],
-  [ "Abigail", "Lewis" ], [ "Michael", "Lee" ], [ "Emily", "Walker" ], [ "Daniel", "Hall" ],
-  [ "Elizabeth", "Allen" ], [ "Matthew", "Young" ], [ "Sofia", "King" ], [ "Joseph", "Wright" ],
-  [ "Avery", "Lopez" ], [ "David", "Hill" ]
+# Create a few test customers for inner circle testing
+test_customers = [
+  {
+    email: "test1@example.com",
+    first_name: "Emma",
+    last_name: "Johnson",
+    phone: "555-100-0001"
+  },
+  {
+    email: "test2@example.com",
+    first_name: "Liam",
+    last_name: "Williams",
+    phone: "555-100-0002"
+  },
+  {
+    email: "test3@example.com",
+    first_name: "Olivia",
+    last_name: "Brown",
+    phone: "555-100-0003"
+  }
 ]
 
-customers = customer_names.map.with_index do |(first, last), i|
+customers = test_customers.map do |attrs|
   User.create!(
-    email: "#{first.downcase}.#{last.downcase}@example.com",
-    password: "password123",
-    password_confirmation: "password123",
-    first_name: first,
-    last_name: last,
-    phone: "555-#{(100 + i).to_s.rjust(3, '0')}-#{(1000 + i).to_s.rjust(4, '0')}",
+    email: attrs[:email],
+    password: "TestPass123!",
+    password_confirmation: "TestPass123!",
+    first_name: attrs[:first_name],
+    last_name: attrs[:last_name],
+    phone: attrs[:phone],
     role: :customer,
-    created_at: rand(180.days.ago..Time.now) # Spread signups over 6 months
+    created_at: rand(30.days.ago..Time.now)
   )
 end
 
@@ -429,10 +428,11 @@ puts "=" * 60
 puts "TEST ACCOUNTS"
 puts "=" * 60
 puts "Admin Accounts:"
-puts "  - admin@coffeeco.com / password123"
-puts "  - rpdecks@gmail.com / seedpass"
-puts "  - krilew@gmail.com / seedpass"
+puts "  - rp@acercoffee.com / ChangeMe123!"
+puts "  - kp@acercoffee.com / ChangeMe123!"
 puts ""
-puts "Sample Customer: emma.johnson@example.com / password123"
-puts "All customer passwords: password123"
+puts "Sample Customers:"
+puts "  - test1@example.com / TestPass123!"
+puts "  - test2@example.com / TestPass123!"
+puts "  - test3@example.com / TestPass123!"
 puts "=" * 60

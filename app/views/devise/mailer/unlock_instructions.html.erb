@@ -1,7 +1,21 @@
-<p>Hello <%= @resource.email %>!</p>
+<h2 style="color: #1f2937; margin-top: 0;">🔒 Account Locked</h2>
 
-<p>Your account has been locked due to an excessive number of unsuccessful sign in attempts.</p>
+<p>Hi there,</p>
 
-<p>Click the link below to unlock your account:</p>
+<div style="background: #fee2e2; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #ef4444;">
+  <p style="margin: 0; color: #991b1b;">
+    Your account has been locked due to too many unsuccessful sign-in attempts.
+  </p>
+</div>
 
-<p><%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token) %></p>
+<p>Click the button below to unlock your account:</p>
+
+<div style="text-align: center; margin: 32px 0;">
+  <%= link_to 'Unlock My Account', unlock_url(@resource, unlock_token: @token), style: "display: inline-block; padding: 14px 28px; background-color: #8B4513; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;" %>
+</div>
+
+<p>If you didn't try to sign in, please contact us immediately by replying to this email.</p>
+
+<p style="margin-top: 24px;">
+  <strong>The Acer Coffee Team</strong>
+</p>

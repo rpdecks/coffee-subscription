@@ -1,5 +1,5 @@
 class SubscriptionMailer < ApplicationMailer
-  default from: ENV.fetch("SENDGRID_FROM_EMAIL", "subscriptions@coffeeshop.com")
+  default from: "Acer Coffee <orders@acercoffee.com>"
 
   def subscription_created(subscription)
     @subscription = subscription
@@ -63,7 +63,7 @@ class SubscriptionMailer < ApplicationMailer
     @plan = subscription.subscription_plan
     @invoice = invoice
     @failed_count = subscription.failed_payment_count
-    @update_payment_url = edit_dashboard_payment_methods_url
+    @update_payment_url = dashboard_payment_methods_url
 
     mail(
       to: @customer.email,

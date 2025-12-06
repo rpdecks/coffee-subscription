@@ -1,7 +1,19 @@
-<p>Hello <%= @email %>!</p>
+<h2 style="color: #1f2937; margin-top: 0;">Email Address Changed</h2>
 
-<% if @resource.try(:unconfirmed_email?) %>
-  <p>We're contacting you to notify you that your email is being changed to <%= @resource.unconfirmed_email %>.</p>
-<% else %>
-  <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
-<% end %>
+<p>Hi there,</p>
+
+<div style="background: #eff6ff; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #3b82f6;">
+  <p style="margin: 0; color: #1e40af;">
+    <% if @resource.try(:unconfirmed_email?) %>
+      Your email address is being changed to <strong><%= @resource.unconfirmed_email %></strong>.
+    <% else %>
+      Your email address has been changed to <strong><%= @resource.email %></strong>.
+    <% end %>
+  </p>
+</div>
+
+<p>If you didn't make this change, please contact us immediately by replying to this email.</p>
+
+<p style="margin-top: 24px;">
+  <strong>The Acer Coffee Team</strong>
+</p>

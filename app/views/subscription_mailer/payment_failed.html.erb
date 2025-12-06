@@ -1,104 +1,42 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        color: #333;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .header {
-        background-color: #8B4513;
-        color: white;
-        padding: 20px;
-        text-align: center;
-      }
-      .content {
-        background-color: #f9f9f9;
-        padding: 30px;
-        border: 1px solid #ddd;
-      }
-      .alert {
-        background-color: #fee;
-        border: 1px solid #fcc;
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 5px;
-      }
-      .button {
-        display: inline-block;
-        padding: 12px 30px;
-        background-color: #8B4513;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        margin: 20px 0;
-      }
-      .footer {
-        text-align: center;
-        padding: 20px;
-        color: #666;
-        font-size: 12px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>Payment Issue with Your Subscription</h1>
-      </div>
-      
-      <div class="content">
-        <p>Hi <%= @customer.full_name %>,</p>
-        
-        <div class="alert">
-          <strong>⚠️ Payment Failed</strong><br>
-          We were unable to process your payment for your <%= @plan.name %> subscription.
-        </div>
-        
-        <p>
-          <% if @failed_count == 1 %>
-            This is the first time we've had trouble processing your payment. Don't worry - we'll try again automatically.
-          <% elsif @failed_count == 2 %>
-            We've now attempted to charge your payment method twice without success. We'll make one more automatic attempt.
-          <% elsif @failed_count >= 3 %>
-            We've made <%= @failed_count %> attempts to charge your payment method without success. Your subscription may be suspended soon.
-          <% end %>
-        </p>
-        
-        <p>
-          <strong>What you can do:</strong>
-        </p>
-        <ul>
-          <li>Check that your payment method has sufficient funds</li>
-          <li>Verify that your card hasn't expired</li>
-          <li>Update your payment method if needed</li>
-        </ul>
-        
-        <div style="text-align: center;">
-          <%= link_to "Update Payment Method", @update_payment_url, class: "button" %>
-        </div>
-        
-        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-        
-        <p>
-          Best regards,<br>
-          The Coffee Subscription Team
-        </p>
-      </div>
-      
-      <div class="footer">
-        <p>
-          You're receiving this email because you have an active coffee subscription.<br>
-          If you believe this is a mistake, please contact us immediately.
-        </p>
-      </div>
-    </div>
-  </body>
-</html>
+<h2 style="color: #1f2937; margin-top: 0;">⚠️ Payment Issue with Your Subscription</h2>
+
+<p>Hi <%= @customer.full_name %>,</p>
+
+<div style="background: #fee2e2; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #ef4444;">
+  <p style="margin: 0; color: #991b1b; font-weight: 600;">
+    Payment Failed
+  </p>
+  <p style="margin: 12px 0 0 0; color: #7f1d1d; font-size: 14px;">
+    We were unable to process your payment for your <%= @plan.name %> subscription.
+  </p>
+</div>
+
+<p>
+  <% if @failed_count == 1 %>
+    This is the first time we've had trouble processing your payment. Don't worry - we'll try again automatically.
+  <% elsif @failed_count == 2 %>
+    We've now attempted to charge your payment method twice without success. We'll make one more automatic attempt.
+  <% elsif @failed_count >= 3 %>
+    We've made <%= @failed_count %> attempts to charge your payment method without success. Your subscription may be suspended soon.
+  <% end %>
+</p>
+
+<div style="background: #f9fafb; padding: 20px; margin: 24px 0; border-radius: 8px;">
+  <p style="margin: 0 0 12px 0; font-weight: 600; color: #1f2937;">What you can do:</p>
+  <ul style="margin: 0; padding-left: 20px; color: #6b7280;">
+    <li>Check that your payment method has sufficient funds</li>
+    <li>Verify that your card hasn't expired</li>
+    <li>Update your payment method if needed</li>
+  </ul>
+</div>
+
+<div style="text-align: center; margin: 32px 0;">
+  <%= link_to "Update Payment Method", @update_payment_url, style: "display: inline-block; padding: 12px 24px; background-color: #8B4513; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600;" %>
+</div>
+
+<p>If you have any questions or need assistance, please don't hesitate to reply to this email.</p>
+
+<p style="margin-top: 24px;">
+  Best regards,<br>
+  <strong>The Acer Coffee Team</strong>
+</p>

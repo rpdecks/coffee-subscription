@@ -1,15 +1,16 @@
-<div style="margin-top:16px; font-size:12px; color:#6b7280;">
-  <div>
-    <strong><%= ENV["BUSINESS_NAME"] || "" %></strong>
+<div class="email-footer">
+  <div style="margin-bottom: 16px;">
+    <strong style="color: #1f2937;">Acer Coffee</strong>
   </div>
-  <div>
-    <%= ENV["BUSINESS_ADDRESS_LINE1"] || "" %><% if ENV["BUSINESS_ADDRESS_LINE2"].present? %>, <%= ENV["BUSINESS_ADDRESS_LINE2"] %><% end %>
+  <div style="margin-bottom: 8px;">
+    Premium craft coffee, delivered fresh to your door
   </div>
-  <div>
-    <%= ENV["BUSINESS_CITY_STATE_ZIP"] || "" %>
+  <div style="margin-bottom: 16px; color: #9ca3af;">
+    orders@acercoffee.com
   </div>
-  <div style="margin-top:8px;">
-    You’re receiving this email from <%= ENV["BUSINESS_NAME"] || "our business" %>.
-    Our mailing address is listed above to comply with CAN-SPAM.
+  <div style="font-size: 12px; color: #9ca3af; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+    You're receiving this email because you have an account with Acer Coffee.
+    <br>
+    Questions? Just reply to this email.
   </div>
 </div>

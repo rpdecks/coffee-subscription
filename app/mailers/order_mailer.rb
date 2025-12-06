@@ -1,5 +1,5 @@
 class OrderMailer < ApplicationMailer
-  default from: ENV.fetch("SENDGRID_FROM_EMAIL", "orders@coffeeshop.com")
+  default from: "Acer Coffee <orders@acercoffee.com>"
 
   def order_confirmation(order)
     @order = order

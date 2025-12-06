@@ -1,40 +1,19 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-    <style>
-      body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-      .header { background: #4CAF50; color: white; padding: 20px; text-align: center; }
-      .content { background: #f9f9f9; padding: 20px; }
-      .footer { text-align: center; padding: 20px; color: #666; font-size: 0.9em; }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>Welcome Back!</h1>
-      </div>
-      
-      <div class="content">
-        <p>Hi <%= @customer.first_name %>,</p>
-        
-        <p>Your <strong><%= @plan.name %></strong> subscription has been resumed!</p>
-        
-        <% if @subscription.next_delivery_date %>
-          <p>Your next delivery is scheduled for <strong><%= @subscription.next_delivery_date.strftime("%B %d, %Y") %></strong>.</p>
-        <% end %>
-        
-        <p>We're glad to have you back. Get ready for fresh coffee!</p>
-        
-        <p>
-          The Coffee Team
-        </p>
-      </div>
-      
-      <div class="footer">
-        <p>Questions? Just reply to this email!</p>
-      </div>
-    </div>
-  </body>
-</html>
+<h2 style="color: #1f2937; margin-top: 0;">🎉 Welcome Back!</h2>
+
+<p>Hi <%= @customer.first_name %>,</p>
+
+<p>Your <strong><%= @plan.name %></strong> subscription has been resumed!</p>
+
+<div style="background: #f0fdf4; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #10b981;">
+  <% if @subscription.next_delivery_date %>
+    <p style="margin: 0; color: #065f46;">
+      <strong>📅 Next delivery:</strong> <%= @subscription.next_delivery_date.strftime("%B %d, %Y") %>
+    </p>
+  <% end %>
+</div>
+
+<p>We're glad to have you back. Get ready for fresh coffee!</p>
+
+<p style="margin-top: 24px;">
+  <strong>The Acer Coffee Team</strong>
+</p>
