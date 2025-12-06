@@ -7,6 +7,7 @@ FactoryBot.define do
     last_name { "Doe" }
     phone { "555-123-4567" }
     role { :customer }
+    confirmed_at { Time.current }
 
     trait :admin do
       role { :admin }
@@ -15,6 +16,18 @@ FactoryBot.define do
 
     trait :customer do
       role { :customer }
+    end
+
+    trait :unconfirmed do
+      confirmed_at { nil }
+
+      # Manually confirm token after create to avoid email send issues in tests
+      after(:create) do |user|
+        user.update_columns(
+          confirmation_token: Devise.friendly_token,
+          confirmation_sent_at: Time.current
+        )
+      end
     end
 
     factory :admin_user, traits: [ :admin ]
