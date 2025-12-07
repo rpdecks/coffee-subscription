@@ -157,6 +157,7 @@ bin/deploy-production
 ```
 
 The deploy script will:
+
 1. Check for uncommitted changes
 2. Run full test suite
 3. Ask for confirmation before deploying

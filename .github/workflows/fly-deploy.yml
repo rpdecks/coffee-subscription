@@ -5,11 +5,29 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # Allow manual triggers from GitHub UI
+
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
   deploy:
     name: Deploy app
+    needs: test # Only deploy if tests pass
     runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    concurrency: deploy-group
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
