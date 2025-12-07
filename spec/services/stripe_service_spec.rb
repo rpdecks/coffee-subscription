@@ -280,4 +280,147 @@ RSpec.describe StripeService do
       described_class.resume_subscription(subscription_id)
     end
   end
+
+  describe '.create_product_checkout_session' do
+    let(:product1) { create(:product, name: 'Ethiopian Yirgacheffe', price_cents: 1800) }
+    let(:product2) { create(:product, name: 'Colombian Supremo', price_cents: 1600) }
+    let(:cart_items) do
+      [
+        { product: product1, quantity: 2 },
+        { product: product2, quantity: 1 }
+      ]
+    end
+    let(:success_url) { 'https://example.com/shop/success' }
+    let(:cancel_url) { 'https://example.com/shop/checkout' }
+    let(:metadata) { { order_note: 'Test order' } }
+
+    before do
+      allow(Stripe::Customer).to receive(:create).and_return(stripe_customer)
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(stripe_checkout_session)
+    end
+
+    it 'creates a checkout session for one-time payment' do
+      expect(Stripe::Checkout::Session).to receive(:create).with(
+        hash_including(
+          customer: stripe_customer.id,
+          mode: 'payment',
+          payment_method_types: [ 'card' ],
+          success_url: success_url,
+          cancel_url: cancel_url
+        )
+      )
+
+      described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        success_url: success_url,
+        cancel_url: cancel_url,
+        metadata: metadata
+      )
+    end
+
+    it 'creates line items for each cart item' do
+      expect(Stripe::Checkout::Session).to receive(:create) do |params|
+        expect(params[:line_items].length).to eq(2)
+
+        # Check first item
+        first_item = params[:line_items][0]
+        expect(first_item[:price_data][:product_data][:name]).to eq('Ethiopian Yirgacheffe')
+        expect(first_item[:price_data][:unit_amount]).to eq(1800)
+        expect(first_item[:quantity]).to eq(2)
+
+        # Check second item
+        second_item = params[:line_items][1]
+        expect(second_item[:price_data][:product_data][:name]).to eq('Colombian Supremo')
+        expect(second_item[:price_data][:unit_amount]).to eq(1600)
+        expect(second_item[:quantity]).to eq(1)
+
+        stripe_checkout_session
+      end
+
+      described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        success_url: success_url,
+        cancel_url: cancel_url
+      )
+    end
+
+    it 'includes user_id and order_type in metadata' do
+      expect(Stripe::Checkout::Session).to receive(:create) do |params|
+        expect(params[:metadata][:user_id]).to eq(user.id)
+        expect(params[:metadata][:order_type]).to eq('one_time')
+        stripe_checkout_session
+      end
+
+      described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        success_url: success_url,
+        cancel_url: cancel_url
+      )
+    end
+
+    it 'enables shipping address collection' do
+      expect(Stripe::Checkout::Session).to receive(:create) do |params|
+        expect(params[:shipping_address_collection]).to be_present
+        expect(params[:shipping_address_collection][:allowed_countries]).to eq([ 'US' ])
+        stripe_checkout_session
+      end
+
+      described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        success_url: success_url,
+        cancel_url: cancel_url
+      )
+    end
+
+    it 'returns the checkout session' do
+      session = described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        success_url: success_url,
+        cancel_url: cancel_url
+      )
+
+      expect(session).to eq(stripe_checkout_session)
+    end
+
+    context 'when user does not have a Stripe customer ID' do
+      it 'creates a new Stripe customer' do
+        expect(Stripe::Customer).to receive(:create).with(
+          hash_including(
+            email: user.email,
+            name: user.full_name
+          )
+        ).and_return(stripe_customer)
+
+        described_class.create_product_checkout_session(
+          user: user,
+          cart_items: cart_items,
+          success_url: success_url,
+          cancel_url: cancel_url
+        )
+      end
+    end
+
+    context 'when Stripe API fails' do
+      before do
+        allow(Stripe::Checkout::Session).to receive(:create)
+          .and_raise(Stripe::StripeError.new('API Error'))
+      end
+
+      it 'raises a StripeService::StripeError' do
+        expect {
+          described_class.create_product_checkout_session(
+            user: user,
+            cart_items: cart_items,
+            success_url: success_url,
+            cancel_url: cancel_url
+          )
+        }.to raise_error(StripeService::StripeError, /Failed to create product checkout session/)
+      end
+    end
+  end
 end

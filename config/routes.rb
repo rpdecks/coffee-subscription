@@ -13,6 +13,17 @@ Rails.application.routes.draw do
   # Products
   resources :products, only: [ :index, :show ]
 
+  # Shop - One-time purchases
+  get "shop", to: "shop#index", as: :shop
+  get "shop/products/:id", to: "shop#show", as: :shop_product
+  get "shop/checkout", to: "shop#checkout", as: :shop_checkout
+  post "shop/checkout/session", to: "shop#create_checkout_session", as: :shop_create_checkout
+  get "shop/success", to: "shop#success", as: :shop_success
+  post "shop/cart/add", to: "shop#add_to_cart", as: :shop_add_to_cart
+  delete "shop/cart/remove/:product_id", to: "shop#remove_from_cart", as: :shop_remove_from_cart
+  patch "shop/cart/update/:product_id", to: "shop#update_cart", as: :shop_update_cart
+  delete "shop/cart/clear", to: "shop#clear_cart", as: :shop_clear_cart
+
   # Subscription flow (public)
   get "subscribe", to: "subscriptions#landing", as: :subscribe
   get "subscribe/plans", to: "subscriptions#plans", as: :subscription_plans

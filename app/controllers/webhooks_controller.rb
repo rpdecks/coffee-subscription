@@ -96,6 +96,72 @@ class WebhooksController < ApplicationController
 
     # Get metadata
     metadata = session.metadata
+
+    # Check if this is a one-time purchase or subscription
+    if metadata["order_type"] == "one_time"
+      handle_one_time_purchase(session, user, metadata)
+    else
+      handle_subscription_purchase(session, user, metadata)
+    end
+  end
+
+  def handle_one_time_purchase(session, user, metadata)
+    Rails.logger.info("Processing one-time purchase for session: #{session.id}")
+
+    # Parse cart items from metadata
+    cart_items = JSON.parse(metadata["cart_items"] || "[]")
+    return if cart_items.empty?
+
+    # Get shipping address from Stripe session
+    shipping_details = session.shipping_details || session.shipping
+    shipping_address = if shipping_details
+      create_or_find_address(user, shipping_details)
+    else
+      user.addresses.shipping.first || user.addresses.first
+    end
+
+    # Create order
+    order = user.orders.create!(
+      order_type: :one_time,
+      status: :pending,
+      shipping_address: shipping_address,
+      stripe_payment_intent_id: session.payment_intent
+    )
+
+    # Create order items
+    cart_items.each do |item|
+      product = Product.find_by(id: item["product_id"])
+      next unless product
+
+      quantity = item["quantity"].to_i
+      order.order_items.create!(
+        product: product,
+        product_name: product.name,
+        quantity: quantity,
+        price_cents: product.price_cents,
+        total_cents: product.price_cents * quantity
+      )
+    end
+
+    # Calculate totals
+    order.calculate_totals
+    order.save!
+
+    Rails.logger.info("Created one-time order #{order.order_number} from webhook")
+
+    # Send confirmation email
+    OrderMailer.order_confirmation(order).deliver_later
+
+    # Update inventory
+    order.order_items.each do |item|
+      product = item.product
+      if product.inventory_count.present?
+        product.update!(inventory_count: product.inventory_count - item.quantity)
+      end
+    end
+  end
+
+  def handle_subscription_purchase(session, user, metadata)
     plan = SubscriptionPlan.find_by(id: metadata["subscription_plan_id"])
     return unless plan
 
@@ -130,6 +196,31 @@ class WebhooksController < ApplicationController
         Rails.logger.error("Failed to create subscription: #{subscription.errors.full_messages}")
       end
     end
+  end
+
+  def create_or_find_address(user, shipping_details)
+    address_attributes = {
+      address_type: :shipping,
+      street_address: shipping_details.address.line1,
+      street_address_2: shipping_details.address.line2,
+      city: shipping_details.address.city,
+      state: shipping_details.address.state,
+      zip_code: shipping_details.address.postal_code,
+      country: shipping_details.address.country || "US"
+    }
+
+    # Try to find existing address
+    existing = user.addresses.find_by(
+      street_address: address_attributes[:street_address],
+      city: address_attributes[:city],
+      state: address_attributes[:state],
+      zip_code: address_attributes[:zip_code]
+    )
+
+    return existing if existing
+
+    # Create new address
+    user.addresses.create!(address_attributes)
   end
 
   def handle_subscription_created(stripe_subscription)

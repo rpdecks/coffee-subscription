@@ -63,6 +63,56 @@ class StripeService
     raise StripeError, "Failed to create checkout session: #{e.message}"
   end
 
+  # Create a checkout session for one-time product purchase
+  def self.create_product_checkout_session(user:, cart_items:, success_url:, cancel_url:, metadata: {})
+    # Ensure user has a Stripe customer ID
+    stripe_customer_id = create_customer(user)
+
+    # Build line items from cart
+    line_items = cart_items.map do |item|
+      product_data = {
+        name: item[:product].name,
+        description: item[:product].description
+      }
+
+      # Add image if available
+      if item[:product].respond_to?(:image_url) && item[:product].image_url.present?
+        product_data[:images] = [ item[:product].image_url ]
+      end
+
+      {
+        price_data: {
+          currency: "usd",
+          product_data: product_data,
+          unit_amount: item[:product].price_cents
+        },
+        quantity: item[:quantity]
+      }
+    end
+
+    # Create checkout session for one-time payment
+    session = Stripe::Checkout::Session.create({
+      customer: stripe_customer_id,
+      mode: "payment",
+      payment_method_types: [ "card" ],
+      line_items: line_items,
+      success_url: success_url,
+      cancel_url: cancel_url,
+      shipping_address_collection: {
+        allowed_countries: [ "US" ]
+      },
+      metadata: metadata.merge({
+        user_id: user.id,
+        order_type: "one_time"
+      })
+    })
+
+    session
+  rescue Stripe::StripeError => e
+    Rails.logger.error("Stripe product checkout session creation failed: #{e.message}")
+    raise StripeError, "Failed to create product checkout session: #{e.message}"
+  end
+
   # Add a payment method to a customer
   def self.attach_payment_method(user:, payment_method_id:, set_as_default: false)
     stripe_customer_id = create_customer(user)

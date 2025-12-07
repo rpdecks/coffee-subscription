@@ -1,0 +1,101 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Verify Stripe production configuration
+require_relative "../config/environment"
+
+puts "\n🔍 Verifying Stripe Production Configuration\n\n"
+
+# Check environment
+puts "Environment: #{Rails.env}"
+puts "App Host: #{ENV.fetch('APP_HOST', 'not set')}"
+puts ""
+
+# Check Stripe keys
+publishable_key = Rails.application.credentials.dig(:stripe, :publishable_key)
+secret_key = Rails.application.credentials.dig(:stripe, :secret_key)
+webhook_secret = Rails.application.credentials.dig(:stripe, :webhooks_secret)
+
+puts "Stripe Keys:"
+if publishable_key&.start_with?("pk_live_")
+  puts "  ✅ Publishable Key: #{publishable_key[0..20]}... (LIVE MODE)"
+elsif publishable_key&.start_with?("pk_test_")
+  puts "  ⚠️  Publishable Key: #{publishable_key[0..20]}... (TEST MODE)"
+else
+  puts "  ❌ Publishable Key: Not configured"
+end
+
+if secret_key&.start_with?("sk_live_")
+  puts "  ✅ Secret Key: #{secret_key[0..20]}... (LIVE MODE)"
+elsif secret_key&.start_with?("sk_test_")
+  puts "  ⚠️  Secret Key: #{secret_key[0..20]}... (TEST MODE)"
+else
+  puts "  ❌ Secret Key: Not configured"
+end
+
+if webhook_secret&.start_with?("whsec_")
+  puts "  ✅ Webhook Secret: #{webhook_secret[0..15]}..."
+else
+  puts "  ❌ Webhook Secret: Not configured"
+end
+
+puts ""
+
+# Test Stripe API connection
+puts "Testing Stripe API Connection:"
+begin
+  account = Stripe::Account.retrieve
+  puts "  ✅ Connected to Stripe"
+  puts "  Account ID: #{account.id}"
+  puts "  Business Name: #{account.business_profile&.name || 'Not set'}"
+  puts "  Email: #{account.email}"
+
+  if account.charges_enabled
+    puts "  ✅ Charges Enabled: Yes"
+  else
+    puts "  ⚠️  Charges Enabled: No (complete account activation)"
+  end
+
+  if account.payouts_enabled
+    puts "  ✅ Payouts Enabled: Yes"
+  else
+    puts "  ⚠️  Payouts Enabled: No (add bank account)"
+  end
+rescue Stripe::AuthenticationError => e
+  puts "  ❌ Authentication Error: #{e.message}"
+rescue => e
+  puts "  ❌ Error: #{e.message}"
+end
+
+puts ""
+
+# Check webhook endpoint configuration
+puts "Webhook Endpoint:"
+puts "  URL: https://#{ENV.fetch('APP_HOST', 'coffee-production.fly.dev')}/webhooks/stripe"
+puts ""
+
+# Check for products and subscription plans
+puts "Database Records:"
+puts "  Products: #{Product.count} (Active: #{Product.active.count})"
+puts "  Subscription Plans: #{SubscriptionPlan.count}"
+puts "  Active Subscriptions: #{Subscription.active.count}"
+puts "  Total Orders: #{Order.count}"
+puts "  - Subscription Orders: #{Order.subscription.count}"
+puts "  - One-Time Orders: #{Order.one_time.count}"
+puts ""
+
+# Check shop products
+shop_products = Product.active.coffee.in_stock
+puts "Shop Products (available for one-off sales):"
+if shop_products.any?
+  shop_products.each do |product|
+    stock = product.inventory_count ? "#{product.inventory_count} in stock" : "unlimited"
+    puts "  ✅ #{product.name} - $#{'%.2f' % product.price} (#{stock})"
+  end
+else
+  puts "  ⚠️  No products available for shop"
+  puts "     Run: Product.create!(name: 'Product Name', price_cents: 1800, active: true, product_type: :coffee)"
+end
+
+puts ""
+puts "✅ Verification complete!\n\n"
