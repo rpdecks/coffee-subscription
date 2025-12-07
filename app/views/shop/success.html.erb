@@ -1,0 +1,53 @@
+<% content_for :title, "Order Confirmed - Acer Coffee" %>
+
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl w-full">
+    <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+      <!-- Success Icon -->
+      <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-100 mb-6">
+        <svg class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
+      <p class="text-lg text-gray-600 mb-8">Thank you for your purchase</p>
+
+      <% if @order %>
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+          <div class="text-left space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Order Number:</span>
+              <span class="font-mono font-bold text-gray-900"><%= @order.order_number %></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total:</span>
+              <span class="font-bold text-gray-900">$<%= '%.2f' % @order.total %></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Order Date:</span>
+              <span class="text-gray-900"><%= @order.created_at.strftime('%B %d, %Y') %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <p class="text-gray-600">
+            We're roasting your coffee fresh! You'll receive a confirmation email shortly with tracking information.
+          </p>
+        </div>
+
+        <%= link_to "View Order Details", dashboard_order_path(@order),
+            class: "inline-block bg-amber-600 text-white px-8 py-3 rounded-lg hover:bg-amber-700 transition font-medium mb-4" %>
+      <% end %>
+
+      <div class="flex justify-center gap-4 pt-4 border-t">
+        <%= link_to "Continue Shopping", shop_path,
+            class: "text-amber-600 hover:text-amber-700 font-medium" %>
+        <span class="text-gray-300">|</span>
+        <%= link_to "Go to Dashboard", dashboard_root_path,
+            class: "text-amber-600 hover:text-amber-700 font-medium" %>
+      </div>
+    </div>
+  </div>
+</div>

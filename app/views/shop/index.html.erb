@@ -1,0 +1,91 @@
+<% content_for :title, "Shop - Acer Coffee" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 class="text-4xl font-bold text-gray-900">Shop</h1>
+      <p class="mt-2 text-lg text-gray-600">Premium craft coffee, delivered to your door</p>
+    </div>
+  </div>
+
+  <!-- Cart Summary (if items) -->
+  <% if session[:cart]&.any? %>
+    <div class="bg-blue-50 border-b border-blue-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-blue-900 font-medium">
+              <%= pluralize(session[:cart].sum { |i| i['quantity'].to_i }, 'item') %> in cart
+            </span>
+          </div>
+          <div class="space-x-4">
+            <%= link_to "View Cart", shop_checkout_path, class: "bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Products Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <% if @products.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% @products.each do |product| %>
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+            <!-- Placeholder Image -->
+            <div class="h-64 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+              <svg class="w-24 h-24 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              </svg>
+            </div>
+
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-2"><%= product.name %></h3>
+
+              <% if product.description.present? %>
+                <p class="text-gray-600 text-sm mb-4"><%= truncate(product.description, length: 100) %></p>
+              <% end %>
+
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl font-bold text-gray-900">
+                  $<%= '%.2f' % product.price %>
+                </span>
+
+                <% if product.inventory_count %>
+                  <span class="text-sm text-gray-500">
+                    <%= product.inventory_count %> in stock
+                  </span>
+                <% end %>
+              </div>
+
+              <%= form_with url: shop_add_to_cart_path, method: :post, local: true do |f| %>
+                <%= f.hidden_field :product_id, value: product.id %>
+
+                <div class="flex items-center gap-2 mb-4">
+                  <label class="text-sm text-gray-600">Qty:</label>
+                  <%= f.number_field :quantity, value: 1, min: 1, max: 10,
+                      class: "w-20 border border-gray-300 rounded px-3 py-2" %>
+                </div>
+
+                <%= f.submit "Add to Cart",
+                    class: "w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 transition font-medium" %>
+              <% end %>
+
+              <%= link_to "View Details", shop_product_path(product),
+                  class: "block text-center mt-2 text-amber-600 hover:text-amber-700 text-sm" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-16">
+        <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+        <h3 class="mt-4 text-xl font-medium text-gray-900">No products available</h3>
+        <p class="mt-2 text-gray-500">Check back soon for our coffee selection!</p>
+      </div>
+    <% end %>
+  </div>
+</div>
