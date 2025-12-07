@@ -1,0 +1,64 @@
+#!/bin/bash
+# Safe production deployment script with confirmation
+
+set -e
+
+echo "🚨 PRODUCTION DEPLOYMENT 🚨"
+echo ""
+echo "App: coffee-production"
+echo "URL: https://coffee-production.fly.dev"
+echo ""
+echo "Current git status:"
+git status --short
+echo ""
+
+# Check if on main branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" != "main" ]; then
+  echo "⚠️  WARNING: You're on branch '$BRANCH', not 'main'"
+  read -p "Continue anyway? (y/N) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Deployment cancelled."
+    exit 1
+  fi
+fi
+
+# Check for uncommitted changes
+if [[ -n $(git status --porcelain) ]]; then
+  echo "⚠️  WARNING: You have uncommitted changes"
+  read -p "Continue anyway? (y/N) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Deployment cancelled."
+    exit 1
+  fi
+fi
+
+# Run tests
+echo "Running tests..."
+if ! bundle exec rspec; then
+  echo "❌ Tests failed. Fix them before deploying."
+  exit 1
+fi
+
+echo ""
+echo "✅ Tests passed"
+echo ""
+read -p "🚀 Deploy to PRODUCTION now? (y/N) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Deployment cancelled."
+  exit 1
+fi
+
+echo ""
+echo "Deploying..."
+fly deploy
+
+echo ""
+echo "✅ Deployment complete!"
+echo ""
+echo "Check status: fly status"
+echo "View logs:    fly logs"
+echo "Open app:     open https://coffee-production.fly.dev"

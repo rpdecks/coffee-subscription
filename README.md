@@ -141,8 +141,26 @@ See **ROADMAP.md** for the complete development plan.
 rails db:migrate             # Run migrations
 rails db:seed                # Load seed data
 rails console                # Rails console
-rspec                        # Run tests (when added)
+rspec                        # Run tests
 ```
+
+## 🚀 Deployment
+
+**⚠️ IMPORTANT: Use the safe deploy script, not `fly deploy` directly**
+
+```bash
+# Safe production deployment (with confirmations)
+bin/deploy-production
+
+# DO NOT use directly:
+# fly deploy  ❌ (bypasses safety checks)
+```
+
+The deploy script will:
+1. Check for uncommitted changes
+2. Run full test suite
+3. Ask for confirmation before deploying
+4. Deploy to production
 
 ## 📚 Additional Documentation
 
@@ -152,8 +170,8 @@ rspec                        # Run tests (when added)
 
 ---
 
-**Status**: MVP foundation complete with subscription flow  
-**Next**: Stripe integration and admin panel  
+**Status**: MVP foundation complete with subscription flow
+**Next**: Stripe integration and admin panel
 **Version**: 0.1.0
 
 Built with ❤️ and ☕
