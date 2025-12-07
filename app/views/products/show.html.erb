@@ -6,7 +6,7 @@
       </svg>
       Back to Products
     <% end %>
-    
+
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div class="md:flex">
         <!-- Product Image -->
@@ -26,29 +26,29 @@
               </defs>
             </svg>
           </div>
-          
+
           <!-- Coffee Cup Emoji -->
           <div class="relative z-10 text-brown/30 text-9xl">☕</div>
-          
+
           <% if @product.weight_oz %>
             <div class="absolute top-6 right-6 bg-white/95 backdrop-blur px-4 py-2 rounded-full text-lg font-medium text-gray-700 shadow-md z-20">
               <%= @product.weight_oz %>oz
             </div>
           <% end %>
         </div>
-        
+
         <!-- Product Details -->
         <div class="md:w-1/2 p-8 lg:p-12">
           <div class="flex justify-between items-start mb-6">
             <h1 class="text-4xl font-bold text-gray-900"><%= @product.name %></h1>
             <span class="text-3xl font-bold text-brown whitespace-nowrap ml-4">$<%= sprintf('%.2f', @product.price_cents / 100.0) %></span>
           </div>
-          
+
           <div class="mb-8">
             <h2 class="text-xl font-semibold text-gray-900 mb-3">Description</h2>
             <p class="text-gray-700 leading-relaxed text-lg"><%= @product.description %></p>
           </div>
-          
+
           <% if @product.coffee? %>
             <div class="mb-8 p-6 bg-gray-50 rounded-lg">
               <h2 class="text-xl font-semibold text-gray-900 mb-4">Coffee Details</h2>
@@ -80,7 +80,7 @@
               </ul>
             </div>
           <% end %>
-          
+
           <!-- Action Buttons -->
           <div class="space-y-4">
             <% if @product.inventory_count.nil? || @product.inventory_count > 0 %>
@@ -98,10 +98,10 @@
                 Out of Stock
               </span>
             <% end %>
-            
+
             <% unless user_signed_in? %>
             <p class="text-center text-gray-600">
-              Don't have an account? 
+              Don't have an account?
               <%= link_to "Sign up", new_user_registration_path, class: "text-brown hover:text-brown/80 font-medium" %> to get started
             </p>
           <% end %>

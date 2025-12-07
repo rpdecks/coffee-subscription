@@ -1,5 +1,5 @@
 class Admin::ProductsController < Admin::BaseController
-  before_action :set_product, only: [ :show, :edit, :update, :destroy, :toggle_active ]
+  before_action :set_product, only: [ :show, :edit, :update, :destroy, :toggle_active, :toggle_shop_visibility ]
 
   def index
     @products = Product.all.order(created_at: :desc)
@@ -66,6 +66,11 @@ class Admin::ProductsController < Admin::BaseController
     redirect_to admin_products_path, notice: "Product #{@product.active? ? 'activated' : 'deactivated'}."
   end
 
+  def toggle_shop_visibility
+    @product.update(visible_in_shop: !@product.visible_in_shop)
+    redirect_to admin_products_path, notice: "Product #{@product.visible_in_shop? ? 'shown' : 'hidden'} in shop."
+  end
+
   private
 
   def set_product
@@ -81,6 +86,7 @@ class Admin::ProductsController < Admin::BaseController
       :weight_oz,
       :inventory_count,
       :active,
+      :visible_in_shop,
       :stripe_product_id,
       :stripe_price_id
     )

@@ -4,12 +4,23 @@ class ShopController < ApplicationController
   before_action :authenticate_user!, except: [ :index, :show ]
 
   def index
-    @products = Product.active.coffee.in_stock.order(:name)
+    @category = params[:category]&.to_sym
+
+    @products = Product.active.visible_in_shop.in_stock
+
+    case @category
+    when :coffee
+      @products = @products.coffee
+    when :merch
+      @products = @products.merch
+    end
+
+    @products = @products.order(:name)
   end
 
   def show
     @product = Product.find(params[:id])
-    redirect_to shop_path, alert: "Product not available" unless @product.active? && @product.in_stock?
+    redirect_to shop_path, alert: "Product not available" unless @product.active? && @product.visible_in_shop? && @product.in_stock?
   end
 
   def checkout

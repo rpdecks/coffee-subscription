@@ -39,9 +39,9 @@
           <!-- Subscription Plan -->
           <div>
             <%= f.label :subscription_plan_id, "Delivery Frequency", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= f.collection_select :subscription_plan_id, 
-                SubscriptionPlan.all, 
-                :id, 
+            <%= f.collection_select :subscription_plan_id,
+                SubscriptionPlan.all,
+                :id,
                 ->(plan) { "#{plan.frequency.titleize} - #{number_to_currency(plan.price_cents / 100.0)}/month" },
                 {},
                 class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
@@ -51,7 +51,7 @@
           <!-- Bag Size -->
           <div>
             <%= f.label :bag_size, "Bag Size", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= f.select :bag_size, 
+            <%= f.select :bag_size,
                 [['12 oz', '12 oz'], ['1 lb (16 oz)', '16 oz'], ['2 lb (32 oz)', '32 oz']],
                 {},
                 class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
@@ -61,8 +61,8 @@
           <!-- Quantity -->
           <div>
             <%= f.label :quantity, "Quantity (bags per delivery)", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= f.number_field :quantity, 
-                min: 1, 
+            <%= f.number_field :quantity,
+                min: 1,
                 max: 10,
                 class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
             <p class="mt-1 text-sm text-gray-500">How many bags would you like per delivery?</p>
@@ -71,9 +71,9 @@
           <!-- Shipping Address -->
           <div>
             <%= f.label :shipping_address_id, "Shipping Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= f.collection_select :shipping_address_id, 
-                current_user.addresses, 
-                :id, 
+            <%= f.collection_select :shipping_address_id,
+                current_user.addresses,
+                :id,
                 ->(address) { "#{address.street_address}, #{address.city}, #{address.state} #{address.zip_code}" },
                 { include_blank: "Select an address" },
                 class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
@@ -85,9 +85,9 @@
           <!-- Payment Method -->
           <div>
             <%= f.label :payment_method_id, "Payment Method", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= f.collection_select :payment_method_id, 
-                current_user.payment_methods, 
-                :id, 
+            <%= f.collection_select :payment_method_id,
+                current_user.payment_methods,
+                :id,
                 ->(pm) { "#{pm.card_brand} ending in #{pm.last_four}" },
                 { include_blank: "Select a payment method" },
                 class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown" %>
@@ -116,7 +116,7 @@
       </div>
       <div class="ml-3">
         <p class="text-sm text-blue-700">
-          To update your coffee preferences (roast level, grind type), visit your 
+          To update your coffee preferences (roast level, grind type), visit your
           <%= link_to "Coffee Preferences", edit_dashboard_coffee_preference_path, class: "font-medium underline hover:text-blue-800" %> page.
         </p>
       </div>

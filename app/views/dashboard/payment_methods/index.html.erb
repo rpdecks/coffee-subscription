@@ -42,7 +42,7 @@
                   </div>
                 <% end %>
               </div>
-              
+
               <div>
                 <p class="font-semibold text-gray-900">
                   <%= payment_method.card_brand %> •••• <%= payment_method.last_four %>
@@ -62,9 +62,9 @@
                   Default
                 </span>
               <% end %>
-              
-              <%= button_to "Remove", dashboard_payment_method_path(payment_method), 
-                  method: :delete, 
+
+              <%= button_to "Remove", dashboard_payment_method_path(payment_method),
+                  method: :delete,
                   data: { turbo_confirm: "Are you sure you want to remove this payment method?" },
                   class: "text-red-600 hover:text-red-800 font-medium text-sm" %>
             </div>

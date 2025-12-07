@@ -2,7 +2,7 @@
 <div class="text-center py-16 mb-16">
   <h1 class="text-6xl font-bold text-gray-900 mb-6">Fresh Roasted Coffee, Delivered</h1>
   <p class="text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">Small-batch coffee roasted to order and delivered on your schedule</p>
-  
+
   <div class="flex justify-center space-x-6">
     <%= link_to "Start a Subscription", subscribe_path, class: "bg-blue-600 text-white px-10 py-4 rounded-lg text-xl font-semibold hover:bg-blue-700 transition-colors" %>
     <%= link_to "Shop Single Bags", products_path, class: "bg-white border-2 border-gray-800 text-gray-800 px-10 py-4 rounded-lg text-xl font-semibold hover:bg-gray-50 transition-colors" %>
@@ -12,8 +12,8 @@
 <!-- Brand Story -->
 <div class="max-w-4xl mx-auto text-center mb-20">
   <p class="text-lg text-gray-700 leading-relaxed">
-    We're a small-batch roasting operation committed to bringing you exceptional coffee. 
-    Every bag is roasted to order, ensuring you receive the freshest beans possible. 
+    We're a small-batch roasting operation committed to bringing you exceptional coffee.
+    Every bag is roasted to order, ensuring you receive the freshest beans possible.
     From our roastery to your cup, we're focused on craft, quality, and consistency.
   </p>
 </div>
@@ -21,20 +21,20 @@
 <!-- How It Works -->
 <div class="bg-white py-16 -mx-4 px-4 mb-20">
   <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">How It Works</h2>
-  
+
   <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
     <div class="text-center">
       <div class="text-6xl mb-6">1️⃣</div>
       <h3 class="text-xl font-bold mb-3">Choose Your Roast & Cadence</h3>
       <p class="text-gray-600">Select from our curated coffees and pick a delivery frequency that fits your routine.</p>
     </div>
-    
+
     <div class="text-center">
       <div class="text-6xl mb-6">2️⃣</div>
       <h3 class="text-xl font-bold mb-3">Roasted Fresh</h3>
       <p class="text-gray-600">We roast your coffee to order, never keeping beans on shelves for weeks.</p>
     </div>
-    
+
     <div class="text-center">
       <div class="text-6xl mb-6">3️⃣</div>
       <h3 class="text-xl font-bold mb-3">Delivered on Schedule</h3>
@@ -46,7 +46,7 @@
 <!-- Featured Coffees -->
 <div class="mb-20">
   <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">Featured Coffees</h2>
-  
+
   <% @featured_products = Product.coffee.active.limit(3) %>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
     <% @featured_products.each do |product| %>
@@ -65,7 +65,7 @@
       </div>
     <% end %>
   </div>
-  
+
   <div class="text-center mt-8">
     <%= link_to "View All Products", products_path, class: "text-blue-600 hover:text-blue-800 font-semibold text-lg" %>
   </div>
@@ -75,7 +75,7 @@
 <div class="bg-gray-50 py-12 px-8 rounded-lg text-center max-w-3xl mx-auto">
   <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay Connected</h2>
   <p class="text-gray-600 mb-6">Get updates on new coffees, brewing tips, and exclusive offers.</p>
-  
+
   <form class="flex max-w-md mx-auto gap-3">
     <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" />
     <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">Subscribe</button>

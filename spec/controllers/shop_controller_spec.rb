@@ -4,8 +4,10 @@ require 'rails_helper'
 
 RSpec.describe ShopController, type: :controller do
   let(:user) { create(:customer_user) }
-  let!(:product1) { create(:product, name: 'Ethiopian Yirgacheffe', price_cents: 1800, active: true, inventory_count: 10) }
-  let!(:product2) { create(:product, name: 'Colombian Supremo', price_cents: 1600, active: true, inventory_count: 5) }
+  let!(:product1) { create(:product, name: 'Ethiopian Yirgacheffe', price_cents: 1800, active: true, visible_in_shop: true, product_type: :coffee, inventory_count: 10) }
+  let!(:product2) { create(:product, name: 'Colombian Supremo', price_cents: 1600, active: true, visible_in_shop: true, product_type: :coffee, inventory_count: 5) }
+  let!(:merch_product) { create(:product, name: 'Coffee Mug', price_cents: 1200, active: true, visible_in_shop: true, product_type: :merch, inventory_count: 20) }
+  let!(:hidden_product) { create(:product, name: 'Hidden Product', active: true, visible_in_shop: false, inventory_count: 10) }
   let!(:inactive_product) { create(:product, active: false) }
 
   describe 'GET #index' do
@@ -14,10 +16,24 @@ RSpec.describe ShopController, type: :controller do
       expect(response).to be_successful
     end
 
-    it 'assigns active, in-stock coffee products' do
+    it 'assigns active, visible, in-stock products (all categories)' do
       get :index
-      expect(assigns(:products)).to match_array([ product1, product2 ])
+      expect(assigns(:products)).to match_array([ product1, product2, merch_product ])
       expect(assigns(:products)).not_to include(inactive_product)
+      expect(assigns(:products)).not_to include(hidden_product)
+    end
+
+    it 'filters by coffee category' do
+      get :index, params: { category: 'coffee' }
+      expect(assigns(:products)).to match_array([ product1, product2 ])
+      expect(assigns(:products)).not_to include(merch_product)
+    end
+
+    it 'filters by merch category' do
+      get :index, params: { category: 'merch' }
+      expect(assigns(:products)).to match_array([ merch_product ])
+      expect(assigns(:products)).not_to include(product1)
+      expect(assigns(:products)).not_to include(product2)
     end
 
     it 'does not require authentication' do
@@ -27,7 +43,7 @@ RSpec.describe ShopController, type: :controller do
   end
 
   describe 'GET #show' do
-    it 'returns a success response for active product' do
+    it 'returns a success response for active, visible product' do
       get :show, params: { id: product1.id }
       expect(response).to be_successful
     end
@@ -39,6 +55,11 @@ RSpec.describe ShopController, type: :controller do
 
     it 'redirects for inactive product' do
       get :show, params: { id: inactive_product.id }
+      expect(response).to redirect_to(shop_path)
+    end
+
+    it 'redirects for hidden product' do
+      get :show, params: { id: hidden_product.id }
       expect(response).to redirect_to(shop_path)
     end
   end

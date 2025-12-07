@@ -82,7 +82,7 @@
           <h2 class="text-xl font-semibold text-gray-900">Subscriptions</h2>
           <span class="text-sm text-gray-500"><%= @subscriptions.count %> total</span>
         </div>
-        
+
         <% if @subscriptions.any? %>
           <div class="space-y-3">
             <% @subscriptions.each do |subscription| %>
@@ -102,8 +102,8 @@
                       </span>
                     </div>
                     <div class="mt-1 text-sm text-gray-500">
-                      <%= subscription.subscription_plan.frequency.titleize %> • 
-                      <%= subscription.quantity %> bag(s) • 
+                      <%= subscription.subscription_plan.frequency.titleize %> •
+                      <%= subscription.quantity %> bag(s) •
                       <%= number_to_currency(subscription.subscription_plan.price * subscription.quantity) %>/delivery
                     </div>
                     <% if subscription.next_delivery_date %>
@@ -132,7 +132,7 @@
           <h2 class="text-xl font-semibold text-gray-900">Recent Orders</h2>
           <span class="text-sm text-gray-500"><%= @customer.orders.count %> total</span>
         </div>
-        
+
         <% if @orders.any? %>
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">

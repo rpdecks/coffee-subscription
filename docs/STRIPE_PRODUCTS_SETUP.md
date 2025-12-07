@@ -11,6 +11,7 @@ Go to: **Products** → **Add Product** in BOTH Test mode and Live mode
 Create these for your subscription plans:
 
 **1. Monthly Subscription**
+
 - Name: `Monthly Coffee Subscription`
 - Description: `Fresh roasted coffee delivered monthly`
 - Pricing: **Recurring** - Monthly
@@ -19,6 +20,7 @@ Create these for your subscription plans:
 - **Don't create Prices** - your code creates them dynamically
 
 **2. Weekly Subscription** (if you have it)
+
 - Name: `Weekly Coffee Subscription`
 - Description: `Fresh roasted coffee delivered weekly`
 - Pricing: **Recurring** - Weekly
@@ -119,11 +121,13 @@ SubscriptionPlan.create!([
 ## Product Guidelines
 
 ### Pricing Strategy
+
 - **Subscriptions**: $20-30/month (industry standard)
 - **Individual bags**: $15-20 per 12oz bag
 - **Premium/specialty**: $22-25 per bag
 
 ### Inventory Management
+
 ```ruby
 # Set inventory count
 product.update!(inventory_count: 100)
@@ -136,7 +140,9 @@ Product.where("inventory_count < ?", 10)
 ```
 
 ### Product Images (Later)
+
 Once you have branding:
+
 1. Upload images to Active Storage
 2. Add `has_one_attached :image` to Product model
 3. Update shop views to display real images
@@ -144,6 +150,7 @@ Once you have branding:
 ---
 
 **Quick Reference:**
+
 - Test cards: https://stripe.com/docs/testing#cards
 - Stripe Dashboard: https://dashboard.stripe.com
 - Your shop: https://coffee-production.fly.dev/shop

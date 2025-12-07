@@ -21,7 +21,7 @@
             <%= f.input :email,
                         required: true,
                         autofocus: true,
-                        input_html: { 
+                        input_html: {
                           autocomplete: "email",
                           class: "block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown transition-colors"
                         },
@@ -30,7 +30,7 @@
           </div>
 
           <div class="mt-6">
-            <%= f.button :submit, "Send Reset Instructions", 
+            <%= f.button :submit, "Send Reset Instructions",
                         class: "w-full bg-brown text-white py-3 px-6 rounded-lg font-semibold hover:bg-brown/90 transition-all shadow-md hover:shadow-lg" %>
           </div>
         <% end %>
@@ -48,7 +48,7 @@
     <!-- Additional Info -->
     <div class="mt-6 text-center">
       <p class="text-sm text-gray-600">
-        Remember your password? 
+        Remember your password?
         <%= link_to "Sign in here", new_session_path(resource_name), class: "text-brown hover:text-brown/80 font-semibold" %>
       </p>
     </div>

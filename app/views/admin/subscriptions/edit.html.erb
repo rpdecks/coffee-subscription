@@ -45,9 +45,9 @@
         <!-- Subscription Plan -->
         <div>
           <%= f.label :subscription_plan_id, "Subscription Plan", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= f.collection_select :subscription_plan_id, 
-              SubscriptionPlan.all, 
-              :id, 
+          <%= f.collection_select :subscription_plan_id,
+              SubscriptionPlan.all,
+              :id,
               :name_with_frequency,
               { prompt: "Select a plan" },
               class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>

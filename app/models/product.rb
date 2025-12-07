@@ -6,6 +6,7 @@ class Product < ApplicationRecord
   validates :inventory_count, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   scope :active, -> { where(active: true) }
+  scope :visible_in_shop, -> { where(visible_in_shop: true) }
   scope :coffee, -> { where(product_type: :coffee) }
   scope :merch, -> { where(product_type: :merch) }
   scope :in_stock, -> { where("inventory_count IS NULL OR inventory_count > 0") }

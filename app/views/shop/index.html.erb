@@ -6,6 +6,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 class="text-4xl font-bold text-gray-900">Shop</h1>
       <p class="mt-2 text-lg text-gray-600">Premium craft coffee, delivered to your door</p>
+
+      <!-- Category Navigation -->
+      <div class="mt-6 flex gap-4">
+        <%= link_to shop_path,
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category.nil? ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+          All Products
+        <% end %>
+        <%= link_to shop_path(category: 'coffee'),
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :coffee ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+          Coffee
+        <% end %>
+        <%= link_to shop_path(category: 'merch'),
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :merch ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+          Merchandise
+        <% end %>
+      </div>
     </div>
   </div>
 

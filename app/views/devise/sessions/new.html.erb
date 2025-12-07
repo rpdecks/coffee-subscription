@@ -14,7 +14,7 @@
             <%= f.input :email,
                         required: false,
                         autofocus: true,
-                        input_html: { 
+                        input_html: {
                           autocomplete: "email",
                           class: "block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown transition-colors"
                         },
@@ -23,7 +23,7 @@
 
             <%= f.input :password,
                         required: false,
-                        input_html: { 
+                        input_html: {
                           autocomplete: "current-password",
                           class: "block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown transition-colors"
                         },
@@ -39,7 +39,7 @@
           <% end %>
 
           <div class="mt-6">
-            <%= f.button :submit, "Sign In", 
+            <%= f.button :submit, "Sign In",
                         class: "w-full bg-brown text-white py-3 px-6 rounded-lg font-semibold hover:bg-brown/90 transition-all shadow-md hover:shadow-lg" %>
           </div>
         <% end %>
@@ -57,7 +57,7 @@
     <!-- Additional Info -->
     <div class="mt-6 text-center">
       <p class="text-sm text-gray-600">
-        New to Acer Coffee? 
+        New to Acer Coffee?
         <%= link_to "Create an account", new_registration_path(resource_name), class: "text-brown hover:text-brown/80 font-semibold" %>
       </p>
     </div>

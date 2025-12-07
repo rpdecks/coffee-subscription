@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Quick Actions -->
       <div class="flex gap-2">
         <% if @subscription.active? %>
@@ -97,7 +97,7 @@
             <div class="font-medium text-gray-900"><%= @subscription.created_at.strftime("%b %d, %Y") %></div>
           </div>
         </div>
-        
+
         <% if @subscription.cancelled? %>
           <div class="mt-4 pt-4 border-t border-gray-200">
             <div class="text-sm text-gray-500">Cancelled At</div>

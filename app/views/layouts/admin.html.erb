@@ -24,7 +24,7 @@
               </svg>
               Admin Panel
             <% end %>
-            
+
             <!-- Main Navigation -->
             <div class="hidden md:flex items-center gap-1">
               <%= link_to "Dashboard", admin_root_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_root_path) ? 'bg-gray-800' : ''}" %>
@@ -57,7 +57,7 @@
         </div>
       </div>
     <% end %>
-    
+
     <% if alert.present? %>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">

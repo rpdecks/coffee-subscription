@@ -51,7 +51,7 @@
           </button>
         </div>
       </div>
-      
+
       <!-- Mobile menu -->
       <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200">
         <div class="px-4 py-3 space-y-3">
@@ -60,18 +60,18 @@
           <%= link_to "About", about_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
           <%= link_to "FAQ", faq_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
           <%= link_to "Contact", contact_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
-          
+
           <% if user_signed_in? %>
             <div class="pt-3 border-t border-gray-200">
               <%= link_to "Dashboard", dashboard_root_path, class: "block py-2 text-gray-700 hover:text-gray-900 font-medium" %>
             </div>
-            
+
             <% if current_user.admin? %>
               <div class="pt-3 border-t border-gray-200">
                 <%= link_to "Admin", admin_root_path, class: "block py-2 text-blue-600 hover:text-blue-800 font-medium" %>
               </div>
             <% end %>
-            
+
             <div class="pt-3 border-t border-gray-200">
               <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-left py-2 text-gray-700 hover:text-gray-900" %>
             </div>
@@ -92,16 +92,16 @@
       document.addEventListener('turbo:load', () => {
         const button = document.getElementById('mobile-menu-button');
         const menu = document.getElementById('mobile-menu');
-        
+
         if (button && menu) {
           // Remove any existing listeners to prevent duplicates
           const newButton = button.cloneNode(true);
           button.parentNode.replaceChild(newButton, button);
-          
+
           newButton.addEventListener('click', () => {
             menu.classList.toggle('hidden');
           });
-          
+
           // Close menu when clicking any link inside it
           menu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {

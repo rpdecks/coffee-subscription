@@ -1,6 +1,6 @@
 <%= yield %>
 
--- 
+--
 <%= ENV["BUSINESS_NAME"] || "" %>
 <%= ENV["BUSINESS_ADDRESS_LINE1"] || "" %><% if ENV["BUSINESS_ADDRESS_LINE2"].present? %>, <%= ENV["BUSINESS_ADDRESS_LINE2"] %><% end %>
 <%= ENV["BUSINESS_CITY_STATE_ZIP"] || "" %>

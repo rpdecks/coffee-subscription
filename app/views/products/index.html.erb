@@ -5,7 +5,7 @@
       <h1 class="text-4xl font-bold text-gray-900 mb-4">Our Coffee Collection</h1>
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">Discover our curated selection of premium, ethically-sourced coffees from around the world</p>
     </div>
-    
+
     <!-- Products Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <% @products.each do |product| %>
@@ -32,16 +32,16 @@
               </div>
             <% end %>
           </div>
-          
+
           <!-- Product Info -->
           <div class="p-6">
             <div class="flex justify-between items-start mb-3">
               <h3 class="text-xl font-bold text-gray-900 group-hover:text-brown transition-colors"><%= product.name %></h3>
               <span class="text-xl font-bold text-brown whitespace-nowrap ml-4">$<%= sprintf('%.2f', product.price_cents / 100.0) %></span>
             </div>
-            
+
             <p class="text-gray-600 mb-6 line-clamp-3"><%= product.description %></p>
-            
+
             <!-- Action Button -->
             <% if product.inventory_count.nil? || product.inventory_count > 0 %>
               <%= link_to product_path(product), class: "block w-full text-center bg-brown text-white px-6 py-3 rounded-lg hover:bg-brown/90 transition-colors font-medium" do %>
@@ -56,7 +56,7 @@
         </div>
       <% end %>
     </div>
-    
+
     <!-- Empty State -->
     <% if @products.empty? %>
       <div class="text-center py-20">

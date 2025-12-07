@@ -7,6 +7,7 @@ FactoryBot.define do
     weight_oz { 12 }
     inventory_count { 100 }
     active { true }
+    visible_in_shop { true }
     stripe_product_id { nil }
     stripe_price_id { nil }
 

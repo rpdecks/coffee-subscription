@@ -55,7 +55,7 @@
           </div>
         <% end %>
       </div>
-      
+
       <div>
         <%= button_to toggle_active_admin_product_path(@product), method: :patch, class: "px-4 py-2 #{@product.active? ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-green-100 text-green-800 hover:bg-green-200'} rounded-lg transition-colors" do %>
           <%= @product.active? ? 'Deactivate' : 'Activate' %>
@@ -69,20 +69,20 @@
     <div class="lg:col-span-2 space-y-6">
       <div class="bg-white rounded-lg border border-gray-200 p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Product Details</h2>
-        
+
         <div class="space-y-4">
           <div>
             <div class="text-sm text-gray-500 mb-1">Name</div>
             <div class="text-base text-gray-900"><%= @product.name %></div>
           </div>
-          
+
           <% if @product.description.present? %>
             <div>
               <div class="text-sm text-gray-500 mb-1">Description</div>
               <div class="text-base text-gray-900 leading-relaxed"><%= simple_format(@product.description) %></div>
             </div>
           <% end %>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <div>
               <div class="text-sm text-gray-500 mb-1">Product Type</div>
@@ -90,7 +90,7 @@
                 <%= @product.product_type.titleize %>
               </span>
             </div>
-            
+
             <div>
               <div class="text-sm text-gray-500 mb-1">Created</div>
               <div class="text-base text-gray-900"><%= @product.created_at.strftime("%b %d, %Y") %></div>
@@ -122,7 +122,7 @@
               <div class="text-sm text-gray-400">Not configured</div>
             <% end %>
           </div>
-          
+
           <div>
             <div class="text-sm text-gray-500 mb-1">Price ID</div>
             <% if @product.stripe_price_id.present? %>
@@ -148,7 +148,7 @@
               <% end %>
             </div>
           </div>
-          
+
           <% if @product.inventory_count && @product.inventory_count <= 10 %>
             <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div class="text-sm text-yellow-800">
@@ -156,7 +156,7 @@
               </div>
             </div>
           <% end %>
-          
+
           <% if @product.inventory_count && @product.inventory_count <= 0 %>
             <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
               <div class="text-sm text-red-800">
@@ -175,7 +175,7 @@
             <div class="text-sm text-gray-500 mb-1">Price</div>
             <div class="text-2xl font-bold text-gray-900"><%= number_to_currency(@product.price) %></div>
           </div>
-          
+
           <div class="text-xs text-gray-500">
             Price in cents: <%= @product.price_cents %>
           </div>

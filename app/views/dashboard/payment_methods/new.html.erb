@@ -41,7 +41,7 @@
   // Initialize Stripe
   const stripe = Stripe('<%= Rails.application.credentials.dig(:stripe, :publishable_key) %>');
   const elements = stripe.elements();
-  
+
   // Create card element
   const cardElement = elements.create('card', {
     style: {
@@ -58,9 +58,9 @@
       },
     },
   });
-  
+
   cardElement.mount('#card-element');
-  
+
   // Handle real-time validation errors
   cardElement.on('change', (event) => {
     const displayError = document.getElementById('card-errors');
@@ -70,25 +70,25 @@
       displayError.textContent = '';
     }
   });
-  
+
   // Handle form submission
   const form = document.getElementById('payment-form');
   const submitButton = document.getElementById('submit-button');
-  
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    
+
     // Disable submit button
     submitButton.disabled = true;
     submitButton.textContent = 'Processing...';
-    
+
     try {
       // Create payment method
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
       });
-      
+
       if (error) {
         // Show error
         document.getElementById('card-errors').textContent = error.message;

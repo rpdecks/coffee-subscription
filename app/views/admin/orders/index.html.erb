@@ -20,12 +20,12 @@
     <%= form_with url: admin_orders_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
       <!-- Search -->
       <div class="flex-1">
-        <%= f.text_field :search, 
+        <%= f.text_field :search,
             value: params[:search],
             placeholder: "Search by order number, customer name, or email...",
             class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
       </div>
-      
+
       <!-- Status Filter -->
       <div>
         <%= f.select :status,
@@ -36,7 +36,7 @@
             {},
             class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
       </div>
-      
+
       <div class="flex gap-2">
         <%= f.submit "Filter", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
         <%= link_to "Clear", admin_orders_path, class: "px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>

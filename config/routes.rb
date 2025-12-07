@@ -86,6 +86,7 @@ Rails.application.routes.draw do
     resources :products do
       member do
         patch :toggle_active
+        patch :toggle_shop_visibility
       end
     end
     resources :subscription_plans do

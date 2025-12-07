@@ -67,7 +67,7 @@
               <% end %>
               <p><%= @order.shipping_address.city %>, <%= @order.shipping_address.state %> <%= @order.shipping_address.zip_code %></p>
             </div>
-            
+
             <% if @order.tracking_number.present? %>
               <div class="mt-6 pt-6 border-t border-gray-200">
                 <h3 class="text-sm font-semibold text-gray-900 mb-2">Tracking Information</h3>
