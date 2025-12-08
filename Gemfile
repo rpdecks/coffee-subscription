@@ -36,7 +36,7 @@ gem "pundit"
 gem "stripe"
 
 # Background jobs
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.0"
 
 # Form builder
 gem "simple_form"
