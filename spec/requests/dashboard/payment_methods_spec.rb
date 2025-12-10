@@ -18,7 +18,9 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     it "displays all payment methods" do
       get dashboard_payment_methods_path
       payment_methods.each do |pm|
-        expect(response.body).to include(pm.display_name)
+        # View shows "Visa •••• 4242" format, not display_name
+        expect(response.body).to include(pm.card_brand.capitalize)
+        expect(response.body).to include(pm.last_four)
       end
     end
 
@@ -42,17 +44,24 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
 
   describe "POST /dashboard/payment_methods" do
     context "with valid payment method ID" do
-      it "creates a new payment method" do
-        allow(StripeService).to receive(:attach_payment_method).and_return(
-          user.payment_methods.create!(
-            stripe_payment_method_id: 'pm_test123',
-            card_brand: 'Visa',
-            last_four: '4242',
+      let(:stripe_pm) do
+        double('Stripe::PaymentMethod',
+          id: 'pm_test123',
+          card: double('card',
+            brand: 'visa',
+            last4: '4242',
             exp_month: 12,
             exp_year: 2025
           )
         )
+      end
 
+      before do
+        allow(Stripe::PaymentMethod).to receive(:attach).and_return(stripe_pm)
+        allow(Stripe::Customer).to receive(:update)
+      end
+
+      it "creates a new payment method" do
         expect {
           post dashboard_payment_methods_path, params: { stripe_payment_method_id: 'pm_test123' }
         }.to change(user.payment_methods, :count).by(1)
@@ -62,24 +71,13 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
       end
 
       it "sets as default for first payment method" do
-        allow(StripeService).to receive(:attach_payment_method).with(
-          user: user,
-          payment_method_id: 'pm_test123',
-          set_as_default: true
-        ).and_return(
-          user.payment_methods.create!(
-            stripe_payment_method_id: 'pm_test123',
-            card_brand: 'Visa',
-            last_four: '4242',
-            exp_month: 12,
-            exp_year: 2025,
-            is_default: true
-          )
-        )
-
         post dashboard_payment_methods_path, params: { stripe_payment_method_id: 'pm_test123' }
 
         expect(user.payment_methods.last.is_default).to be true
+        expect(Stripe::Customer).to have_received(:update).with(
+          user.stripe_customer_id,
+          invoice_settings: { default_payment_method: 'pm_test123' }
+        )
       end
     end
 
@@ -93,11 +91,13 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     end
 
     context "when Stripe service fails" do
-      it "redirects with error message" do
-        allow(StripeService).to receive(:attach_payment_method).and_raise(
-          StripeService::StripeError.new('Card declined')
+      before do
+        allow(Stripe::PaymentMethod).to receive(:attach).and_raise(
+          Stripe::CardError.new('Card declined', nil, code: 'card_declined')
         )
+      end
 
+      it "redirects with error message" do
         post dashboard_payment_methods_path, params: { stripe_payment_method_id: 'pm_test123' }
 
         expect(response).to redirect_to(new_dashboard_payment_method_path)
@@ -109,10 +109,24 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
   describe "POST /dashboard/payment_methods/:id/set_default" do
     let!(:payment_method) { create(:payment_method, user: user, is_default: false) }
     let!(:default_pm) { create(:payment_method, user: user, is_default: true) }
+    let(:stripe_pm) do
+      double('Stripe::PaymentMethod',
+        id: payment_method.stripe_payment_method_id,
+        card: double('card',
+          brand: payment_method.card_brand,
+          last4: payment_method.last_four,
+          exp_month: payment_method.exp_month,
+          exp_year: payment_method.exp_year
+        )
+      )
+    end
+
+    before do
+      allow(Stripe::PaymentMethod).to receive(:attach).and_return(stripe_pm)
+      allow(Stripe::Customer).to receive(:update)
+    end
 
     it "sets payment method as default" do
-      allow(StripeService).to receive(:attach_payment_method)
-
       post set_default_dashboard_payment_method_path(payment_method)
 
       expect(payment_method.reload.is_default).to be true
@@ -120,13 +134,12 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     end
 
     it "updates Stripe customer default" do
-      expect(StripeService).to receive(:attach_payment_method).with(
-        user: user,
-        payment_method_id: payment_method.stripe_payment_method_id,
-        set_as_default: true
-      )
-
       post set_default_dashboard_payment_method_path(payment_method)
+
+      expect(Stripe::Customer).to have_received(:update).with(
+        user.stripe_customer_id,
+        invoice_settings: { default_payment_method: payment_method.stripe_payment_method_id }
+      )
     end
   end
 
@@ -134,9 +147,11 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     let!(:payment_method) { create(:payment_method, user: user, is_default: false) }
 
     context "when not default and no active subscription" do
-      it "deletes the payment method" do
-        allow(StripeService).to receive(:detach_payment_method)
+      before do
+        allow(Stripe::PaymentMethod).to receive(:detach)
+      end
 
+      it "deletes the payment method" do
         expect {
           delete dashboard_payment_method_path(payment_method)
         }.to change(user.payment_methods, :count).by(-1)
@@ -146,11 +161,11 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
       end
 
       it "detaches from Stripe" do
-        expect(StripeService).to receive(:detach_payment_method).with(
+        delete dashboard_payment_method_path(payment_method)
+
+        expect(Stripe::PaymentMethod).to have_received(:detach).with(
           payment_method.stripe_payment_method_id
         )
-
-        delete dashboard_payment_method_path(payment_method)
       end
     end
 
@@ -169,11 +184,13 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
     end
 
     context "when Stripe service fails" do
-      it "redirects with error message" do
-        allow(StripeService).to receive(:detach_payment_method).and_raise(
-          StripeService::StripeError.new('Payment method not found')
+      before do
+        allow(Stripe::PaymentMethod).to receive(:detach).and_raise(
+          Stripe::InvalidRequestError.new('Payment method not found', nil)
         )
+      end
 
+      it "redirects with error message" do
         delete dashboard_payment_method_path(payment_method)
 
         expect(flash[:alert]).to include('Payment method not found')
