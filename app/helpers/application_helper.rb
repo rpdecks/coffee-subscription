@@ -52,14 +52,14 @@ module ApplicationHelper
   end
 
   def inline_svg(path, options = {})
-    file_path = Rails.root.join('app', 'assets', 'images', path)
+    file_path = Rails.root.join("app", "assets", "images", path)
     return unless File.exist?(file_path)
 
     svg_content = File.read(file_path)
 
     # Add CSS classes if provided
     if options[:class]
-      svg_content.sub('<svg', "<svg class=\"#{options[:class]}\"")
+      svg_content.sub("<svg", "<svg class=\"#{options[:class]}\"")
     else
       svg_content
     end.html_safe

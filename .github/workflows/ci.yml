@@ -86,7 +86,7 @@ jobs:
           bundler-cache: true
 
       - name: Setup Database
-        run: bin/rails db:prepare
+        run: bin/rails db:test:prepare
 
       - name: Run tests
         run: bundle exec rspec

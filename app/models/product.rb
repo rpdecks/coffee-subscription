@@ -30,22 +30,22 @@ class Product < ApplicationRecord
   def cultivar_icon
     return nil unless coffee?
     case roast_type&.to_sym
-    when :signature then 'brand/cultivar-icons/palmatum.png'
-    when :light then 'brand/cultivar-icons/deshojo.svg'
-    when :medium then 'brand/cultivar-icons/arakawa.svg'
-    when :dark then 'brand/cultivar-icons/kiyohime.svg'
-    else 'brand/cultivar-icons/palmatum.png'
+    when :signature then "brand/cultivar-icons/palmatum.png"
+    when :light then "brand/cultivar-icons/deshojo.svg"
+    when :medium then "brand/cultivar-icons/arakawa.svg"
+    when :dark then "brand/cultivar-icons/kiyohime.svg"
+    else "brand/cultivar-icons/palmatum.png"
     end
   end
 
   def cultivar_color
-    return 'text-cream' unless coffee?
+    return "text-cream" unless coffee?
     case roast_type&.to_sym
-    when :signature then 'text-cream'
-    when :light then 'text-deshojo'
-    when :medium then 'text-coffee-brown'
-    when :dark then 'text-coffee-brown'
-    else 'text-cream'
+    when :signature then "text-cream"
+    when :light then "text-deshojo"
+    when :medium then "text-coffee-brown"
+    when :dark then "text-coffee-brown"
+    else "text-cream"
     end
   end
 end
