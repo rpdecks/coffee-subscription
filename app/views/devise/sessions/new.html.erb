@@ -1,65 +1,36 @@
-<div class="min-h-screen bg-gradient-to-br from-brown/5 via-white to-green/5 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full">
-    <!-- Logo/Brand -->
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-brown mb-2">☕ Acer Coffee</h1>
-      <p class="text-gray-600">Welcome back! Sign in to your account</p>
+<%= content_for :skip_container, true %>
+
+<%= render 'devise/shared/auth_wrapper' do %>
+  <h1 class="text-3xl font-serif mb-6 text-gray-900">Sign In</h1>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+    <div>
+      <%= f.label :email, class: "block mb-2 text-gray-700 font-medium" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input-field" %>
     </div>
 
-    <!-- Sign In Card -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      <div class="px-8 py-10">
-        <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-          <div class="space-y-5">
-            <%= f.input :email,
-                        required: false,
-                        autofocus: true,
-                        input_html: {
-                          autocomplete: "email",
-                          class: "block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown transition-colors"
-                        },
-                        label_html: { class: "block text-sm font-medium text-gray-700 mb-2" },
-                        wrapper_html: { class: "mb-0" } %>
+    <div>
+      <%= f.label :password, class: "block mb-2 text-gray-700 font-medium" %>
+      <%= f.password_field :password, autocomplete: "current-password", class: "input-field" %>
+    </div>
 
-            <%= f.input :password,
-                        required: false,
-                        input_html: {
-                          autocomplete: "current-password",
-                          class: "block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown/20 focus:border-brown transition-colors"
-                        },
-                        label_html: { class: "block text-sm font-medium text-gray-700 mb-2" },
-                        wrapper_html: { class: "mb-0" } %>
-          </div>
-
-          <% if devise_mapping.rememberable? %>
-            <div class="flex items-center mt-6">
-              <%= f.input_field :remember_me, as: :boolean, class: "h-4 w-4 text-brown border-gray-300 rounded focus:ring-brown/20 mr-4 flex-shrink-0" %>
-              <span class="text-sm text-gray-700 leading-none">Remember me</span>
-            </div>
-          <% end %>
-
-          <div class="mt-6">
-            <%= f.button :submit, "Sign In",
-                        class: "w-full bg-brown text-white py-3 px-6 rounded-lg font-semibold hover:bg-brown/90 transition-all shadow-md hover:shadow-lg" %>
-          </div>
-        <% end %>
+    <% if devise_mapping.rememberable? %>
+      <div class="flex justify-between items-center text-sm text-gray-600">
+        <label class="flex items-center gap-2">
+          <%= f.check_box :remember_me, class: "rounded border-gray-300 text-gray-900 focus:ring-gray-900" %>
+          <span>Remember me</span>
+        </label>
+        <%= link_to "Forgot your password?", new_password_path(resource_name), class: "text-blue-600 hover:text-blue-700 hover:underline" %>
       </div>
+    <% end %>
 
-      <!-- Divider -->
-      <div class="px-8 py-4 bg-gray-50 border-t border-gray-100">
-        <div class="flex items-center justify-between text-sm">
-          <%= link_to "Forgot password?", new_password_path(resource_name), class: "text-brown hover:text-brown/80 font-medium" %>
-          <%= link_to "Sign up", new_registration_path(resource_name), class: "text-brown hover:text-brown/80 font-medium" %>
-        </div>
-      </div>
+    <div>
+      <%= f.submit "Sign In", class: "btn-primary w-full" %>
     </div>
+  <% end %>
 
-    <!-- Additional Info -->
-    <div class="mt-6 text-center">
-      <p class="text-sm text-gray-600">
-        New to Acer Coffee?
-        <%= link_to "Create an account", new_registration_path(resource_name), class: "text-brown hover:text-brown/80 font-semibold" %>
-      </p>
-    </div>
+  <div class="mt-6 text-center text-sm text-gray-600">
+    Don't have an account?
+    <%= link_to "Sign Up", new_registration_path(resource_name), class: "text-blue-600 hover:text-blue-700 hover:underline ml-1 font-medium" %>
   </div>
-</div>
+<% end %>

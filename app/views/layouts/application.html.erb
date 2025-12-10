@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Coffee" %></title>
+    <title><%= content_for(:title) || "Acer Coffee" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
@@ -13,34 +13,48 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50">
-    <nav class="bg-white shadow-sm">
+  <body class="bg-white text-gray-900 font-sans">
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
       <div class="container mx-auto px-4">
         <div class="flex justify-between items-center h-16">
-          <div class="flex items-center space-x-8">
-            <%= link_to "Acer Coffee", root_path, class: "text-xl font-bold text-gray-900" %>
-            <div class="hidden md:flex space-x-4">
-              <%= link_to "Products", products_path, class: "text-gray-700 hover:text-gray-900" %>
-              <%= link_to "About", about_path, class: "text-gray-700 hover:text-gray-900" %>
-              <%= link_to "FAQ", faq_path, class: "text-gray-700 hover:text-gray-900" %>
-              <%= link_to "Contact", contact_path, class: "text-gray-700 hover:text-gray-900" %>
-            </div>
+          <div class="flex items-center space-x-3">
+            <%= link_to root_path, class: "flex items-center space-x-3 hover:opacity-90 transition text-gray-900" do %>
+              <%# Coffee bean icon by Alyssa from the Noun Project %>
+              <svg class="h-8 w-8" viewBox="0 0 90 90" fill="currentColor">
+                <path d="M16.112,27.895c0,0-19.206,34.839,5.125,52.456c2.723,1.711,4.586-0.553,4.789-3.621c0.201-3.067,3.895-21.867,21.027-38.446C64.186,21.702,65.23,10.451,60.84,5.655C56.344,0.742,32.885-2.691,16.112,27.895z"/>
+                <path d="M73.886,62.105c0,0,19.207-34.838-5.124-52.454c-2.725-1.713-4.588,0.551-4.789,3.621c-0.201,3.066-3.893,21.866-21.028,38.445C25.813,68.297,24.771,79.551,29.158,84.347C33.655,89.258,57.112,92.692,73.886,62.105z"/>
+              </svg>
+              <span class="text-xl font-serif">Acer Coffee</span>
+            <% end %>
+          </div>
+          <div class="hidden md:flex items-center space-x-8">
+            <%= link_to "Shop", shop_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+            <%= link_to "About", about_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+            <%= link_to "FAQ", faq_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+            <%= link_to "Contact", contact_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
           </div>
           <div class="hidden md:flex items-center space-x-4">
             <% if user_signed_in? %>
-              <%= link_to "Dashboard", dashboard_root_path, class: "text-gray-700 hover:text-gray-900" %>
+              <%= link_to "Dashboard", dashboard_root_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
               <% if current_user.admin? %>
-                <%= link_to "Admin", admin_root_path, class: "text-blue-600 hover:text-blue-800" %>
+                <%= link_to "Admin", admin_root_path, class: "text-red-600 hover:text-red-700 font-medium" %>
               <% end %>
-              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-gray-900" %>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
             <% else %>
-              <%= link_to "Sign In", new_user_session_path, class: "text-gray-700 hover:text-gray-900" %>
-              <%= link_to "Sign Up", new_user_registration_path, class: "bg-brown text-white px-4 py-2 rounded hover:bg-brown/90" %>
+              <%= link_to "Sign In", new_user_session_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
             <% end %>
           </div>
           <!-- Mobile menu button -->
@@ -53,34 +67,34 @@
       </div>
 
       <!-- Mobile menu -->
-      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200">
+      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white">
         <div class="px-4 py-3 space-y-3">
-          <!-- Nav Links -->
-          <%= link_to "Products", products_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
-          <%= link_to "About", about_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
-          <%= link_to "FAQ", faq_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
-          <%= link_to "Contact", contact_path, class: "block py-2 text-gray-700 hover:text-gray-900" %>
+          <%= link_to "Shop", shop_path, class: "block py-2 nav-link" %>
+          <%= link_to "Products", products_path, class: "block py-2 nav-link" %>
+          <%= link_to "About", about_path, class: "block py-2 nav-link" %>
+          <%= link_to "FAQ", faq_path, class: "block py-2 nav-link" %>
+          <%= link_to "Contact", contact_path, class: "block py-2 nav-link" %>
 
           <% if user_signed_in? %>
             <div class="pt-3 border-t border-gray-200">
-              <%= link_to "Dashboard", dashboard_root_path, class: "block py-2 text-gray-700 hover:text-gray-900 font-medium" %>
+              <%= link_to "Dashboard", dashboard_root_path, class: "block py-2 nav-link font-medium" %>
             </div>
 
             <% if current_user.admin? %>
               <div class="pt-3 border-t border-gray-200">
-                <%= link_to "Admin", admin_root_path, class: "block py-2 text-blue-600 hover:text-blue-800 font-medium" %>
+                <%= link_to "Admin", admin_root_path, class: "block py-2 text-red-600 hover:text-red-700 font-medium" %>
               </div>
             <% end %>
 
             <div class="pt-3 border-t border-gray-200">
-              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-left py-2 text-gray-700 hover:text-gray-900" %>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-left py-2 nav-link" %>
             </div>
           <% else %>
             <div class="pt-3 border-t border-gray-200">
-              <div class="flex items-center py-2 text-gray-700">
-                <%= link_to "Sign In", new_user_session_path, class: "hover:text-gray-900" %>
-                <span class="mx-3 text-gray-400">|</span>
-                <%= link_to "Sign Up", new_user_registration_path, class: "hover:text-gray-900" %>
+              <div class="flex items-center py-2 space-x-4">
+                <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+                <span class="text-gray-400">|</span>
+                <%= link_to "Sign Up", new_user_registration_path, class: "text-blue-600 hover:text-blue-700 font-medium" %>
               </div>
             </div>
           <% end %>
@@ -112,44 +126,46 @@
       });
     </script>
 
-    <% if notice.present? %>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mx-4 mt-4" role="alert">
-        <span class="block sm:inline"><%= notice %></span>
-      </div>
+    <% unless content_for?(:skip_container) %>
+      <% if notice.present? %>
+        <div class="bg-moss/20 border-l-4 border-moss text-cream px-4 py-3 container mx-auto my-4" role="alert">
+          <p><%= notice %></p>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div class="bg-deshojo/20 border-l-4 border-deshojo text-cream px-4 py-3 container mx-auto my-4" role="alert">
+          <p><%= alert %></p>
+        </div>
+      <% end %>
     <% end %>
 
-    <% if alert.present? %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-4 mt-4" role="alert">
-        <span class="block sm:inline"><%= alert %></span>
-      </div>
-    <% end %>
-
-    <main class="container mx-auto px-4 py-8">
+    <main class="<%= 'container mx-auto px-4 py-8' unless content_for?(:skip_container) %>">
       <%= yield %>
     </main>
 
-    <footer class="bg-gray-800 text-white mt-16">
+    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-16">
       <div class="container mx-auto px-4 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 class="font-bold mb-4">Acer Coffee</h3>
-            <p class="text-gray-400">Freshly roasted coffee, delivered to your door.</p>
+            <h3 class="font-serif text-lg font-semibold mb-4">Acer Coffee</h3>
+            <p class="text-gray-400 text-sm">Freshly roasted coffee, delivered to your door.</p>
           </div>
           <div>
-            <h3 class="font-bold mb-4">Quick Links</h3>
-            <ul class="space-y-2 text-gray-400">
-              <li><%= link_to "Products", products_path, class: "hover:text-white" %></li>
-              <li><%= link_to "About", about_path, class: "hover:text-white" %></li>
-              <li><%= link_to "FAQ", faq_path, class: "hover:text-white" %></li>
-              <li><%= link_to "Contact", contact_path, class: "hover:text-white" %></li>
+            <h3 class="font-serif text-lg font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+              <li><%= link_to "Products", products_path, class: "text-gray-400 hover:text-white" %></li>
+              <li><%= link_to "About", about_path, class: "text-gray-400 hover:text-white" %></li>
+              <li><%= link_to "FAQ", faq_path, class: "text-gray-400 hover:text-white" %></li>
+              <li><%= link_to "Contact", contact_path, class: "text-gray-400 hover:text-white" %></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold mb-4">Contact</h3>
-            <p class="text-gray-400">Questions? <%= link_to "Get in touch", contact_path, class: "hover:text-white" %></p>
+            <h3 class="font-serif text-lg font-semibold mb-4">Contact</h3>
+            <p class="text-gray-400 text-sm">Questions? <%= link_to "Get in touch", contact_path, class: "text-white hover:text-gray-300 underline" %></p>
           </div>
         </div>
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
           <p>&copy; <%= Time.current.year %> Acer Coffee. All rights reserved.</p>
         </div>
       </div>

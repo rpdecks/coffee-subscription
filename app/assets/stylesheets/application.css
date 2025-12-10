@@ -1,15 +1,303 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
+@import "tailwindcss";
+
+/* Custom brand color utilities - added after Tailwind import to persist through builds */
+.bg-espresso {
+  background-color: #1b1a17 !important;
+}
+.bg-espresso-light {
+  background-color: #252320 !important;
+}
+.bg-deshojo {
+  background-color: #b93e3e !important;
+}
+.bg-cream {
+  background-color: #f6f1eb !important;
+}
+.bg-coffee-brown {
+  background-color: #4a2f27 !important;
+}
+.bg-moss {
+  background-color: #78866b !important;
+}
+
+.text-espresso {
+  color: #1b1a17 !important;
+}
+.text-deshojo {
+  color: #b93e3e !important;
+}
+.text-cream {
+  color: #f6f1eb !important;
+}
+.text-coffee-brown {
+  color: #4a2f27 !important;
+}
+.text-moss {
+  color: #78866b !important;
+}
+
+.border-espresso {
+  border-color: #1b1a17 !important;
+}
+.border-deshojo {
+  border-color: #b93e3e !important;
+}
+.border-cream {
+  border-color: #f6f1eb !important;
+}
+.border-moss {
+  border-color: #78866b !important;
+}
+
+/* Brand color opacity variants */
+.bg-espresso-light\/80 {
+  background-color: rgb(37 35 32 / 0.8) !important;
+}
+.bg-deshojo\/20 {
+  background-color: rgb(185 62 62 / 0.2) !important;
+}
+.bg-moss\/20 {
+  background-color: rgb(120 134 107 / 0.2) !important;
+}
+
+.text-cream\/70 {
+  color: rgb(246 241 235 / 0.7) !important;
+}
+.text-cream\/85 {
+  color: rgb(246 241 235 / 0.85) !important;
+}
+.text-cream\/50 {
+  color: rgb(246 241 235 / 0.5) !important;
+}
+
+.border-cream\/10 {
+  border-color: rgb(246 241 235 / 0.1) !important;
+}
+.border-cream\/20 {
+  border-color: rgb(246 241 235 / 0.2) !important;
+}
+.border-cream\/30 {
+  border-color: rgb(246 241 235 / 0.3) !important;
+}
+
+/* Focus variants */
+.focus\:ring-deshojo:focus {
+  --tw-ring-color: #b93e3e !important;
+}
+
+/* Border radius brand values */
+.rounded-brand {
+  border-radius: 6px !important;
+}
+.rounded-card {
+  border-radius: 8px !important;
+}
+
+@theme {
+  --color-espresso: #1b1a17;
+  --color-espresso-light: #252320;
+  --color-deshojo: #b93e3e;
+  --color-cream: #f6f1eb;
+  --color-coffee-brown: #4a2f27;
+  --color-moss: #78866b;
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: Inter, system-ui, sans-serif;
+
+  --radius-brand: 6px;
+  --radius-card: 8px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-family-sans);
+  }
+
+  body {
+    background-color: var(--color-espresso);
+    color: var(--color-cream);
+    font-family: var(--font-family-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-serif);
+    color: var(--color-cream);
+  }
+
+  p {
+    color: rgb(246 241 235 / 0.85);
+  }
+
+  small,
+  .meta {
+    color: rgb(246 241 235 / 0.7);
+    font-size: 0.875rem;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    background-color: var(--color-deshojo);
+    color: var(--color-cream);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-brand);
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+
+  .btn-primary:hover {
+    background-color: rgb(185 62 62 / 0.9);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-coffee-brown);
+    color: var(--color-cream);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-brand);
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgb(74 47 39 / 0.9);
+  }
+
+  .btn-tertiary {
+    border: 2px solid rgb(246 241 235 / 0.3);
+    color: var(--color-cream);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-brand);
+    font-weight: 500;
+    transition: border-color 0.2s;
+  }
+
+  .btn-tertiary:hover {
+    border-color: rgb(246 241 235 / 0.5);
+  }
+
+  /* Cards */
+  .card {
+    background-color: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    transition: box-shadow 0.2s;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .card-elevated {
+    background-color: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  /* Inputs */
+  .input-field {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border: 2px solid rgb(209 213 219);
+    border-radius: var(--radius-brand);
+    color: rgb(17 24 39);
+    transition: all 0.2s;
+  }
+
+  .input-field::placeholder {
+    color: rgb(107 114 128);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: rgb(17 24 39);
+    box-shadow: 0 0 0 2px rgb(17 24 39 / 0.1);
+  }
+
+  /* Navigation Links */
+  .nav-link {
+    color: rgb(55 65 81);
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: rgb(17 24 39);
+  }
+}
+
+@layer utilities {
+  /* Background Colors */
+  .bg-espresso {
+    background-color: var(--color-espresso);
+  }
+  .bg-espresso-light {
+    background-color: var(--color-espresso-light);
+  }
+  .bg-deshojo {
+    background-color: var(--color-deshojo);
+  }
+  .bg-cream {
+    background-color: var(--color-cream);
+  }
+  .bg-coffee-brown {
+    background-color: var(--color-coffee-brown);
+  }
+  .bg-moss {
+    background-color: var(--color-moss);
+  }
+
+  /* Text Colors */
+  .text-espresso {
+    color: var(--color-espresso);
+  }
+  .text-deshojo {
+    color: var(--color-deshojo);
+  }
+  .text-cream {
+    color: var(--color-cream);
+  }
+  .text-coffee-brown {
+    color: var(--color-coffee-brown);
+  }
+  .text-moss {
+    color: var(--color-moss);
+  }
+
+  /* Border Colors */
+  .border-espresso {
+    border-color: var(--color-espresso);
+  }
+  .border-deshojo {
+    border-color: var(--color-deshojo);
+  }
+  .border-cream {
+    border-color: var(--color-cream);
+  }
+  .border-moss {
+    border-color: var(--color-moss);
+  }
+
+  /* Ring Colors */
+  .ring-deshojo {
+    --tw-ring-color: var(--color-deshojo);
+  }
+  .focus\:ring-deshojo:focus {
+    --tw-ring-color: var(--color-deshojo);
+  }
+
+  /* Border Radius */
+  .rounded-brand {
+    border-radius: var(--radius-brand);
+  }
+  .rounded-card {
+    border-radius: var(--radius-card);
+  }
+}
