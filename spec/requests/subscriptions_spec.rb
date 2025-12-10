@@ -1,37 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "Subscriptions", type: :request do
-  describe "GET /new" do
+  describe "GET /subscribe" do
     it "returns http success" do
-      get "/subscriptions/new"
+      get subscribe_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /create" do
+  describe "GET /subscribe/plans" do
     it "returns http success" do
-      get "/subscriptions/create"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /show" do
-    it "returns http success" do
-      get "/subscriptions/show"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /edit" do
-    it "returns http success" do
-      get "/subscriptions/edit"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /update" do
-    it "returns http success" do
-      get "/subscriptions/update"
+      get subscription_plans_path
       expect(response).to have_http_status(:success)
     end
   end

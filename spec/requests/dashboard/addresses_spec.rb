@@ -1,45 +1,53 @@
 require 'rails_helper'
 
 RSpec.describe "Dashboard::Addresses", type: :request do
-  describe "GET /index" do
+  let(:user) { FactoryBot.create(:user) }
+  let(:address) { FactoryBot.create(:address, user: user) }
+
+  before { sign_in user }
+
+  describe "GET /dashboard/addresses" do
     it "returns http success" do
-      get "/dashboard/addresses/index"
+      get dashboard_addresses_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /new" do
+  describe "GET /dashboard/addresses/new" do
     it "returns http success" do
-      get "/dashboard/addresses/new"
+      get new_dashboard_address_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /create" do
+  describe "POST /dashboard/addresses" do
+    it "creates an address" do
+      expect {
+        post dashboard_addresses_path, params: { address: FactoryBot.attributes_for(:address) }
+      }.to change(Address, :count).by(1)
+    end
+  end
+
+  describe "GET /dashboard/addresses/:id/edit" do
     it "returns http success" do
-      get "/dashboard/addresses/create"
+      get edit_dashboard_address_path(address)
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /edit" do
-    it "returns http success" do
-      get "/dashboard/addresses/edit"
-      expect(response).to have_http_status(:success)
+  describe "PATCH /dashboard/addresses/:id" do
+    it "updates the address" do
+      patch dashboard_address_path(address), params: { address: { street: "New Street" } }
+      expect(response).to have_http_status(:redirect)
     end
   end
 
-  describe "GET /update" do
-    it "returns http success" do
-      get "/dashboard/addresses/update"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /destroy" do
-    it "returns http success" do
-      get "/dashboard/addresses/destroy"
-      expect(response).to have_http_status(:success)
+  describe "DELETE /dashboard/addresses/:id" do
+    it "destroys the address" do
+      address # create it
+      expect {
+        delete dashboard_address_path(address)
+      }.to change(Address, :count).by(-1)
     end
   end
 end

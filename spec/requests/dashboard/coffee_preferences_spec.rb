@@ -1,17 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe "Dashboard::CoffeePreferences", type: :request do
-  describe "GET /edit" do
+  let(:user) { FactoryBot.create(:user) }
+
+  before { sign_in user }
+
+  describe "GET /dashboard/coffee_preference/edit" do
     it "returns http success" do
-      get "/dashboard/coffee_preferences/edit"
+      get edit_dashboard_coffee_preference_path
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /update" do
-    it "returns http success" do
-      get "/dashboard/coffee_preferences/update"
-      expect(response).to have_http_status(:success)
+  describe "PATCH /dashboard/coffee_preference" do
+    it "updates preferences" do
+      patch dashboard_coffee_preference_path, params: { coffee_preference: { roast_preference: :medium } }
+      expect(response).to have_http_status(:redirect)
     end
   end
 end
