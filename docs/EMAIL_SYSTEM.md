@@ -85,8 +85,8 @@ OrderMailer.order_delivered(order)
 **Features:**
 
 - Dynamic subject lines with order numbers
-- From address: "Coffee Co. <orders@coffeeco.com>"
-- Reply-to: support@coffeeco.com
+- From address: "Coffee Co. <orders@acercoffee.com>"
+- Reply-to: support@acercoffee.com
 - Branded email templates
 - Both HTML and text versions
 
@@ -193,13 +193,11 @@ config.action_mailer.default_url_options = {
 ### SendGrid Setup
 
 1. **Create SendGrid Account:**
-
    - Sign up at sendgrid.com
    - Verify your email
    - Complete sender authentication
 
 2. **Create API Key:**
-
    - Settings → API Keys → Create API Key
    - Select "Restricted Access"
    - Enable: Mail Send
@@ -212,7 +210,6 @@ config.action_mailer.default_url_options = {
    ```
 
 4. **Verify Domain (Recommended):**
-
    - Settings → Sender Authentication → Domain Authentication
    - Add DNS records to your domain
    - Verify domain
@@ -469,25 +466,21 @@ config.action_mailer.delivery_method = :letter_opener
 ### Planned Features
 
 1. **Email Preferences**
-
    - Customer dashboard for email settings
    - Opt-in/out for specific email types
    - Frequency preferences
 
 2. **Rich Content**
-
    - Product images in emails
    - Coffee brewing tips
    - Recipe suggestions
 
 3. **Tracking**
-
    - Open tracking via SendGrid
    - Click tracking for links
    - A/B testing for subject lines
 
 4. **Advanced Notifications**
-
    - Subscription renewal reminders
    - Low inventory alerts for favorites
    - Personalized recommendations

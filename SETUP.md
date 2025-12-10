@@ -7,13 +7,11 @@ A full-stack Ruby on Rails coffee subscription MVP with:
 ### ✅ Core Features Implemented
 
 1. **User Authentication & Authorization**
-
    - Devise authentication with custom fields (first_name, last_name, phone)
    - Role-based access (customer, admin)
    - Pundit authorization framework
 
 2. **Database Models** (All created and migrated)
-
    - Users with roles
    - Addresses (shipping/billing)
    - Payment Methods (Stripe integration ready)
@@ -24,7 +22,6 @@ A full-stack Ruby on Rails coffee subscription MVP with:
    - Coffee Preferences
 
 3. **Public Pages**
-
    - Home page with hero section
    - About page
    - FAQ page
@@ -33,7 +30,6 @@ A full-stack Ruby on Rails coffee subscription MVP with:
    - Individual product pages
 
 4. **User Dashboard**
-
    - Subscription status
    - Recent orders
    - Account info
@@ -49,7 +45,7 @@ A full-stack Ruby on Rails coffee subscription MVP with:
 ## Test Accounts
 
 ```
-Admin: admin@coffeeco.com / password123
+Admin: admin@acercoffee.com / password123
 Customer 1: john@example.com / password123
 Customer 2: jane@example.com / password123
 ```
@@ -138,7 +134,7 @@ Open http://localhost:3000 in your browser
 ### 3. Test Different User Roles
 
 - Sign in as customer: john@example.com / password123
-- Sign in as admin: admin@coffeeco.com / password123
+- Sign in as admin: admin@acercoffee.com / seedpass
 
 ### 4. Explore What's Built
 

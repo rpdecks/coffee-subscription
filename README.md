@@ -96,7 +96,7 @@ Coffee Co. is a production-ready subscription platform for coffee roasting busin
 The seed data creates test accounts you can use:
 
 ```
-Admin: admin@coffeeco.com / password123
+Admin: admin@acercoffee.com / password123
 Customer 1: john@example.com / password123
 Customer 2: jane@example.com / password123
 ```
