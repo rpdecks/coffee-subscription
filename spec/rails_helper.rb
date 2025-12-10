@@ -34,6 +34,10 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+# Build Tailwind CSS assets for test environment
+system("bin/rails tailwindcss:build") unless File.exist?("app/assets/builds/tailwind.css")
+
 RSpec.configure do |config|
   # Include ActiveJob test helper for email testing
   config.include ActiveJob::TestHelper
