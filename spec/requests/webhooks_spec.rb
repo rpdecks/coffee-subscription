@@ -14,6 +14,7 @@ RSpec.describe WebhooksController, type: :request do
     let(:event) do
       double(
         'Stripe::Event',
+        id: 'evt_test123',
         type: event_type,
         data: double(object: stripe_object)
       )
