@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Coffee Product #{n}" }
     description { "A delicious coffee with notes of chocolate and caramel" }
     product_type { :coffee }
+    roast_type { :signature }
     price_cents { 1800 }
     weight_oz { 12 }
     inventory_count { 100 }
@@ -13,10 +14,24 @@ FactoryBot.define do
 
     trait :coffee do
       product_type { :coffee }
+      roast_type { :signature }
+    end
+
+    trait :light_roast do
+      roast_type { :light }
+    end
+
+    trait :medium_roast do
+      roast_type { :medium }
+    end
+
+    trait :dark_roast do
+      roast_type { :dark }
     end
 
     trait :merch do
       product_type { :merch }
+      roast_type { nil }
       sequence(:name) { |n| "Merch Item #{n}" }
       description { "Coffee Co. merchandise" }
       price_cents { 1200 }
