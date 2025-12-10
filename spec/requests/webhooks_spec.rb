@@ -137,6 +137,9 @@ RSpec.describe WebhooksController, type: :request do
     end
 
     context 'with invalid signature' do
+      let(:event_type) { 'any.event' }
+      let(:stripe_object) { double }
+
       before do
         allow(Stripe::Webhook).to receive(:construct_event).and_raise(
           Stripe::SignatureVerificationError.new('Invalid signature', 'sig_header')
@@ -144,7 +147,7 @@ RSpec.describe WebhooksController, type: :request do
       end
 
       it 'returns bad request' do
-        post '/webhooks/stripe', params: { type: 'any.event' }, as: :json
+        post '/webhooks/stripe', params: { type: event_type }, as: :json
 
         expect(response).to have_http_status(:bad_request)
       end
