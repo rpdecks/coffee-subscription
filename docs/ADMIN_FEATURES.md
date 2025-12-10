@@ -10,7 +10,7 @@ Admin users can access the panel at `/admin` after logging in with an admin acco
 
 **Admin Accounts:**
 
-- `admin@coffeeco.com` / `password123`
+- `admin@acercoffee.com` / `seedpass`
 - `rpdecks@gmail.com` / `seedpass`
 - `krilew@gmail.com` / `seedpass`
 
@@ -19,7 +19,6 @@ Admin users can access the panel at `/admin` after logging in with an admin acco
 ### Dashboard (`/admin`)
 
 - **Key Metrics Display:**
-
   - Active subscriptions count
   - Total customers count
   - Recent orders (last 7 days)
