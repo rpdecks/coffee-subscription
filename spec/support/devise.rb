@@ -2,6 +2,7 @@
 
 RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Devise::Test::ControllerHelpers, type: :controller
 
   # Stub Stripe customer creation for all tests
   config.before(:each) do
