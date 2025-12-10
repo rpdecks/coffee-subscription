@@ -6,26 +6,17 @@ on:
     branches:
       - main
   workflow_dispatch: # Allow manual triggers from GitHub UI
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.10
-          bundler-cache: true
-
-      - name: Run RSpec
-        run: bundle exec rspec
-
   deploy:
     name: Deploy app
-    needs: test # Only deploy if tests pass
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     concurrency: deploy-group
     steps:
