@@ -1,0 +1,9 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dark Roast (Kiyohime)">
+  <!-- Kiyohime - classic maple with serrated edges -->
+  <path d="M100,40 L106,70 L115,65 L120,75 L132,68 L118,88 L128,92 L145,95 L122,105 L132,115 L142,130 L112,120 L108,135 L108,150 L100,128 L92,150 L92,135 L88,120 L58,130 L68,115 L78,105 L55,95 L72,92 L82,88 L68,68 L80,75 L85,65 L94,70 Z"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  <line x1="100" y1="150" x2="100" y2="178" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
