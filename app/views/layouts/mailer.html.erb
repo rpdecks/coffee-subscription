@@ -18,13 +18,14 @@
         background-color: #ffffff;
       }
       .email-header {
-        background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+        background-color: #111827;
         padding: 32px 24px;
         text-align: center;
+        border-bottom: 2px solid #1f2937;
       }
       .email-logo {
-        font-size: 28px;
-        font-weight: 700;
+        font-size: 24px;
+        font-weight: 600;
         color: #ffffff;
         text-decoration: none;
         letter-spacing: 0.5px;
@@ -43,7 +44,7 @@
       .btn {
         display: inline-block;
         padding: 12px 24px;
-        background-color: #8B4513;
+        background-color: #111827;
         color: #ffffff !important;
         text-decoration: none;
         border-radius: 6px;
@@ -51,7 +52,7 @@
         margin: 16px 0;
       }
       .btn:hover {
-        background-color: #654321;
+        background-color: #1f2937;
       }
       @media only screen and (max-width: 600px) {
         .email-content {
@@ -67,7 +68,13 @@
   <body>
     <div class="email-container">
       <div class="email-header">
-        <div class="email-logo">☕ Acer Coffee</div>
+        <div class="email-logo">
+          <svg style="height: 24px; width: 24px; display: inline-block; vertical-align: middle; margin-right: 8px;" viewBox="0 0 90 90" fill="currentColor">
+            <path d="M16.112,27.895c0,0-19.206,34.839,5.125,52.456c2.723,1.711,4.586-0.553,4.789-3.621c0.201-3.067,3.895-21.867,21.027-38.446C64.186,21.702,65.23,10.451,60.84,5.655C56.344,0.742,32.885-2.691,16.112,27.895z"/>
+            <path d="M73.886,62.105c0,0,19.207-34.838-5.124-52.454c-2.725-1.713-4.588,0.551-4.789,3.621c-0.201,3.066-3.893,21.866-21.028,38.445C25.813,68.297,24.771,79.551,29.158,84.347C33.655,89.258,57.112,92.692,73.886,62.105z"/>
+          </svg>
+          Acer Coffee
+        </div>
       </div>
       <div class="email-content">
         <%= yield %>
