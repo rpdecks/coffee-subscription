@@ -46,7 +46,7 @@ robert_admin = User.create!(
   role: :admin
 )
 
-katie_admin = User.create!(
+kristin_admin = User.create!(
   email: "kp@acercoffee.com",
   password: "ChangeMe123!",
   password_confirmation: "ChangeMe123!",
@@ -430,6 +430,7 @@ puts "=" * 60
 puts "Admin Accounts:"
 puts "  - rp@acercoffee.com / ChangeMe123!"
 puts "  - kp@acercoffee.com / ChangeMe123!"
+puts "  - admin@acercoffee.com / ChangeMe123!"
 puts ""
 puts "Sample Customers:"
 puts "  - test1@example.com / TestPass123!"
