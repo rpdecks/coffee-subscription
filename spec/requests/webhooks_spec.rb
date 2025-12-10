@@ -124,7 +124,8 @@ RSpec.describe WebhooksController, type: :request do
       let(:stripe_object) do
         double(
           id: 'in_test123',
-          subscription: 'sub_test123'
+          subscription: 'sub_test123',
+          to_hash: { id: 'in_test123', subscription: 'sub_test123' }
         )
       end
 
@@ -143,7 +144,7 @@ RSpec.describe WebhooksController, type: :request do
       end
 
       it 'returns bad request' do
-        post '/webhooks/stripe', params: {}, as: :json
+        post '/webhooks/stripe', params: { type: 'any.event' }, as: :json
 
         expect(response).to have_http_status(:bad_request)
       end
@@ -154,6 +155,7 @@ RSpec.describe WebhooksController, type: :request do
       let(:stripe_object) { double }
 
       it 'returns success but logs the unhandled event' do
+        allow(Rails.logger).to receive(:info)
         expect(Rails.logger).to receive(:info).with(/Unhandled Stripe event type/)
 
         post '/webhooks/stripe', params: { type: event_type }, as: :json

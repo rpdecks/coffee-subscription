@@ -141,14 +141,16 @@ RSpec.describe "Dashboard::Subscriptions", type: :request do
     end
   end
 
-  describe "POST /dashboard/subscriptions/:id/cancel" do
+  describe "DELETE /dashboard/subscriptions/:id/cancel" do
     let!(:subscription) { create(:subscription, :active, user: user, stripe_subscription_id: 'sub_test123') }
 
     context "when subscription is active" do
-      it "cancels the subscription" do
+      before do
         allow(StripeService).to receive(:cancel_subscription)
+      end
 
-        post cancel_dashboard_subscription_path(subscription)
+      it "cancels the subscription" do
+        delete cancel_dashboard_subscription_path(subscription)
 
         expect(subscription.reload.status).to eq('cancelled')
         expect(subscription.cancelled_at).to be_present
@@ -159,7 +161,7 @@ RSpec.describe "Dashboard::Subscriptions", type: :request do
       it "cancels in Stripe at period end" do
         expect(StripeService).to receive(:cancel_subscription).with('sub_test123', cancel_at_period_end: true)
 
-        post cancel_dashboard_subscription_path(subscription)
+        delete cancel_dashboard_subscription_path(subscription)
       end
     end
 
@@ -167,8 +169,9 @@ RSpec.describe "Dashboard::Subscriptions", type: :request do
       let!(:subscription) { create(:subscription, status: :cancelled, user: user) }
 
       it "redirects with error" do
-        post cancel_dashboard_subscription_path(subscription)
+        delete cancel_dashboard_subscription_path(subscription)
 
+        expect(response).to redirect_to(dashboard_subscription_path(subscription))
         expect(flash[:alert]).to include('cannot be cancelled')
       end
     end

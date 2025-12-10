@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ShopController < ApplicationController
-  before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :authenticate_user!, except: [ :index, :show, :add_to_cart, :remove_from_cart, :update_cart, :clear_cart, :create_checkout_session ]
 
   def index
     @category = params[:category]&.to_sym
@@ -31,7 +31,7 @@ class ShopController < ApplicationController
 
   def checkout
     unless current_user
-      store_location_for(:user, shop_checkout_path)
+      store_location_for(:user, request.fullpath)
       redirect_to new_user_session_path, alert: "Please sign in to continue"
       return
     end
@@ -47,7 +47,7 @@ class ShopController < ApplicationController
       product = Product.find_by(id: item["product_id"])
       next unless product&.active? && product&.in_stock?
 
-      { product: product, quantity: item["quantity"] }
+      { product: product, quantity: item["quantity"].to_i }
     end.compact
 
     if @products_with_quantities.empty?

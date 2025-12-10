@@ -6,19 +6,9 @@ RSpec.describe "Webhook Shipping Address Handling", type: :request do
   let(:address) { create(:address, user: user, address_type: :shipping) }
   let(:payment_method) { create(:payment_method, user: user, is_default: true) }
 
-  let(:event_payload) do
-    {
-      id: 'evt_test123',
-      type: event_type,
-      data: { object: event_data }
-    }
-  end
-
   before do
     # Stub Stripe verification to bypass signature check and return our event
-    allow(Stripe::Webhook).to receive(:construct_event).and_return(
-      Stripe::Event.construct_from(event_payload)
-    )
+    allow(Stripe::Webhook).to receive(:construct_event) { stripe_event }
 
     # Stub WebhookEvent to bypass idempotency check
     allow(WebhookEvent).to receive(:find_or_initialize_by).and_return(
