@@ -70,7 +70,7 @@ class ShopController < ApplicationController
 
     cart_items = params[:cart_items] || []
     if cart_items.empty?
-      render json: { error: "Cart is empty" }, status: :unprocessable_entity
+      render json: { error: "Cart is empty" }, status: :unprocessable_content
       return
     end
 
@@ -83,7 +83,7 @@ class ShopController < ApplicationController
     end.compact
 
     if items_with_products.empty?
-      render json: { error: "No valid products in cart" }, status: :unprocessable_entity
+      render json: { error: "No valid products in cart" }, status: :unprocessable_content
       return
     end
 
@@ -101,7 +101,7 @@ class ShopController < ApplicationController
     render json: { checkout_url: session.url }
   rescue StripeService::StripeError => e
     Rails.logger.error("Checkout session creation failed: #{e.message}")
-    render json: { error: "Unable to create checkout session" }, status: :unprocessable_entity
+    render json: { error: "Unable to create checkout session" }, status: :unprocessable_content
   end
 
   def success

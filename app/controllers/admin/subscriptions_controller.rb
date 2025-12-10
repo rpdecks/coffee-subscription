@@ -33,7 +33,7 @@ class Admin::SubscriptionsController < Admin::BaseController
       redirect_to admin_subscription_path(@subscription), notice: "Subscription updated successfully."
     else
       flash[:alert] = "Unable to update subscription: #{@subscription.errors.full_messages.join(', ')}"
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

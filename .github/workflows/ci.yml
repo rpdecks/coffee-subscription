@@ -76,6 +76,7 @@ jobs:
       RAILS_ENV: test
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_TEST_SECRET_KEY }}
+      SUPPRESS_DEPRECATIONS: "true"
 
     steps:
       - name: Checkout code

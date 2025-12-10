@@ -20,7 +20,7 @@ class Admin::SubscriptionPlansController < Admin::BaseController
     if @subscription_plan.save
       redirect_to admin_subscription_plan_path(@subscription_plan), notice: "Subscription plan created successfully."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -31,7 +31,7 @@ class Admin::SubscriptionPlansController < Admin::BaseController
     if @subscription_plan.update(subscription_plan_params)
       redirect_to admin_subscription_plan_path(@subscription_plan), notice: "Subscription plan updated successfully."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

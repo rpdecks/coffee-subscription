@@ -13,7 +13,7 @@ module Dashboard
       if @subscription.update(subscription_params)
         redirect_to dashboard_subscription_path(@subscription), notice: "Subscription updated successfully."
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

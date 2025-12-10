@@ -58,7 +58,7 @@ RSpec.describe "Dashboard::Subscriptions", type: :request do
           subscription: { subscription_plan_id: nil }
         }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

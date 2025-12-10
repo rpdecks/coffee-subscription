@@ -50,6 +50,12 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Silence deprecation warnings in CI or when explicitly requested
+  # (mainly for Devise gem warnings while waiting for Rails 8.2 compatibility updates)
+  if ENV["CI"] || ENV["SUPPRESS_DEPRECATIONS"]
+    config.active_support.report_deprecations = false
+  end
+
   # Raise exceptions for disallowed deprecations.
   config.active_support.disallowed_deprecation = :raise
 

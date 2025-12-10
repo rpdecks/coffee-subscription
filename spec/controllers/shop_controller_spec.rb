@@ -132,7 +132,7 @@ RSpec.describe ShopController, type: :controller do
       context 'with empty cart' do
         it 'returns unprocessable entity' do
           post :create_checkout_session, params: { cart_items: [] }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(JSON.parse(response.body)['error']).to eq('Cart is empty')
         end
       end
@@ -181,7 +181,7 @@ RSpec.describe ShopController, type: :controller do
         it 'returns unprocessable entity with error message' do
           post :create_checkout_session, params: { cart_items: cart_items }
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(JSON.parse(response.body)['error']).to eq('Unable to create checkout session')
         end
       end

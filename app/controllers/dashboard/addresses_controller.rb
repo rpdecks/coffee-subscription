@@ -16,7 +16,7 @@ class Dashboard::AddressesController < ApplicationController
     if @address.save
       redirect_to dashboard_addresses_path, notice: "Address added successfully."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -27,7 +27,7 @@ class Dashboard::AddressesController < ApplicationController
     if @address.update(address_params)
       redirect_to dashboard_addresses_path, notice: "Address updated successfully."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

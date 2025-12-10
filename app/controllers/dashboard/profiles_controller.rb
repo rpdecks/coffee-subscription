@@ -14,14 +14,14 @@ class Dashboard::ProfilesController < ApplicationController
         bypass_sign_in(@user) # Sign in the user again to maintain session
         redirect_to edit_dashboard_profile_path, notice: "Profile updated successfully."
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     else
       # If not updating password, just update other attributes
       if @user.update_without_password(user_params.except(:current_password, :password, :password_confirmation))
         redirect_to edit_dashboard_profile_path, notice: "Profile updated successfully."
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
   end
