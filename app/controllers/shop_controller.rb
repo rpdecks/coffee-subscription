@@ -5,6 +5,7 @@ class ShopController < ApplicationController
 
   def index
     @category = params[:category]&.to_sym
+    @roast = params[:roast]&.to_sym
 
     @products = Product.active.visible_in_shop.in_stock
 
@@ -13,6 +14,11 @@ class ShopController < ApplicationController
       @products = @products.coffee
     when :merch
       @products = @products.merch
+    end
+
+    # Filter by roast type if specified
+    if @roast.present? && Product.roast_types.key?(@roast.to_s)
+      @products = @products.where(roast_type: @roast)
     end
 
     @products = @products.order(:name)

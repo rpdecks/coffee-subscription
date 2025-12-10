@@ -2,41 +2,56 @@
 
 <div class="min-h-screen bg-gray-50">
   <!-- Header -->
-  <div class="bg-white border-b">
+  <div class="bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 class="text-4xl font-bold text-gray-900">Shop</h1>
+      <h1 class="text-4xl font-serif font-bold text-gray-900">Shop</h1>
       <p class="mt-2 text-lg text-gray-600">Premium craft coffee, delivered to your door</p>
 
       <!-- Category Navigation -->
-      <div class="mt-6 flex gap-4">
+      <div class="mt-6 flex flex-wrap gap-4">
         <%= link_to shop_path,
-            class: "px-6 py-2 rounded-lg font-medium transition #{@category.nil? ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category.nil? ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-900'}" do %>
           All Products
         <% end %>
         <%= link_to shop_path(category: 'coffee'),
-            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :coffee ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :coffee ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-900'}" do %>
           Coffee
         <% end %>
         <%= link_to shop_path(category: 'merch'),
-            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :merch ? 'bg-amber-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}" do %>
+            class: "px-6 py-2 rounded-lg font-medium transition #{@category == :merch ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-900'}" do %>
           Merchandise
         <% end %>
       </div>
+
+      <!-- Roast Type Filters (Coffee only) -->
+      <% if @category == :coffee || @category.nil? %>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <span class="text-sm text-gray-500 self-center font-medium">Roast:</span>
+          <%= link_to "Signature", shop_path(category: 'coffee', roast: 'signature'),
+              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
+          <%= link_to "Light", shop_path(category: 'coffee', roast: 'light'),
+              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
+          <%= link_to "Medium", shop_path(category: 'coffee', roast: 'medium'),
+              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
+          <%= link_to "Dark", shop_path(category: 'coffee', roast: 'dark'),
+              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
+        </div>
+      <% end %>
     </div>
   </div>
 
   <!-- Cart Summary (if items) -->
   <% if session[:cart]&.any? %>
-    <div class="bg-blue-50 border-b border-blue-100">
+    <div class="bg-blue-50 border-b border-blue-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex justify-between items-center">
           <div>
-            <span class="text-blue-900 font-medium">
+            <span class="text-gray-900 font-medium">
               <%= pluralize(session[:cart].sum { |i| i['quantity'].to_i }, 'item') %> in cart
             </span>
           </div>
           <div class="space-x-4">
-            <%= link_to "View Cart", shop_checkout_path, class: "bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition" %>
+            <%= link_to "View Cart", shop_checkout_path, class: "px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
           </div>
         </div>
       </div>
@@ -48,16 +63,31 @@
     <% if @products.any? %>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <% @products.each do |product| %>
-          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
-            <!-- Placeholder Image -->
-            <div class="h-64 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-              <svg class="w-24 h-24 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-              </svg>
+          <div class="card overflow-hidden">
+            <!-- Product Image -->
+            <div class="h-64 bg-white flex items-center justify-center overflow-hidden">
+              <% if product.image.attached? %>
+                <% if product.image.content_type == 'image/svg+xml' %>
+                  <%= image_tag product.image, class: "w-full h-full object-contain p-4", style: "filter: brightness(0) saturate(100%) invert(8%) sepia(6%) saturate(6%) hue-rotate(315deg) brightness(96%) contrast(95%);" %>
+                <% else %>
+                  <%= image_tag product.image, class: "w-full h-full object-contain p-4" %>
+                <% end %>
+              <% else %>
+                <svg class="w-24 h-24 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+              <% end %>
             </div>
 
             <div class="p-6">
-              <h3 class="text-xl font-bold text-gray-900 mb-2"><%= product.name %></h3>
+              <div class="flex items-start justify-between mb-2">
+                <h3 class="text-xl font-semibold flex-1 text-gray-900"><%= product.name %></h3>
+                <% if product.coffee? && product.cultivar_icon %>
+                  <%= image_tag product.cultivar_icon,
+                      class: "w-6 h-6 #{product.cultivar_color} flex-shrink-0 ml-2",
+                      alt: product.roast_type&.titleize %>
+                <% end %>
+              </div>
 
               <% if product.description.present? %>
                 <p class="text-gray-600 text-sm mb-4"><%= truncate(product.description, length: 100) %></p>
@@ -79,28 +109,28 @@
                 <%= f.hidden_field :product_id, value: product.id %>
 
                 <div class="flex items-center gap-2 mb-4">
-                  <label class="text-sm text-gray-600">Qty:</label>
+                  <label class="text-sm text-gray-700 font-medium">Qty:</label>
                   <%= f.number_field :quantity, value: 1, min: 1, max: 10,
-                      class: "w-20 border border-gray-300 rounded px-3 py-2" %>
+                      class: "w-20 input-field" %>
                 </div>
 
                 <%= f.submit "Add to Cart",
-                    class: "w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 transition font-medium" %>
+                    class: "w-full px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
               <% end %>
 
               <%= link_to "View Details", shop_product_path(product),
-                  class: "block text-center mt-2 text-amber-600 hover:text-amber-700 text-sm" %>
+                  class: "block text-center mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium" %>
             </div>
           </div>
         <% end %>
       </div>
     <% else %>
       <div class="text-center py-16">
-        <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="mx-auto h-24 w-24 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
         </svg>
         <h3 class="mt-4 text-xl font-medium text-gray-900">No products available</h3>
-        <p class="mt-2 text-gray-500">Check back soon for our coffee selection!</p>
+        <p class="mt-2 text-gray-600">Check back soon for our coffee selection!</p>
       </div>
     <% end %>
   </div>
