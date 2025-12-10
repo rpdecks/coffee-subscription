@@ -9,7 +9,7 @@
       <% end %>
       <div>
         <h1 class="text-3xl font-bold text-gray-900"><%= @product.name %></h1>
-        <p class="text-gray-600 mt-1"><%= @product.product_type.titleize %></p>
+        <p class="text-gray-600 mt-1"><%= @product.product_type&.titleize || 'No type set' %></p>
       </div>
     </div>
     <div class="flex gap-2">
@@ -72,27 +72,27 @@
 
         <div class="space-y-4">
           <div>
-            <div class="text-sm text-gray-500 mb-1">Name</div>
+            <div class="text-sm font-medium text-gray-700 mb-1">Name</div>
             <div class="text-base text-gray-900"><%= @product.name %></div>
           </div>
 
           <% if @product.description.present? %>
             <div>
-              <div class="text-sm text-gray-500 mb-1">Description</div>
-              <div class="text-base text-gray-900 leading-relaxed"><%= simple_format(@product.description) %></div>
+              <div class="text-sm font-medium text-gray-700 mb-1">Description</div>
+              <div class="text-base text-gray-900 leading-relaxed whitespace-pre-wrap"><%= @product.description %></div>
             </div>
           <% end %>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <div class="text-sm text-gray-500 mb-1">Product Type</div>
+              <div class="text-sm font-medium text-gray-700 mb-1">Product Type</div>
               <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full <%= @product.coffee? ? 'bg-brown-100 text-brown-800' : 'bg-purple-100 text-purple-800' %>">
                 <%= @product.product_type.titleize %>
               </span>
             </div>
 
             <div>
-              <div class="text-sm text-gray-500 mb-1">Created</div>
+              <div class="text-sm font-medium text-gray-700 mb-1">Created</div>
               <div class="text-base text-gray-900"><%= @product.created_at.strftime("%b %d, %Y") %></div>
             </div>
           </div>
@@ -102,8 +102,8 @@
       <!-- Order History -->
       <div class="bg-white rounded-lg border border-gray-200 p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Orders</h2>
-        <div class="text-center py-8 text-gray-500">
-          <p>Order history feature coming soon</p>
+        <div class="text-center py-8">
+          <p class="text-gray-500">Order history feature coming soon</p>
         </div>
       </div>
     </div>

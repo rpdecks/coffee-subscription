@@ -82,13 +82,15 @@ class Admin::ProductsController < Admin::BaseController
       :name,
       :description,
       :product_type,
+      :roast_type,
       :price,
       :weight_oz,
       :inventory_count,
       :active,
       :visible_in_shop,
       :stripe_product_id,
-      :stripe_price_id
+      :stripe_price_id,
+      :image
     )
   end
 end
