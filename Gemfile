@@ -80,6 +80,8 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
   gem "rails-controller-testing"  # For assigns() and assert_template in controller specs
+  gem "simplecov", require: false
+  gem "shoulda-matchers"
 end
 
 group :development do

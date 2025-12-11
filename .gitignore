@@ -48,3 +48,6 @@ node_modules/
 
 # macOS specific files
 .DS_Store
+
+# Test coverage reports
+/coverage/
