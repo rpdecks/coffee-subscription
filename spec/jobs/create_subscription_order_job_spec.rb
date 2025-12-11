@@ -48,7 +48,7 @@ RSpec.describe CreateSubscriptionOrderJob, type: :job do
     context "when order fails to save" do
       before do
         allow_any_instance_of(Order).to receive(:save).and_return(false)
-        allow_any_instance_of(Order).to receive(:errors).and_return(double(full_messages: ["Error message"]))
+        allow_any_instance_of(Order).to receive(:errors).and_return(double(full_messages: [ "Error message" ]))
       end
 
       it "does not create an order" do
