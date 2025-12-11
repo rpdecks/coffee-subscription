@@ -68,7 +68,6 @@ class SubscriptionOrderGenerator
         product: product,
         quantity: 1,
         price_cents: product.price_cents,
-        bag_size: subscription.bag_size || "12 oz",
         grind_type: grind_type_for_user
       )
     end
@@ -85,8 +84,10 @@ class SubscriptionOrderGenerator
     products = Product.coffee.active.in_stock
 
     # If user has preferences, try to match them
-    if coffee_preference&.preferred_roast_level
-      preferred = products.where(roast_level: coffee_preference.preferred_roast_level).limit(bag_count)
+    # Note: CoffeePreference uses roast_level, Product uses roast_type
+    if coffee_preference&.roast_level
+      # Map roast_level to roast_type (both use same enum values)
+      preferred = products.where(roast_type: coffee_preference.roast_level).limit(bag_count)
       return preferred if preferred.count == bag_count
     end
 
@@ -96,7 +97,7 @@ class SubscriptionOrderGenerator
 
   def grind_type_for_user
     coffee_preference = subscription.user.coffee_preference
-    coffee_preference&.preferred_grind_type || :whole_bean
+    coffee_preference&.grind_type || :whole_bean
   end
 
   def calculate_shipping_cost

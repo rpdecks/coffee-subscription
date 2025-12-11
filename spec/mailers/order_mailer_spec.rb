@@ -11,8 +11,8 @@ RSpec.describe OrderMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Order Confirmation - ORD-12345")
-      expect(mail.to).to eq(["customer@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "customer@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
@@ -30,8 +30,8 @@ RSpec.describe OrderMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Your order has shipped! - ORD-12345")
-      expect(mail.to).to eq(["customer@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "customer@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do

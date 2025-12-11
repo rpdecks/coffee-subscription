@@ -16,8 +16,8 @@ RSpec.describe SubscriptionMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Welcome to your coffee subscription!")
-      expect(mail.to).to eq(["subscriber@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "subscriber@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
@@ -31,8 +31,8 @@ RSpec.describe SubscriptionMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Your subscription has been paused")
-      expect(mail.to).to eq(["subscriber@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "subscriber@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
@@ -46,8 +46,8 @@ RSpec.describe SubscriptionMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Your subscription has been resumed")
-      expect(mail.to).to eq(["subscriber@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "subscriber@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
@@ -61,8 +61,8 @@ RSpec.describe SubscriptionMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Your subscription has been cancelled")
-      expect(mail.to).to eq(["subscriber@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "subscriber@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
@@ -80,8 +80,8 @@ RSpec.describe SubscriptionMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Payment failed for your coffee subscription")
-      expect(mail.to).to eq(["subscriber@example.com"])
-      expect(mail.from).to eq(["orders@acercoffee.com"])
+      expect(mail.to).to eq([ "subscriber@example.com" ])
+      expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
 
     it "renders the body" do
