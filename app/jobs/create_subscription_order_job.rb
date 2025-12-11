@@ -22,7 +22,7 @@ class CreateSubscriptionOrderJob < ApplicationJob
 
       # Update next delivery date
       subscription.update(
-        next_delivery_date: subscription.next_delivery_date + subscription.frequency.days
+        next_delivery_date: subscription.next_delivery_date + subscription.subscription_plan.frequency_in_days.days
       )
 
       # Send order confirmation email
