@@ -40,9 +40,9 @@ class Admin::InventoryController < Admin::BaseController
     # Sort
     case params[:sort]
     when "quantity_asc"
-      @inventory_items = @inventory_items.order(quantity: :asc)
+      @inventory_items = @inventory_items.reorder(quantity: :asc)
     when "quantity_desc"
-      @inventory_items = @inventory_items.order(quantity: :desc)
+      @inventory_items = @inventory_items.reorder(quantity: :desc)
     when "roast_date"
       @inventory_items = @inventory_items.by_roast_date
     when "received_date"

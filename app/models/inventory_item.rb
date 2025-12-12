@@ -11,7 +11,7 @@ class InventoryItem < ApplicationRecord
   scope :roasted, -> { where(state: :roasted) }
   scope :packaged, -> { where(state: :packaged) }
   scope :available, -> { where("quantity > 0") }
-  scope :low_stock, ->(threshold = 5.0) { where("quantity > 0 AND quantity <= ?", threshold) }
+  scope :low_stock, ->(threshold = 5.0) { where("quantity > 0 AND quantity < ?", threshold) }
   scope :out_of_stock, -> { where(quantity: 0) }
   scope :expiring_soon, ->(days = 14) { where("expires_on IS NOT NULL AND expires_on <= ?", Date.today + days.days) }
   scope :recent, -> { order(created_at: :desc) }
