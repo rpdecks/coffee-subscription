@@ -141,44 +141,59 @@
 }
 
 @layer components {
-  /* Buttons */
+  /* Buttons - Light Theme */
   .btn-primary {
-    background-color: var(--color-deshojo);
-    color: var(--color-cream);
+    display: inline-block;
+    background-color: #b93e3e !important;
+    color: white !important;
     padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-brand);
+    border-radius: 6px;
     font-weight: 600;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+    border: 2px solid #b93e3e !important;
   }
 
   .btn-primary:hover {
-    background-color: rgb(185 62 62 / 0.9);
+    background-color: rgb(185 62 62 / 0.9) !important;
+    border-color: rgb(185 62 62 / 0.9) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185, 62, 62, 0.3);
   }
 
   .btn-secondary {
-    background-color: var(--color-coffee-brown);
-    color: var(--color-cream);
+    display: inline-block;
+    background-color: #4a2f27 !important;
+    color: white !important;
     padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-brand);
+    border-radius: 6px;
     font-weight: 500;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+    border: 2px solid #4a2f27 !important;
   }
 
   .btn-secondary:hover {
-    background-color: rgb(74 47 39 / 0.9);
+    background-color: rgb(74 47 39 / 0.9) !important;
+    border-color: rgb(74 47 39 / 0.9) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 47, 39, 0.3);
   }
 
   .btn-tertiary {
-    border: 2px solid rgb(246 241 235 / 0.3);
-    color: var(--color-cream);
+    display: inline-block;
+    background-color: transparent;
+    border: 2px solid #b93e3e !important;
+    color: #b93e3e !important;
     padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-brand);
+    border-radius: 6px;
     font-weight: 500;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
 
   .btn-tertiary:hover {
-    border-color: rgb(246 241 235 / 0.5);
+    background-color: #b93e3e !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185, 62, 62, 0.3);
   }
 
   /* Cards */

@@ -1,0 +1,229 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Inventory Management</h1>
+      <p class="text-gray-600 mt-1">Track and manage your coffee and merchandise inventory</p>
+    </div>
+    <%= link_to "Add Inventory", new_admin_inventory_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Total Items</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @total_items %></p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Low Stock</p>
+          <p class="text-2xl font-bold text-yellow-600"><%= @low_stock_count %></p>
+        </div>
+        <div class="p-3 bg-yellow-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Expiring Soon</p>
+          <p class="text-2xl font-bold text-orange-600"><%= @expiring_soon_count %></p>
+        </div>
+        <div class="p-3 bg-orange-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Out of Stock</p>
+          <p class="text-2xl font-bold text-red-600"><%= @out_of_stock_count %></p>
+        </div>
+        <div class="p-3 bg-red-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <%= form_with url: admin_inventory_index_path, method: :get, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- Search -->
+        <div>
+          <%= text_field_tag :search, params[:search], placeholder: "Search product or lot...", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Product Type -->
+        <div>
+          <%= select_tag :product_type,
+              options_for_select([["All Types", ""], ["Coffee", "coffee"], ["Merchandise", "merch"]], params[:product_type]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- State -->
+        <div>
+          <%= select_tag :state,
+              options_for_select([["All States", ""], ["Green", "green"], ["Roasted", "roasted"], ["Packaged", "packaged"]], params[:state]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Stock Status -->
+        <div>
+          <%= select_tag :stock_status,
+              options_for_select([["All Stock", ""], ["Available", "available"], ["Low Stock", "low_stock"], ["Out of Stock", "out_of_stock"], ["Expiring Soon", "expiring_soon"]], params[:stock_status]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Sort -->
+        <div>
+          <%= select_tag :sort,
+              options_for_select([["Newest First", ""], ["Quantity Low-High", "quantity_asc"], ["Quantity High-Low", "quantity_desc"], ["Roast Date", "roast_date"], ["Received Date", "received_date"]], params[:sort]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <%= submit_tag "Apply Filters", class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        <%= link_to "Clear Filters", admin_inventory_index_path, class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @inventory_items.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lot #</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Freshness</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @inventory_items.each do |item| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900"><%= item.product.name %></div>
+                      <div class="text-sm text-gray-500"><%= item.product.product_type.titleize %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% state_colors = {
+                    'green' => 'bg-green-100 text-green-800',
+                    'roasted' => 'bg-amber-100 text-amber-800',
+                    'packaged' => 'bg-blue-100 text-blue-800'
+                  } %>
+                  <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full <%= state_colors[item.state] %>">
+                    <%= item.state.titleize %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    <%= number_with_precision(item.quantity, precision: 2) %> lbs
+                  </div>
+                  <% if item.quantity <= 5 && item.quantity > 0 %>
+                    <div class="text-xs text-yellow-600">Low Stock</div>
+                  <% elsif item.quantity == 0 %>
+                    <div class="text-xs text-red-600">Out of Stock</div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900"><%= item.lot_number || "—" %></div>
+                </td>
+                <td class="px-6 py-4">
+                  <% if item.roasted_on %>
+                    <div class="text-xs text-gray-900">Roasted: <%= item.roasted_on.strftime("%m/%d/%Y") %></div>
+                  <% end %>
+                  <% if item.received_on %>
+                    <div class="text-xs text-gray-500">Received: <%= item.received_on.strftime("%m/%d/%Y") %></div>
+                  <% end %>
+                  <% if item.expires_on %>
+                    <div class="text-xs text-gray-500">Expires: <%= item.expires_on.strftime("%m/%d/%Y") %></div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if item.roasted_on && item.product.coffee? %>
+                    <% days = item.days_since_roast %>
+                    <% if days <= 7 %>
+                      <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        Fresh (<%= days %>d)
+                      </span>
+                    <% elsif days <= 21 %>
+                      <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        Good (<%= days %>d)
+                      </span>
+                    <% else %>
+                      <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Aging (<%= days %>d)
+                      </span>
+                    <% end %>
+                  <% elsif item.is_expiring_soon? %>
+                    <span class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
+                      Expires in <%= item.days_until_expiry %>d
+                    </span>
+                  <% else %>
+                    <span class="text-sm text-gray-500">—</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex gap-2 justify-end">
+                    <%= link_to "Edit", edit_admin_inventory_path(item), class: "text-blue-600 hover:text-blue-900" %>
+                    <%= button_to "Delete", admin_inventory_path(item), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-200">
+        <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No inventory items found</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by adding your first inventory item.</p>
+        <div class="mt-6">
+          <%= link_to "Add Inventory", new_admin_inventory_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

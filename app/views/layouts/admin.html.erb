@@ -32,6 +32,7 @@
               <%= link_to "Subscriptions", admin_subscriptions_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_subscriptions_path) ? 'bg-gray-800' : ''}" %>
               <%= link_to "Plans", admin_subscription_plans_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_subscription_plans_path) ? 'bg-gray-800' : ''}" %>
               <%= link_to "Products", admin_products_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_products_path) ? 'bg-gray-800' : ''}" %>
+              <%= link_to "Inventory", admin_inventory_index_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/inventory') ? 'bg-gray-800' : ''}" %>
               <%= link_to "Customers", admin_customers_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_customers_path) ? 'bg-gray-800' : ''}" %>
             </div>
           </div>

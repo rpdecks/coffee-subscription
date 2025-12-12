@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_09_175019) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_12_014539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,6 +66,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_175019) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_coffee_preferences_on_user_id"
+  end
+
+  create_table "inventory_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "expires_on"
+    t.string "lot_number"
+    t.text "notes"
+    t.bigint "product_id", null: false
+    t.decimal "quantity", precision: 10, scale: 2, default: "0.0", null: false
+    t.date "received_on"
+    t.date "roasted_on"
+    t.integer "state", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_inventory_items_on_product_id"
+    t.index ["received_on"], name: "index_inventory_items_on_received_on"
+    t.index ["roasted_on"], name: "index_inventory_items_on_roasted_on"
+    t.index ["state"], name: "index_inventory_items_on_state"
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -200,6 +217,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_175019) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "users"
   add_foreign_key "coffee_preferences", "users"
+  add_foreign_key "inventory_items", "products"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "subscriptions"

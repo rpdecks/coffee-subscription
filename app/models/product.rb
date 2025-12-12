@@ -1,5 +1,6 @@
 class Product < ApplicationRecord
   has_one_attached :image
+  has_many :inventory_items, dependent: :destroy
 
   enum :product_type, { coffee: 0, merch: 1 }
   enum :roast_type, { signature: 0, light: 1, medium: 2, dark: 3 }
@@ -25,6 +26,38 @@ class Product < ApplicationRecord
 
   def in_stock?
     inventory_count.nil? || inventory_count > 0
+  end
+
+  # New inventory management methods
+  def total_green_inventory
+    return 0.0 unless coffee?
+    inventory_items.green.sum(:quantity)
+  end
+
+  def total_roasted_inventory
+    return 0.0 unless coffee?
+    inventory_items.roasted.sum(:quantity)
+  end
+
+  def total_packaged_inventory
+    inventory_items.packaged.sum(:quantity)
+  end
+
+  def total_inventory_pounds
+    if coffee?
+      total_green_inventory + total_roasted_inventory + total_packaged_inventory
+    else
+      inventory_items.sum(:quantity)
+    end
+  end
+
+  def low_on_inventory?(threshold = 5.0)
+    total_inventory_pounds < threshold
+  end
+
+  def fresh_roasted_inventory
+    return 0.0 unless coffee?
+    inventory_items.roasted.select(&:is_fresh?).sum(&:quantity)
   end
 
   def cultivar_icon

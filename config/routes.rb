@@ -94,6 +94,7 @@ Rails.application.routes.draw do
         patch :toggle_active
       end
     end
+    resources :inventory, except: [ :show ]
   end
 
   # Email testing (admin only, development)
