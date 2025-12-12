@@ -1,0 +1,48 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Record Roasted Inventory</h1>
+      <p class="text-sm text-gray-500">Enter the output of your latest Cropster roast so the storefront knows what is available.</p>
+    </div>
+    <%= link_to "Back to Inventory", admin_inventory_index_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+  </div>
+
+  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <%= form_with model: @roasted_inventory, url: admin_roasted_inventories_path, local: true do |form| %>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div>
+          <%= form.label :product_id, "Product", class: "text-sm font-medium text-gray-700" %>
+          <%= form.select :product_id, options_from_collection_for_select(@products, :id, :name), { prompt: "Select a coffee SKU" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :quantity, "Quantity (bags)", class: "text-sm font-medium text-gray-700" %>
+          <%= form.number_field :quantity, step: 0.1, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :roasted_on, "Roast Date", class: "text-sm font-medium text-gray-700" %>
+          <%= form.date_field :roasted_on, value: Date.today, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :expires_on, "Use By", class: "text-sm font-medium text-gray-700" %>
+          <%= form.date_field :expires_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :batch_id, "Cropster Batch ID", class: "text-sm font-medium text-gray-700" %>
+          <%= form.text_field :batch_id, placeholder: "Optional", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= form.label :lot_number, "Lot / Roast Reference", class: "text-sm font-medium text-gray-700" %>
+          <%= form.text_field :lot_number, placeholder: "e.g. PAL-2025-01", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :notes, "Notes", class: "text-sm font-medium text-gray-700" %>
+          <%= form.text_area :notes, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <%= form.submit "Record Roast", class: "inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+  </div>
+</div>

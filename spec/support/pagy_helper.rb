@@ -13,13 +13,44 @@ module PagyTestOverride
     total_pages = 1 if total_pages.zero?
 
     # Create pagy object
+    pagy_vars = { page: page, items: items_per_page, page_param: :page, size: 7, params: {} }.merge(vars)
+
     pagy_obj = OpenStruct.new(
       page: page,
       pages: total_pages,
       count: total_count,
       items: items_per_page,
-      vars: vars
+      vars: pagy_vars
     )
+
+    pagy_obj.define_singleton_method(:from) do
+      return 0 if total_count.zero?
+      ((page - 1) * items_per_page) + 1
+    end
+
+    pagy_obj.define_singleton_method(:to) do
+      [page * items_per_page, total_count].min
+    end
+
+    pagy_obj.define_singleton_method(:prev) do
+      page > 1 ? page - 1 : nil
+    end
+
+    pagy_obj.define_singleton_method(:next) do
+      page < total_pages ? page + 1 : nil
+    end
+
+    pagy_obj.define_singleton_method(:label_for) do |value|
+      value.to_s
+    end
+
+    pagy_obj.define_singleton_method(:series) do |**|
+      [].tap do |series|
+        1.upto(total_pages) do |number|
+          series << (number == page ? number.to_s : number)
+        end
+      end
+    end
 
     # Paginate collection - must preserve order!
     paginated = if collection.is_a?(ActiveRecord::Relation)

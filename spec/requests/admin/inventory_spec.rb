@@ -190,10 +190,11 @@ RSpec.describe "Admin Inventory Management", type: :request do
         sign_in regular_user
       end
 
-      it "denies access with proper error" do
-        expect {
-          get admin_inventory_index_path
-        }.to raise_error(Pundit::NotAuthorizedError)
+      it "redirects with authorization alert" do
+        get admin_inventory_index_path
+        expect(response).to redirect_to(root_path)
+        follow_redirect!
+        expect(response.body).to include("You are not authorized to perform this action.")
       end
     end
   end

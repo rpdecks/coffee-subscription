@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_12_014539) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_12_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_014539) do
   end
 
   create_table "inventory_items", force: :cascade do |t|
+    t.string "batch_id"
     t.datetime "created_at", null: false
     t.date "expires_on"
     t.string "lot_number"
@@ -79,6 +80,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_014539) do
     t.date "roasted_on"
     t.integer "state", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index ["batch_id"], name: "index_inventory_items_on_batch_id"
     t.index ["product_id"], name: "index_inventory_items_on_product_id"
     t.index ["received_on"], name: "index_inventory_items_on_received_on"
     t.index ["roasted_on"], name: "index_inventory_items_on_roasted_on"

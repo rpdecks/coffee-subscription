@@ -82,6 +82,7 @@ group :development, :test do
   gem "rails-controller-testing"  # For assigns() and assert_template in controller specs
   gem "simplecov", require: false
   gem "shoulda-matchers"
+  gem "capybara"
 end
 
 group :development do

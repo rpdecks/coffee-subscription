@@ -4,6 +4,15 @@ class User < ApplicationRecord
     devise :database_authenticatable, :registerable,
       :recoverable, :rememberable, :validatable, :confirmable
 
+  def self.serialize_from_session(key, salt = nil)
+    if salt.nil? && key.is_a?(Array)
+      salt = key[1]
+      key = key[0]
+    end
+
+    super(key, salt)
+  end
+
   # Role enum
   enum :role, { customer: 0, admin: 1 }
 

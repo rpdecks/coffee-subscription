@@ -109,7 +109,8 @@ class Admin::InventoryController < Admin::BaseController
       :roasted_on,
       :received_on,
       :expires_on,
-      :notes
+      :notes,
+      :batch_id
     )
   end
 end

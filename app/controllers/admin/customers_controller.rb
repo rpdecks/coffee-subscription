@@ -5,15 +5,15 @@ class Admin::CustomersController < Admin::BaseController
 
   def index
     @customers = build_customers_query
+    @pagy, @customers = pagy(@customers, items: 25)
 
     respond_to do |format|
-      format.html { @pagy, @customers = pagy(@customers, items: 25) }
+      format.html
       format.csv { export_customers_csv }
     end
   end
 
   def export
-    @customers = build_customers_query
     export_customers_csv
   end
 
@@ -51,10 +51,9 @@ class Admin::CustomersController < Admin::BaseController
   end
 
   def export_customers_csv
-    # Preload associations for export
-    @customers = @customers.includes(:subscriptions, :orders)
+    customers = build_customers_query.includes(:subscriptions, :orders)
 
-    render_csv(@customers, "customers") do |csv, customers|
+    render_csv(customers, "customers") do |csv, customers|
       csv << [ "Name", "Email", "Phone", "Subscriptions", "Total Orders", "Total Spent", "Joined Date" ]
 
       customers.each do |customer|

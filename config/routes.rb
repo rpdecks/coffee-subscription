@@ -95,6 +95,8 @@ Rails.application.routes.draw do
       end
     end
     resources :inventory, except: [ :show ]
+    resource :production_plan, only: [ :show ]
+    resources :roasted_inventories, only: [ :new, :create ]
   end
 
   # Email testing (admin only, development)

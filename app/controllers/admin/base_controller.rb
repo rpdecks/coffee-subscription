@@ -7,9 +7,8 @@ class Admin::BaseController < ApplicationController
   private
 
   def require_admin!
-    unless current_user&.admin?
-      flash[:alert] = "You must be an administrator to access this area."
-      redirect_to root_path
-    end
+    return if current_user&.admin?
+
+    raise Pundit::NotAuthorizedError, "You must be an administrator to access this area."
   end
 end

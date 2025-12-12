@@ -79,6 +79,18 @@ For roasted coffee, the system automatically tracks freshness:
 5. Optional: Add lot number, dates, notes
 6. Save
 
+#### Recording Roasted Output
+
+Use the **Record Roasted Inventory** page (linked from the admin nav) after a roast finishes inside Cropster. Enter:
+
+1. The SKU that was roasted
+2. Quantity in bags or pounds
+3. Roast date (default today)
+4. Optional Cropster batch ID/lot reference
+5. Optional expiry date and notes
+
+Saving creates a roasted inventory item so the production plan and storefront know the new supply without duplicating Cropster’s roast logs.
+
 #### Editing Inventory
 
 - Update quantities as inventory changes
@@ -179,6 +191,12 @@ Use filters to monitor coffee freshness:
 5. **Expiry Management**: Set expiry dates for roasted coffee (typically 21-30 days)
 
 ## Future Enhancements
+
+### Production Planning
+
+Use the new **Production Plan** section under the admin navigation to understand how much coffee you need to roast for the current backlog of pending orders. The page pulls pending orders (pending/processing/roasting) and compares demand per SKU with the roasted inventory on hand, giving you a concise “Need → Have → Roast” view that you can hand off to Cropster before you execute the roast.
+
+The service also shows the number of outstanding orders covered in the plan and highlights any deficit rows so you can prioritize what to roast first.
 
 Consider adding:
 

@@ -1,0 +1,56 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Production Plan</h1>
+      <p class="text-sm text-gray-500">
+        Generated <%= time_ago_in_words(@plan.generated_at) %> ago for <%= @plan.reference_date.strftime("%B %-d, %Y") %>
+      </p>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-gray-600">Outstanding Orders</p>
+      <p class="text-2xl font-semibold text-teal-700"><%= @plan.orders_count %></p>
+    </div>
+  </div>
+
+  <% if @plan.plan_entries.any? %>
+    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">SKU</th>
+            <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Need</th>
+            <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Have</th>
+            <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Roast</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @plan.plan_entries.each do |entry| %>
+            <tr class="<%= 'bg-yellow-50' if entry.deficit? %>">
+              <td class="px-6 py-4">
+                <div class="text-sm font-semibold text-gray-900"><%= entry.product.name %></div>
+                <div class="text-xs text-gray-500">SKU: <%= entry.product.sku.presence || entry.product.name.parameterize.upcase %></div>
+              </td>
+              <td class="px-6 py-4 text-right text-sm text-gray-700"><%= number_with_precision(entry.demand, precision: 2) %> bags</td>
+              <td class="px-6 py-4 text-right text-sm text-green-600"><%= number_with_precision(entry.available, precision: 2) %> bags</td>
+              <td class="px-6 py-4 text-right text-sm">
+                <% if entry.deficit? %>
+                  <span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                    <%= number_with_precision(entry.to_roast, precision: 2) %> bags
+                  </span>
+                <% else %>
+                  <span class="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                    In stock
+                  </span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="rounded-lg border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-500">
+      <p>No outstanding demand right now. All orders are fulfilled or in transit.</p>
+    </div>
+  <% end %>
+</div>

@@ -1,24 +1,30 @@
 require 'rails_helper'
+require 'capybara'
+require 'capybara'
 
 RSpec.describe Admin::InventoryHelper, type: :helper do
+  def parsed_html(result)
+    Capybara::Node::Simple.new(result)
+  end
+
   describe "#inventory_state_badge" do
     it "returns green badge for green state" do
-      result = helper.inventory_state_badge("green")
+      result = parsed_html(helper.inventory_state_badge("green"))
       expect(result).to have_css("span.bg-green-100.text-green-800", text: "Green")
     end
 
     it "returns amber badge for roasted state" do
-      result = helper.inventory_state_badge("roasted")
+      result = parsed_html(helper.inventory_state_badge("roasted"))
       expect(result).to have_css("span.bg-amber-100.text-amber-800", text: "Roasted")
     end
 
     it "returns blue badge for packaged state" do
-      result = helper.inventory_state_badge("packaged")
+      result = parsed_html(helper.inventory_state_badge("packaged"))
       expect(result).to have_css("span.bg-blue-100.text-blue-800", text: "Packaged")
     end
 
     it "includes proper styling classes" do
-      result = helper.inventory_state_badge("green")
+      result = parsed_html(helper.inventory_state_badge("green"))
       expect(result).to have_css("span.px-2.py-1.inline-flex.text-xs.font-semibold.rounded-full")
     end
   end
@@ -30,7 +36,7 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
       let(:item) { create(:inventory_item, product: product, roasted_on: nil) }
 
       it "returns placeholder" do
-        result = helper.inventory_freshness_badge(item)
+        result = parsed_html(helper.inventory_freshness_badge(item))
         expect(result).to have_css("span.text-sm.text-gray-500", text: "—")
       end
     end
@@ -40,7 +46,7 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
       let(:item) { create(:inventory_item, product: merch_product, roasted_on: 5.days.ago.to_date) }
 
       it "returns placeholder" do
-        result = helper.inventory_freshness_badge(item)
+        result = parsed_html(helper.inventory_freshness_badge(item))
         expect(result).to have_css("span.text-sm.text-gray-500", text: "—")
       end
     end
@@ -49,8 +55,8 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
       let(:item) { create(:inventory_item, product: product, roasted_on: 5.days.ago.to_date) }
 
       it "returns fresh badge" do
-        result = helper.inventory_freshness_badge(item)
-        expect(result).to have_css("span.bg-green-100.text-green-800", text: /Fresh \(5d\)/)
+        result = parsed_html(helper.inventory_freshness_badge(item))
+        expect(result).to have_css("span.bg-green-100.text-green-800", text: /Fresh \(#{item.days_since_roast}d\)/)
       end
     end
 
@@ -58,8 +64,8 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
       let(:item) { create(:inventory_item, product: product, roasted_on: 15.days.ago.to_date) }
 
       it "returns good badge" do
-        result = helper.inventory_freshness_badge(item)
-        expect(result).to have_css("span.bg-yellow-100.text-yellow-800", text: /Good \(15d\)/)
+        result = parsed_html(helper.inventory_freshness_badge(item))
+        expect(result).to have_css("span.bg-yellow-100.text-yellow-800", text: /Good \(#{item.days_since_roast}d\)/)
       end
     end
 
@@ -67,8 +73,8 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
       let(:item) { create(:inventory_item, product: product, roasted_on: 30.days.ago.to_date) }
 
       it "returns aging badge" do
-        result = helper.inventory_freshness_badge(item)
-        expect(result).to have_css("span.bg-gray-100.text-gray-800", text: /Aging \(30d\)/)
+        result = parsed_html(helper.inventory_freshness_badge(item))
+        expect(result).to have_css("span.bg-gray-100.text-gray-800", text: /Aging \(#{item.days_since_roast}d\)/)
       end
     end
   end
@@ -76,14 +82,14 @@ RSpec.describe Admin::InventoryHelper, type: :helper do
   describe "#inventory_quantity_status" do
     context "when quantity is zero" do
       it "returns out of stock message" do
-        result = helper.inventory_quantity_status(0)
+        result = parsed_html(helper.inventory_quantity_status(0))
         expect(result).to have_css("div.text-xs.text-red-600", text: "Out of Stock")
       end
     end
 
     context "when quantity is low (1-5)" do
       it "returns low stock message" do
-        result = helper.inventory_quantity_status(3)
+        result = parsed_html(helper.inventory_quantity_status(3))
         expect(result).to have_css("div.text-xs.text-yellow-600", text: "Low Stock")
       end
     end

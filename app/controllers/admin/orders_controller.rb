@@ -4,16 +4,16 @@ class Admin::OrdersController < Admin::BaseController
   before_action :set_order, only: [ :show, :update_status ]
 
   def index
-    @orders = build_orders_query
+    orders = build_orders_query
+    @pagy, @orders = pagy(orders, items: 25)
 
     respond_to do |format|
-      format.html { @pagy, @orders = pagy(@orders, items: 25) }
+      format.html
       format.csv { export_orders_csv }
     end
   end
 
   def export
-    @orders = build_orders_query
     export_orders_csv
   end
 
@@ -77,7 +77,8 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def export_orders_csv
-    render_csv(@orders, "orders") do |csv, orders|
+    orders = build_orders_query.includes(:user, :subscription, :shipping_address)
+    render_csv(orders, "orders") do |csv, orders|
       csv << [ "Order Number", "Customer Name", "Email", "Date", "Status", "Type", "Total", "Shipping Address" ]
 
       orders.each do |order|
