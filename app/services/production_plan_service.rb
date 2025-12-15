@@ -18,7 +18,7 @@ class ProductionPlanService
   def call
     rows = demand_by_product.map do |product, demand|
       available = product&.total_roasted_inventory || 0.0
-      to_roast = [demand - available, 0.0].max
+      to_roast = [ demand - available, 0.0 ].max
       PlanEntry.new(product, demand, available, to_roast)
     end
 

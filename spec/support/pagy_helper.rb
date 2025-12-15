@@ -29,7 +29,7 @@ module PagyTestOverride
     end
 
     pagy_obj.define_singleton_method(:to) do
-      [page * items_per_page, total_count].min
+      [ page * items_per_page, total_count ].min
     end
 
     pagy_obj.define_singleton_method(:prev) do

@@ -7,10 +7,17 @@
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Product Image -->
-        <div class="h-96 md:h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-          <svg class="w-48 h-48 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-          </svg>
+        <div class="bg-gray-100 flex items-center justify-center overflow-hidden">
+          <% hero_image = product_hero_image(@product) %>
+          <% if hero_image.present? %>
+            <%= image_tag hero_image, alt: @product.name, class: "w-full h-full object-cover" %>
+          <% else %>
+            <div class="h-96 md:h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center w-full">
+              <svg class="w-48 h-48 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              </svg>
+            </div>
+          <% end %>
         </div>
 
         <!-- Product Details -->
