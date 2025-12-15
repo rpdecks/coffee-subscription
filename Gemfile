@@ -62,6 +62,9 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# AWS S3 for Active Storage
+gem "aws-sdk-s3", "~> 1.0", require: false
+
 # CSV support (will be removed from stdlib in Ruby 3.4)
 gem "csv"
 
