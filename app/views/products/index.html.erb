@@ -12,9 +12,8 @@
         <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-brown/30 hover:shadow-lg transition-all group">
           <!-- Product Image -->
           <div class="h-64 bg-gray-100 flex items-center justify-center relative overflow-hidden">
-            <% hero_image = product_hero_image(product) %>
-            <% if hero_image.present? %>
-              <%= image_tag hero_image, alt: product.name, class: "w-full h-full object-cover group-hover:scale-105 transition-transform" %>
+            <% if product.image.attached? %>
+              <%= image_tag product.image, alt: product.name, class: "w-full h-full object-cover group-hover:scale-105 transition-transform" %>
             <% else %>
               <div class="absolute inset-0 opacity-30">
                 <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
