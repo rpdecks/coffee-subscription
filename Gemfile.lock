@@ -218,7 +218,9 @@ GEM
       childprocess (>= 0.6.3, < 6)
       iniparse (~> 1.4)
       rexml (>= 3.3.9)
-    pagy (9.4.0)
+    pagy (43.2.1)
+      json
+      yaml
     parallel (1.27.0)
     parity (3.5.0)
     parser (3.3.10.0)
@@ -413,6 +415,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yaml (0.4.0)
     zeitwerk (2.6.18)
 
 PLATFORMS
@@ -437,7 +440,7 @@ DEPENDENCIES
   jbuilder
   letter_opener
   overcommit
-  pagy (~> 9.0)
+  pagy (~> 43.2)
   parity
   pg (~> 1.1)
   puma (>= 5.0)
