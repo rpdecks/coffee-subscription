@@ -131,6 +131,9 @@
                     <%= button_to toggle_shop_visibility_admin_product_path(product), method: :patch, class: "text-purple-600 hover:text-purple-900" do %>
                       <%= product.visible_in_shop? ? 'Hide' : 'Show' %>
                     <% end %>
+                    <%= button_to admin_product_path(product), method: :delete, data: { turbo_confirm: "Delete #{product.name}? This action cannot be undone." }, class: "text-red-600 hover:text-red-900" do %>
+                      Delete
+                    <% end %>
                   </div>
                 </td>
               </tr>
