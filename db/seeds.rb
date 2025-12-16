@@ -91,7 +91,7 @@ customers = test_customers.map do |attrs|
   )
 end
 
-puts "Created #{User.count} users (#{User.admin.count} admins, #{User.customer.count} customers)"
+puts "Created #{User.where(role: 0).count + User.where(role: 1).count} users"
 
 puts "Creating products..."
 
@@ -141,6 +141,32 @@ Product.create!([
     weight_oz: 12,
     inventory_count: 90,
     active: true
+  },
+  {
+    name: "Palmatum Blend",
+    description: "A signature offering from Acer Coffee, our Palmatum Blend is a syrupy, bittersweet espresso-forward coffee crafted from an all Central American selection. With notes of high cacao dark chocolate, truffles, molasses, toasted almond, and a subtle lemon peel tang, this blend offers a complex, creamy mouthfeel and lingering finish.\n\nExpect a full-bodied experience with balanced sweetness and moderate acidity — perfect as a straight espresso or in milk drinks.\n\n—\n\n🍁 Story Behind the Name\n\nThe Palmatum Blend draws its name from the Acer palmatum, the elegant Japanese maple that forms the foundation of the maple world.\n\nThis tree is the origin species — the base from which countless cultivars like Deshojo, Arakawa, and Kiyohime have been developed. With hand-shaped leaves that burn with color across the seasons, Acer palmatum symbolizes grace, transformation, and rooted beauty.",
+    product_type: :coffee,
+    price_cents: 1500,
+    weight_oz: 12.0,
+    roast_type: :signature,
+    inventory_count: 40,
+    stripe_product_id: "prod_Tc13m6ZERxkivE",
+    stripe_price_id: "price_1Sen163cVWIql7alRroOVLFt",
+    active: true,
+    visible_in_shop: true
+  },
+  {
+    name: "Deshojo Blend",
+    description: "A deep-hued cultivar of the Japanese maple, the Deshojo Blend celebrates the vibrant crimson energy of spring transformation. This coffee mirrors the leaf's bold character—rich, complex, and full of life. With notes of dark cherry, cocoa, and a whisper of cedar, this medium-dark roast offers a smooth, velvety body with a bright finish. Perfect for espresso or milk-based drinks.",
+    product_type: :coffee,
+    price_cents: 2000,
+    weight_oz: nil,
+    roast_type: :signature,
+    inventory_count: nil,
+    stripe_product_id: "prod_Tc18rUnxODu6tS",
+    stripe_price_id: "price_1Sen6d3cVWIql7alIY3WXP04",
+    active: true,
+    visible_in_shop: true
   }
 ])
 
