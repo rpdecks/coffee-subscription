@@ -6,13 +6,13 @@ module ShopHelper
 
     # Try to find a hero image for this product
     hero_image = case product_slug
-                 when /palmatum/
+    when /palmatum/
                    "products/palmatum_05.jpg"
-                 when /deshojo/
+    when /deshojo/
                    nil # Image not yet available
-                 else
+    else
                    nil
-                 end
+    end
 
     hero_image
   end

@@ -4,7 +4,8 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <%= link_to "← Back to Shop", shop_path, class: "text-amber-600 hover:text-amber-700 mb-6 inline-block" %>
 
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <!-- Hero Section with Image and Basic Info -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Product Image -->
         <div class="bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -29,8 +30,8 @@
           </div>
 
           <% if @product.description.present? %>
-            <div class="prose prose-lg mb-8">
-              <p class="text-gray-700"><%= @product.description %></p>
+            <div class="mb-8">
+              <p class="text-gray-700 leading-relaxed"><%= @product.description %></p>
             </div>
           <% end %>
 
@@ -40,6 +41,12 @@
                 <dt class="text-gray-600">Type</dt>
                 <dd class="font-medium text-gray-900"><%= @product.product_type.titleize %></dd>
               </div>
+              <% if @product.roast_type %>
+                <div class="flex justify-between">
+                  <dt class="text-gray-600">Roast</dt>
+                  <dd class="font-medium text-gray-900"><%= @product.roast_type.titleize %></dd>
+                </div>
+              <% end %>
               <% if @product.inventory_count %>
                 <div class="flex justify-between">
                   <dt class="text-gray-600">Availability</dt>
@@ -72,5 +79,90 @@
         </div>
       </div>
     </div>
+
+    <!-- Full Cupping Notes Section (for Deshojo and Palmatum) -->
+    <% if @product.name.downcase.include?("deshojo") || @product.name.downcase.include?("palmatum") %>
+      <div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Full Cupping Notes</h2>
+
+        <% if @product.name.downcase.include?("deshojo") %>
+          <div class="prose prose-lg max-w-none mb-8">
+            <p class="text-gray-700 leading-relaxed">
+              The Deshojo Blend celebrates the vibrant crimson energy of spring transformation in the Japanese maple tradition. This coffee mirrors the leaf's bold character—deep-hued, complex, and full of life. Crafted from carefully selected Central American and East African origins, this medium-dark roast delivers notes of dark cherry, cocoa nib, and a subtle cedar undertone. The cup presents a smooth, velvety body with balanced sweetness and a bright, lingering finish that echoes the bold colors of the Deshojo leaf through the seasons.
+            </p>
+          </div>
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Specs</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Region</td>
+                  <td class="px-4 py-3 text-gray-600">Central America, East Africa</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Processing</td>
+                  <td class="px-4 py-3 text-gray-600">Washed, Natural</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Roast Level</td>
+                  <td class="px-4 py-3 text-gray-600">Medium-Dark</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Tasting Notes</td>
+                  <td class="px-4 py-3 text-gray-600">Dark Cherry, Cocoa, Cedar</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Best For</td>
+                  <td class="px-4 py-3 text-gray-600">Espresso, Milk Drinks, Pour Over</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Body</td>
+                  <td class="px-4 py-3 text-gray-600">Velvety, Full</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <% elsif @product.name.downcase.include?("palmatum") %>
+          <div class="prose prose-lg max-w-none mb-8">
+            <p class="text-gray-700 leading-relaxed">
+              The Palmatum Blend draws its name from Acer palmatum, the elegant Japanese maple that forms the foundation of the maple world. This origin species—the base from which countless cultivars have been developed—is mirrored in this coffee's versatility and elegance. A signature offering from Acer Coffee, this blend is syrupy and bittersweet with espresso-forward character. Crafted from an all Central American selection, it showcases notes of high cacao dark chocolate, truffles, molasses, and toasted almond with a subtle lemon peel tang. The cup offers complex, creamy mouthfeel and lingering finish. Expect a full-bodied experience with balanced sweetness and moderate acidity—perfect as a straight espresso or in milk drinks.
+            </p>
+          </div>
+
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Specs</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Region</td>
+                  <td class="px-4 py-3 text-gray-600">Central America</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Processing</td>
+                  <td class="px-4 py-3 text-gray-600">Washed</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Roast Level</td>
+                  <td class="px-4 py-3 text-gray-600">Signature (Medium-Dark)</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Tasting Notes</td>
+                  <td class="px-4 py-3 text-gray-600">Dark Chocolate, Truffles, Molasses, Almond, Lemon Peel</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Best For</td>
+                  <td class="px-4 py-3 text-gray-600">Espresso, Milk Drinks</td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-700">Body</td>
+                  <td class="px-4 py-3 text-gray-600">Full, Syrupy</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>

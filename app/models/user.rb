@@ -2,8 +2,7 @@ class User < ApplicationRecord
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
     devise :database_authenticatable, :registerable,
-      :recoverable, :rememberable, :validatable, :confirmable
-
+    :recoverable, :rememberable, :validatable
   def self.serialize_from_session(key, salt = nil)
     if salt.nil? && key.is_a?(Array)
       salt = key[1]
