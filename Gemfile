@@ -23,6 +23,9 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 gem "redis", ">= 4.0.1"
 
+# Pin connection_pool to 2.x for Sidekiq 7.3.9 compatibility
+gem "connection_pool", "~> 2.5"
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
