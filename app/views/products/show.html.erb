@@ -10,25 +10,30 @@
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div class="md:flex">
         <!-- Product Image -->
-        <div class="md:w-1/2 bg-gradient-to-br from-amber-50 via-orange-50 to-brown/5 flex items-center justify-center relative" style="min-height: 500px;">
-          <!-- SVG Pattern Background -->
-          <div class="absolute inset-0 opacity-30">
-            <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
-              <circle cx="200" cy="250" r="120" fill="url(#coffee-gradient-detail)" opacity="0.4"/>
-              <circle cx="150" cy="180" r="60" fill="url(#coffee-gradient-detail)" opacity="0.3"/>
-              <circle cx="280" cy="320" r="80" fill="url(#coffee-gradient-detail)" opacity="0.3"/>
-              <circle cx="100" cy="350" r="50" fill="url(#coffee-gradient-detail)" opacity="0.2"/>
-              <defs>
-                <radialGradient id="coffee-gradient-detail">
-                  <stop offset="0%" style="stop-color:#4e342e;stop-opacity:0.4" />
-                  <stop offset="100%" style="stop-color:#6d4c41;stop-opacity:0" />
-                </radialGradient>
-              </defs>
-            </svg>
-          </div>
+        <div class="md:w-1/2 bg-gradient-to-br from-amber-50 via-orange-50 to-brown/5 flex items-center justify-center relative overflow-hidden" style="min-height: 500px;">
+          <% hero_image = product_hero_image(@product) %>
+          <% if hero_image.present? %>
+            <%= image_tag hero_image, alt: @product.name, class: "w-full h-full object-cover" %>
+          <% else %>
+            <!-- SVG Pattern Background -->
+            <div class="absolute inset-0 opacity-30">
+              <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+                <circle cx="200" cy="250" r="120" fill="url(#coffee-gradient-detail)" opacity="0.4"/>
+                <circle cx="150" cy="180" r="60" fill="url(#coffee-gradient-detail)" opacity="0.3"/>
+                <circle cx="280" cy="320" r="80" fill="url(#coffee-gradient-detail)" opacity="0.3"/>
+                <circle cx="100" cy="350" r="50" fill="url(#coffee-gradient-detail)" opacity="0.2"/>
+                <defs>
+                  <radialGradient id="coffee-gradient-detail">
+                    <stop offset="0%" style="stop-color:#4e342e;stop-opacity:0.4" />
+                    <stop offset="100%" style="stop-color:#6d4c41;stop-opacity:0" />
+                  </radialGradient>
+                </defs>
+              </svg>
+            </div>
 
-          <!-- Coffee Cup Emoji -->
-          <div class="relative z-10 text-brown/30 text-9xl">☕</div>
+            <!-- Coffee Cup Emoji -->
+            <div class="relative z-10 text-brown/30 text-9xl">☕</div>
+          <% end %>
 
           <% if @product.weight_oz %>
             <div class="absolute top-6 right-6 bg-white/95 backdrop-blur px-4 py-2 rounded-full text-lg font-medium text-gray-700 shadow-md z-20">
