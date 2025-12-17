@@ -24,7 +24,7 @@ gem "jbuilder"
 gem "redis", ">= 4.0.1"
 
 # Pin connection_pool to 2.x for Sidekiq 7.3.9 compatibility
-gem "connection_pool", "~> 2.5"
+gem "connection_pool", "~> 3.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
