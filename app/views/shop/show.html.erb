@@ -11,7 +11,13 @@
         <div class="bg-gray-100 flex items-center justify-center overflow-hidden">
           <% hero_image = product_hero_image(@product) %>
           <% if hero_image.present? %>
-            <%= image_tag hero_image, alt: @product.name, class: "w-full h-full object-cover" %>
+            <% if hero_image.respond_to?(:url) %>
+              <!-- ActiveStorage attachment -->
+              <%= image_tag hero_image, alt: @product.name, class: "w-full h-full object-cover" %>
+            <% else %>
+              <!-- String image path (legacy) -->
+              <%= image_tag hero_image, alt: @product.name, class: "w-full h-full object-cover" %>
+            <% end %>
           <% else %>
             <div class="h-96 md:h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center w-full">
               <svg class="w-48 h-48 text-amber-400" fill="currentColor" viewBox="0 0 20 20">

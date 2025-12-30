@@ -192,6 +192,21 @@ Product.create!([
 
 puts "Created #{Product.count} products"
 
+# Attach product images from repo
+puts "Attaching product images..."
+palmatum = Product.find_by(name: "Palmatum Blend")
+deshojo = Product.find_by(name: "Deshojo Blend")
+
+if palmatum && File.exist?(Rails.root.join("app/assets/images/products/palmatum.jpeg"))
+  palmatum.image.attach(io: File.open(Rails.root.join("app/assets/images/products/palmatum.jpeg")), filename: "palmatum.jpeg", content_type: "image/jpeg")
+  puts "✓ Attached image to Palmatum Blend"
+end
+
+if deshojo && File.exist?(Rails.root.join("app/assets/images/products/palmatum_03.jpg"))
+  deshojo.image.attach(io: File.open(Rails.root.join("app/assets/images/products/palmatum_03.jpg")), filename: "palmatum_03.jpg", content_type: "image/jpeg")
+  puts "✓ Attached image to Deshojo Blend"
+end
+
 puts "Creating subscription plans..."
 
 weekly_plan = SubscriptionPlan.create!(
