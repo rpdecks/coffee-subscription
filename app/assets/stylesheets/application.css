@@ -1,6 +1,4 @@
-@import "tailwindcss";
-
-/* Custom brand color utilities - added after Tailwind import to persist through builds */
+/* Custom brand color utilities */
 .bg-espresso {
   background-color: #1b1a17 !important;
 }

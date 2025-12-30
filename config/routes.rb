@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "/favicon.ico", to: redirect("/icon.png")
+
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }
