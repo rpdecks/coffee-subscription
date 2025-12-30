@@ -1,6 +1,25 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  def format_ounces(ounces)
+    return if ounces.blank?
+
+    formatted = number_with_precision(
+      ounces,
+      precision: 2,
+      strip_insignificant_zeros: true
+    )
+
+    "#{formatted} oz"
+  end
+
+  def ounces_field_value(ounces)
+    return if ounces.blank?
+
+    value = ounces.to_f
+    (value % 1).zero? ? value.to_i : value
+  end
+
   def pagy_nav(pagy)
     html = +%(<nav class="flex items-center gap-1" aria-label="Pagination">)
 

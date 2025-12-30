@@ -109,6 +109,7 @@
         <div>
           <%= f.label :weight_oz, "Weight (oz)", class: "block text-sm font-medium text-gray-700 mb-2" %>
           <%= f.number_field :weight_oz,
+              value: ounces_field_value(@product.weight_oz),
               step: 0.1,
               min: 0,
               placeholder: "12",
