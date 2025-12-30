@@ -90,7 +90,8 @@ class Admin::ProductsController < Admin::BaseController
       :visible_in_shop,
       :stripe_product_id,
       :stripe_price_id,
-      :image
+      :image,
+      images: []
     )
   end
 end

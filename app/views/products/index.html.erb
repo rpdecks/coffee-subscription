@@ -12,8 +12,56 @@
         <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-brown/30 hover:shadow-lg transition-all group">
           <!-- Product Image -->
           <div class="h-64 bg-gray-100 flex items-center justify-center relative overflow-hidden">
-            <% if product.image.attached? %>
-              <%= image_tag product.image, alt: product.name, class: "w-full h-full object-cover group-hover:scale-105 transition-transform" %>
+            <% carousel_images = [] %>
+            <% if product.images.attached? %>
+              <% carousel_images = product.images %>
+            <% elsif product.image.attached? %>
+              <% carousel_images = [product.image] %>
+            <% end %>
+
+            <% if carousel_images.any? %>
+              <div
+                class="absolute inset-0"
+                data-controller="product-carousel"
+                data-product-carousel-count-value="<%= carousel_images.length %>"
+              >
+                <div
+                  class="h-full w-full overflow-hidden"
+                  data-action="pointerdown->product-carousel#pointerdown pointermove->product-carousel#pointermove pointerup->product-carousel#pointerup pointercancel->product-carousel#pointerup"
+                  style="touch-action: pan-y;"
+                >
+                  <div class="flex h-full w-full" data-product-carousel-target="track">
+                    <% carousel_images.each do |img| %>
+                      <div class="h-full w-full flex-none">
+                        <%= image_tag img, alt: product.name, class: "w-full h-full object-cover" %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <% if carousel_images.length > 1 %>
+                  <button
+                    type="button"
+                    aria-label="Previous image"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-9 w-9 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
+                    data-action="product-carousel#prev"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next image"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-9 w-9 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
+                    data-action="product-carousel#next"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                <% end %>
+              </div>
             <% else %>
               <div class="absolute inset-0 opacity-30">
                 <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">

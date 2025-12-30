@@ -1,5 +1,6 @@
 class Product < ApplicationRecord
   has_one_attached :image
+  has_many_attached :images
   has_many :inventory_items, dependent: :destroy
 
   enum :product_type, { coffee: 0, merch: 1 }
