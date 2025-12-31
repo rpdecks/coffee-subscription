@@ -12,12 +12,7 @@
         <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-brown/30 hover:shadow-lg transition-all group">
           <!-- Product Image -->
           <div class="h-64 bg-gray-100 flex items-center justify-center relative overflow-hidden">
-            <% carousel_images = [] %>
-            <% if product.images.attached? %>
-              <% carousel_images = product.images %>
-            <% elsif product.image.attached? %>
-              <% carousel_images = [product.image] %>
-            <% end %>
+            <% carousel_images = product.carousel_images %>
 
             <% if carousel_images.any? %>
               <div

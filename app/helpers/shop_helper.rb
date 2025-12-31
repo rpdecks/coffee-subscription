@@ -1,9 +1,7 @@
 module ShopHelper
   def product_hero_image(product)
-    # First check if product has an attached image
-    if product.image.attached?
-      return product.image
-    end
+    carousel_images = product.carousel_images
+    return carousel_images.first if carousel_images.any?
 
     # Fallback to static image mappings for legacy support
     product_slug = product.name.downcase.gsub(/\s+/, "_").gsub(/[^a-z0-9_]/, "")
