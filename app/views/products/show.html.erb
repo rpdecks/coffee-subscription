@@ -15,7 +15,7 @@
 
           <% if carousel_images.any? %>
             <div
-              class="absolute inset-0"
+              class="absolute inset-0 group"
               data-controller="product-carousel"
               data-product-carousel-count-value="<%= carousel_images.length %>"
             >
@@ -37,7 +37,7 @@
                 <button
                   type="button"
                   aria-label="Previous image"
-                  class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-10 w-10 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 hover:opacity-100 focus:opacity-100 transition"
+                  class="absolute left-6 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-10 w-10 rounded-full shadow-sm ring-1 ring-black/10 flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 hover:bg-white focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brown/30 transition"
                   data-action="product-carousel#prev"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,7 +47,7 @@
                 <button
                   type="button"
                   aria-label="Next image"
-                  class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-10 w-10 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 hover:opacity-100 focus:opacity-100 transition"
+                  class="absolute right-6 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-10 w-10 rounded-full shadow-sm ring-1 ring-black/10 flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 hover:bg-white focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brown/30 transition"
                   data-action="product-carousel#next"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
