@@ -110,6 +110,30 @@
 
     <!-- Sidebar -->
     <div class="space-y-6">
+      <!-- Images -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Images</h2>
+
+        <% images = @product.carousel_images %>
+        <% if images.any? %>
+          <div class="grid grid-cols-2 gap-4">
+            <% images.each do |img| %>
+              <div class="relative">
+                <div class="aspect-[4/3] rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                  <%= image_tag img, class: "h-full w-full object-cover" %>
+                </div>
+                <% if img.respond_to?(:id) && @product.featured_image_attachment_id.present? && @product.featured_image_attachment_id.to_i == img.id %>
+                  <span class="absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white">Featured</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          <p class="mt-3 text-xs text-gray-500">Featured image appears first in carousels.</p>
+        <% else %>
+          <p class="text-sm text-gray-500">No images uploaded yet.</p>
+        <% end %>
+      </div>
+
       <!-- Stripe Integration -->
       <div class="bg-white rounded-lg border border-gray-200 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Stripe Integration</h2>

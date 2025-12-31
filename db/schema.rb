@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_12_030000) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -140,6 +140,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_030000) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.text "description"
+    t.bigint "featured_image_attachment_id"
+    t.bigint "image_attachment_ids_order", default: [], null: false, array: true
     t.integer "inventory_count"
     t.string "name"
     t.integer "price_cents"
@@ -150,6 +152,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_030000) do
     t.datetime "updated_at", null: false
     t.boolean "visible_in_shop", default: true, null: false
     t.decimal "weight_oz"
+    t.index ["featured_image_attachment_id"], name: "index_products_on_featured_image_attachment_id"
+    t.index ["image_attachment_ids_order"], name: "index_products_on_image_attachment_ids_order", using: :gin
   end
 
   create_table "subscription_plans", force: :cascade do |t|

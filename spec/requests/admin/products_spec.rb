@@ -133,6 +133,27 @@ RSpec.describe "Admin::Products", type: :request do
     end
   end
 
+  describe "PATCH /admin/products/:product_id/images/:attachment_id/feature" do
+    let(:product) { products.first }
+
+    it "sets the featured image and moves it to the front of the order" do
+      product.images.attach(io: StringIO.new("a"), filename: "a.png", content_type: "image/png")
+      product.images.attach(io: StringIO.new("b"), filename: "b.png", content_type: "image/png")
+      product.reload
+
+      first_id = product.images.attachments.first.id
+      second_id = product.images.attachments.second.id
+
+      patch admin_product_make_featured_image_path(product, attachment_id: second_id)
+      expect(response).to redirect_to(edit_admin_product_path(product))
+
+      product.reload
+      expect(product.featured_image_attachment_id.to_i).to eq(second_id)
+      expect(product.image_attachment_ids_order.map(&:to_i).first).to eq(second_id)
+      expect(product.image_attachment_ids_order.map(&:to_i)).to include(first_id)
+    end
+  end
+
   describe "DELETE /admin/products/:id" do
     let(:product) { products.first }
 

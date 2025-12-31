@@ -90,6 +90,9 @@ Rails.application.routes.draw do
         patch :toggle_active
         patch :toggle_shop_visibility
       end
+
+      delete "images/:attachment_id", to: "products#destroy_image", as: :destroy_image
+      patch "images/:attachment_id/feature", to: "products#make_featured_image", as: :make_featured_image
     end
     resources :subscription_plans do
       member do

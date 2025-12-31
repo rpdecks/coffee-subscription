@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   has_many_attached :images
   has_many :inventory_items, dependent: :destroy
 
+  after_commit :ensure_image_order_and_featured, on: [ :create, :update ]
+
   enum :product_type, { coffee: 0, merch: 1 }
   enum :roast_type, { signature: 0, light: 1, medium: 2, dark: 3 }
 
@@ -81,5 +83,61 @@ class Product < ApplicationRecord
     when :dark then "text-coffee-brown"
     else "text-cream"
     end
+  end
+
+  def image_attachments
+    attachments = []
+    attachments << image.attachment if image.attached?
+    attachments.concat(images.attachments) if images.attached?
+    attachments.compact
+  end
+
+  def ordered_image_attachments
+    attachments = image_attachments
+    return attachments if attachments.empty?
+
+    order = Array(image_attachment_ids_order).map(&:to_i)
+    return attachments if order.empty?
+
+    by_id = attachments.index_by(&:id)
+    ordered = order.filter_map { |id| by_id[id] }
+    remaining = attachments.reject { |a| order.include?(a.id) }
+    ordered + remaining
+  end
+
+  def featured_image_attachment
+    return nil if featured_image_attachment_id.blank?
+    image_attachments.find { |a| a.id == featured_image_attachment_id.to_i }
+  end
+
+  def carousel_images
+    ordered_image_attachments
+  end
+
+  private
+
+  def ensure_image_order_and_featured
+    attachments = image_attachments
+    if attachments.empty?
+      update_column(:featured_image_attachment_id, nil) if featured_image_attachment_id.present?
+      update_column(:image_attachment_ids_order, []) unless image_attachment_ids_order == []
+      return
+    end
+
+    existing_ids = attachments.map(&:id)
+    order = Array(image_attachment_ids_order).map(&:to_i)
+
+    # Remove IDs that no longer exist, and append any new attachments.
+    order &= existing_ids
+    order += (existing_ids - order)
+
+    desired_featured_id = order.first
+
+    updates = {}
+    updates[:image_attachment_ids_order] = order if order != Array(image_attachment_ids_order).map(&:to_i)
+    updates[:featured_image_attachment_id] = desired_featured_id if featured_image_attachment_id.to_i != desired_featured_id.to_i
+
+    return if updates.empty?
+    update_columns(updates)
   end
 end
