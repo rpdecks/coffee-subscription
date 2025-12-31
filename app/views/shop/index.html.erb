@@ -65,13 +65,61 @@
         <% @products.each do |product| %>
           <div class="card overflow-hidden">
             <!-- Product Image -->
-            <div class="h-64 bg-white flex items-center justify-center overflow-hidden">
-              <% if product.image.attached? %>
-                <% if product.image.content_type == 'image/svg+xml' %>
-                  <%= image_tag product.image, class: "w-full h-full object-contain p-4", style: "filter: brightness(0) saturate(100%) invert(8%) sepia(6%) saturate(6%) hue-rotate(315deg) brightness(96%) contrast(95%);" %>
-                <% else %>
-                  <%= image_tag product.image, class: "w-full h-full object-contain p-4" %>
-                <% end %>
+            <div class="h-64 bg-white flex items-center justify-center overflow-hidden relative">
+              <% carousel_images = [] %>
+              <% if product.images.attached? %>
+                <% carousel_images = product.images %>
+              <% elsif product.image.attached? %>
+                <% carousel_images = [product.image] %>
+              <% end %>
+
+              <% if carousel_images.any? %>
+                <div
+                  class="absolute inset-0"
+                  data-controller="product-carousel"
+                  data-product-carousel-count-value="<%= carousel_images.length %>"
+                >
+                  <div
+                    class="h-full w-full overflow-hidden"
+                    data-action="pointerdown->product-carousel#pointerdown pointermove->product-carousel#pointermove pointerup->product-carousel#pointerup pointercancel->product-carousel#pointerup"
+                    style="touch-action: pan-y;"
+                  >
+                    <div class="flex h-full w-full" data-product-carousel-target="track">
+                      <% carousel_images.each do |img| %>
+                        <div class="h-full w-full flex-none">
+                          <% if img.respond_to?(:content_type) && img.content_type == 'image/svg+xml' %>
+                            <%= image_tag img, class: "w-full h-full object-contain p-4", style: "filter: brightness(0) saturate(100%) invert(8%) sepia(6%) saturate(6%) hue-rotate(315deg) brightness(96%) contrast(95%);" %>
+                          <% else %>
+                            <%= image_tag img, class: "w-full h-full object-contain p-4" %>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <% if carousel_images.length > 1 %>
+                    <button
+                      type="button"
+                      aria-label="Previous image"
+                      class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-9 w-9 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 hover:opacity-100 focus:opacity-100 transition"
+                      data-action="product-carousel#prev"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Next image"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur h-9 w-9 rounded-full shadow-sm flex items-center justify-center text-gray-700 opacity-0 hover:opacity-100 focus:opacity-100 transition"
+                      data-action="product-carousel#next"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  <% end %>
+                </div>
               <% else %>
                 <svg class="w-24 h-24 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
