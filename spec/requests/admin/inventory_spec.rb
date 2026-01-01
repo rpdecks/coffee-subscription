@@ -4,7 +4,7 @@ RSpec.describe "Admin Inventory Management", type: :request do
   let(:admin_user) { create(:user, :admin) }
   let(:product) { create(:product, product_type: :coffee) }
 
-  before { sign_in admin_user }
+  before { sign_in admin_user, scope: :user }
 
   describe "GET /admin/inventory" do
     let!(:inventory_item) { create(:inventory_item, product: product) }
@@ -174,7 +174,7 @@ RSpec.describe "Admin Inventory Management", type: :request do
 
   describe "authorization" do
     context "when not signed in" do
-      before { sign_out admin_user }
+      before { sign_out :user }
 
       it "redirects to sign in" do
         get admin_inventory_index_path
@@ -186,15 +186,15 @@ RSpec.describe "Admin Inventory Management", type: :request do
       let(:regular_user) { create(:user) }
 
       before do
-        sign_out admin_user
-        sign_in regular_user
+        sign_out :user
+        sign_in regular_user, scope: :user
       end
 
       it "redirects with authorization alert" do
         get admin_inventory_index_path
         expect(response).to redirect_to(root_path)
         follow_redirect!
-        expect(response.body).to include("You are not authorized to perform this action.")
+        expect(flash[:alert]).to include("You are not authorized to perform this action.")
       end
     end
   end
