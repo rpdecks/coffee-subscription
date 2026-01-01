@@ -23,9 +23,6 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 gem "redis", ">= 4.0.1"
 
-# Pin connection_pool to 2.x for Sidekiq 7.3.9 compatibility
-gem "connection_pool", "~> 2.5"
-
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
@@ -42,7 +39,7 @@ gem "stripe"
 gem "aws-sdk-s3", "~> 1.0"
 
 # Background jobs
-gem "sidekiq", "~> 7.3"
+gem "sidekiq", "~> 8.0"
 
 # Form builder
 gem "simple_form"
@@ -67,9 +64,6 @@ gem "bootsnap", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
-
-# AWS S3 for Active Storage
-gem "aws-sdk-s3", "~> 1.0", require: false
 
 # CSV support (will be removed from stdlib in Ruby 3.4)
 gem "csv"
