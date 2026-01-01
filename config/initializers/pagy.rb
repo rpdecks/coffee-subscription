@@ -1,5 +1,6 @@
-# Pagy Configuration
-require "pagy/extras/overflow"
+# Pagy Configuration for v43+
+# Pagy v43 uses a much simpler and automatic configuration approach
+# Most settings are now optional and autoloaded
 
-Pagy::DEFAULT[:items] = 25
-Pagy::DEFAULT[:overflow] = :last_page
+# Set default pagination size
+Pagy.options[:items] = 25
