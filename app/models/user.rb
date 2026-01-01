@@ -16,9 +16,13 @@ class User < ApplicationRecord
   # Role enum
   enum :role, { customer: 0, admin: 1 }
 
+  # Avatar attachment
+  has_one_attached :avatar
+
   # Validations
   validates :first_name, :last_name, presence: true
   validates :phone, format: { with: /\A[\d\s\-\(\)\+]+\z/, message: "must be a valid phone number" }, allow_blank: true
+  validate :avatar_file_type, :avatar_file_size, if: -> { avatar.attached? }
 
   # Associations
   has_many :addresses, dependent: :destroy
@@ -40,6 +44,20 @@ class User < ApplicationRecord
   end
 
   private
+
+  def avatar_file_type
+    return unless avatar.attached?
+    unless avatar.content_type.in?(%w[image/png image/jpeg image/webp])
+      errors.add(:avatar, "must be a PNG, JPEG, or WebP image")
+    end
+  end
+
+  def avatar_file_size
+    return unless avatar.attached?
+    if avatar.blob.byte_size > 5.megabytes
+      errors.add(:avatar, "must be less than 5 MB")
+    end
+  end
 
   def create_stripe_customer
     # Create Stripe customer asynchronously to not block signup

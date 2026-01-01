@@ -31,7 +31,7 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
+  # Store uploaded files locally in development
   config.active_storage.service = :local
 
   # Use letter_opener to preview emails in the browser

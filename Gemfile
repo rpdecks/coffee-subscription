@@ -38,6 +38,9 @@ gem "pundit"
 # Payment processing
 gem "stripe"
 
+# AWS S3 for Active Storage
+gem "aws-sdk-s3", "~> 1.0"
+
 # Background jobs
 gem "sidekiq", "~> 7.3"
 
