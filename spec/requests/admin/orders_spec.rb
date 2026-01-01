@@ -35,7 +35,8 @@ RSpec.describe "Admin::Orders", type: :request do
       it "paginates results" do
         get admin_orders_path
         expect(response.body).to match(/pagination/i)
-        expect(response.body).to include("Next")
+        # Check that pagination info is present (from, to, count)
+        expect(response.body).to match(/showing.*1.*to.*25.*of.*33/i)
       end
 
       it "respects per_page limit" do
