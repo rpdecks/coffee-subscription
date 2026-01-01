@@ -106,7 +106,7 @@ class Admin::ProductsController < Admin::BaseController
     end
 
     current_order = @product.ordered_image_attachments.map(&:id)
-    new_order = ([attachment.id] + current_order).uniq
+    new_order = ([ attachment.id ] + current_order).uniq
 
     @product.update_columns(
       featured_image_attachment_id: attachment.id,
