@@ -4,7 +4,7 @@
     <p class="text-gray-600">Update your account information and password</p>
   </div>
 
-  <%= form_with model: @user, url: dashboard_profile_path, method: :patch, class: "space-y-8" do |form| %>
+  <%= form_with model: @user, url: dashboard_profile_path, method: :patch, class: "space-y-8", id: "profile_form" do |form| %>
     <!-- Avatar Section -->
     <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-900 mb-4">Profile Photo</h2>
@@ -34,7 +34,8 @@
 
             <%= form.file_field :avatar,
                 class: "block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-espresso file:text-cream hover:file:bg-espresso/90 cursor-pointer",
-                accept: "image/png,image/jpeg,image/webp" %>
+                accept: "image/png,image/jpeg,image/webp",
+                data: { max_file_size: 5242880 } %>
           </div>
         </div>
 
@@ -146,3 +147,23 @@
     </div>
   <% end %>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const avatarInput = document.querySelector('input[type="file"][name="user[avatar]"]');
+
+  if (avatarInput) {
+    avatarInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const maxSize = parseInt(avatarInput.dataset.maxFileSize);
+
+      if (file && file.size > maxSize) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const maxSizeMB = (maxSize / 1024 / 1024).toFixed(0);
+        alert(`File size (${sizeMB} MB) exceeds the maximum allowed size of ${maxSizeMB} MB. Please choose a smaller file.`);
+        event.target.value = ''; // Clear the input
+      }
+    });
+  }
+});
+</script>

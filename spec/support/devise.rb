@@ -4,6 +4,11 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::ControllerHelpers, type: :controller
 
+  # Ensure Devise mappings are loaded before tests
+  config.before(:suite) do
+    Rails.application.reload_routes!
+  end
+
   # Stub Stripe customer creation for all tests
   config.before(:each) do
     allow_any_instance_of(User).to receive(:create_stripe_customer).and_return(true)

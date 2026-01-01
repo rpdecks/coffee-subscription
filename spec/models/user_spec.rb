@@ -32,6 +32,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_many(:subscriptions) }
     it { is_expected.to have_many(:orders) }
     it { is_expected.to have_one(:coffee_preference) }
+    it { is_expected.to have_one_attached(:avatar) }
   end
 
   describe "enums" do
@@ -84,6 +85,43 @@ RSpec.describe User, type: :model do
           create(:user, role: :admin)
         }.not_to raise_error
       end
+    end
+  end
+
+  describe "avatar validations" do
+    let(:user) { create(:user) }
+
+    it "accepts valid image types" do
+      %w[image/png image/jpeg image/webp].each do |content_type|
+        avatar = fixture_file_upload("spec/fixtures/files/test_avatar.jpg", content_type)
+        user.avatar.attach(avatar)
+        expect(user).to be_valid
+      end
+    end
+
+    it "rejects invalid file types" do
+      # Create a blob with invalid content type and attach it
+      user.avatar.attach(
+        io: StringIO.new("fake file content"),
+        filename: "test.pdf",
+        content_type: "application/pdf"
+      )
+      user.validate
+      expect(user.errors[:avatar]).to include("must be a PNG, JPEG, or WebP image")
+    end
+
+    it "rejects files larger than 5MB" do
+      avatar = fixture_file_upload("spec/fixtures/files/test_avatar.jpg", "image/jpeg")
+      user.avatar.attach(avatar)
+      user.avatar.blob.update(byte_size: 6.megabytes)
+      user.validate
+      expect(user.errors[:avatar]).to include("must be less than 5 MB")
+    end
+
+    it "allows files smaller than 5MB" do
+      avatar = fixture_file_upload("spec/fixtures/files/test_avatar.jpg", "image/jpeg")
+      user.avatar.attach(avatar)
+      expect(user).to be_valid
     end
   end
 end
