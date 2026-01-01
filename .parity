@@ -1,1 +1,2 @@
-production: coffee-rp
+production: coffee-production
+staging: coffee-staging
