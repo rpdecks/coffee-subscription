@@ -3,7 +3,7 @@ class PagesController < ApplicationController
     hero_images = [
       "hero/coffee-cherries-1.jpg",
       "hero/coffee-cherries-2.jpg",
-      "hero/coffee-cherries-3.jpg",
+      "hero/coffee-cherries-3.jpg"
     ]
 
     hero_index = params[:hero].to_i
