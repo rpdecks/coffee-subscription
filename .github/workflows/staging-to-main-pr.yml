@@ -5,32 +5,34 @@ on:
     branches:
       - staging
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   create-pr:
     name: Create or Update Staging → Main PR
     runs-on: ubuntu-latest
     steps:
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Integrate staging into main"
-          title: "Integration: Staging → Main"
-          body: |
-            ## Staging to Main Integration
+          fetch-depth: 0
 
-            This PR integrates commits from the `staging` branch into `main`.
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          # Check if PR already exists
+          EXISTING_PR=$(gh pr list -B main -H staging --json number -q '.[0].number' 2>/dev/null || echo "")
 
-            It serves as an integration test to ensure that all features and fixes in staging work well together before deploying to production.
-
-            **Merge criteria:**
-            - ✅ All CI checks pass (tests, linting, security scans)
-            - ✅ Manual review and approval
-            - ✅ Staging deployment verified stable
-
-            ---
-            *Auto-generated integration PR. Do not edit this description.*
-          branch: staging-to-main-integration
-          base: main
-          delete-branch: true
-          labels: integration
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists"
+          else
+            # Create the PR from staging to main
+            gh pr create \
+              -B main \
+              -H staging \
+              -t "Integration: Staging → Main" \
+              -b "This PR integrates commits from the staging branch into main. It serves as an integration test to ensure all features and fixes work well together before production deployment."
+          fi
