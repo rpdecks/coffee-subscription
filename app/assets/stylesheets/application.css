@@ -139,6 +139,49 @@
 }
 
 @layer components {
+  /* Buttons - Hero CTAs (high contrast over imagery) */
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem 2rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    line-height: 1.2 !important;
+    cursor: pointer !important;
+    background-color: transparent !important;
+    color: #F6F1EB !important;
+    border: 2px solid #F6F1EB !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .btn-hero-primary:hover,
+  .btn-hero-secondary:hover {
+    transform: translateY(-2px) !important;
+    background-color: #F6F1EB !important;
+    border-color: #F6F1EB !important;
+    color: #1B1A17 !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .btn-hero-primary:active,
+  .btn-hero-secondary:active {
+    transform: scale(0.98) !important;
+    background-color: #F6F1EB !important;
+    border-color: #F6F1EB !important;
+    color: #1B1A17 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .btn-hero-primary:focus-visible,
+  .btn-hero-secondary:focus-visible {
+    outline: 3px solid #FFFFFF !important;
+    outline-offset: 3px !important;
+  }
+
   /* Buttons - Light Theme */
   .btn-primary {
     display: inline-block;

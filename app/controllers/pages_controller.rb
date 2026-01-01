@@ -1,5 +1,15 @@
 class PagesController < ApplicationController
   def home
+    hero_images = [
+      "hero/coffee-cherries-1.jpg",
+      "hero/coffee-cherries-2.jpg",
+      "hero/coffee-cherries-3.jpg",
+    ]
+
+    hero_index = params[:hero].to_i
+    hero_index = 3 unless hero_index.between?(1, hero_images.length)
+
+    @hero_image = hero_images[hero_index - 1]
   end
 
   def about

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+}
+
 @source "../../../app/views/**/*.html.erb";
 @source "../../../app/helpers/**/*.rb";
 @source "../../../app/components/**/*.{rb,erb}";

@@ -1,28 +1,43 @@
-<!-- Hero Section -->
-<div class="text-center py-16 mb-16">
-  <h1 class="text-6xl font-serif font-bold mb-6 text-gray-900">Fresh Roasted Coffee, Delivered</h1>
-  <p class="text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">Small-batch coffee roasted to order and delivered on your schedule</p>
+<% content_for :skip_container, true %>
 
-  <div class="flex justify-center space-x-6">
-    <%= link_to "Start a Subscription", subscribe_path, class: "btn-primary text-xl" %>
-    <%= link_to "Shop Single Bags", shop_path, class: "btn-tertiary text-xl" %>
+<!-- Hero Section -->
+<section class="relative w-full">
+  <div class="relative h-[360px] sm:h-[440px] lg:h-[520px]">
+    <%= image_tag @hero_image,
+        class: "absolute inset-0 h-full w-full object-cover",
+        alt: "Coffee cherries at origin" %>
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative h-full flex items-center">
+      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-4 sm:mb-6 text-cream">Fresh Roasted Coffee, Delivered</h1>
+        <p class="text-lg sm:text-xl lg:text-2xl text-cream/85 mb-8 sm:mb-10 max-w-3xl mx-auto">Small-batch coffee roasted to order and delivered on your schedule</p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 px-6 sm:px-0">
+          <%= link_to "Start a Subscription", subscribe_path, class: "btn-hero-primary text-lg sm:text-xl max-w-sm mx-auto sm:mx-0 w-full sm:w-auto" %>
+          <%= link_to "Shop Single Bags", shop_path, class: "btn-hero-secondary text-lg sm:text-xl max-w-sm mx-auto sm:mx-0 w-full sm:w-auto" %>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 <!-- Brand Story -->
-<div class="max-w-4xl mx-auto text-center mb-20">
-  <p class="text-lg text-gray-700 leading-relaxed">
+<section class="py-12 sm:py-16">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">
     We're a small-batch roasting operation committed to bringing you exceptional coffee.
     Every bag is roasted to order, ensuring you receive the freshest beans possible.
     From our roastery to your cup, we're focused on craft, quality, and consistency.
-  </p>
-</div>
+    </p>
+  </div>
+</section>
 
 <!-- How It Works -->
-<div class="bg-gray-50 py-16 -mx-4 px-4 mb-20 border-y border-gray-200">
-  <h2 class="text-4xl font-serif font-bold text-center mb-12 text-gray-900">How It Works</h2>
+<section class="bg-gray-50 py-12 sm:py-16 border-y border-gray-200">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900">How It Works</h2>
 
-  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
     <div class="text-center">
       <div class="text-6xl mb-6">1️⃣</div>
       <h3 class="text-xl font-semibold mb-3 text-gray-900">Choose Your Roast & Cadence</h3>
@@ -40,52 +55,59 @@
       <h3 class="text-xl font-semibold mb-3 text-gray-900">Delivered on Schedule</h3>
       <p class="text-gray-600">Your coffee arrives on your chosen schedule. Pause, skip, or adjust anytime.</p>
     </div>
+    </div>
   </div>
-</div>
+</section>
 
 <!-- Featured Coffees -->
-<div class="mb-20">
-  <h2 class="text-4xl font-serif font-bold text-center mb-12 text-gray-900">Featured Coffees</h2>
+<section class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900">Featured Coffees</h2>
 
-  <% @featured_products = Product.coffee.active.limit(3) %>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <% @featured_products.each do |product| %>
-      <div class="card overflow-hidden">
-        <div class="h-48 bg-gray-100 flex items-center justify-center">
-          <span class="text-gray-300 text-6xl">☕</span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-2">
-            <h3 class="text-xl font-semibold flex-1 text-gray-900"><%= product.name %></h3>
-            <%# TODO: Fix cultivar icon display - SVG assets need proper configuration or alternative icon solution %>
-            <% if product.cultivar_icon %>
-              <%= image_tag product.cultivar_icon,
-                  class: "w-6 h-6 #{product.cultivar_color} flex-shrink-0 ml-2",
-                  alt: product.roast_type&.titleize %>
-            <% end %>
+    <% @featured_products = Product.coffee.active.limit(3) %>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <% @featured_products.each do |product| %>
+        <div class="card overflow-hidden">
+          <div class="h-48 bg-gray-100 flex items-center justify-center">
+            <span class="text-gray-300 text-6xl">☕</span>
           </div>
-          <p class="text-gray-600 mb-4 text-sm"><%= truncate(product.description, length: 80) %></p>
-          <div class="flex justify-between items-center">
-            <span class="text-lg font-semibold text-gray-900">$<%= sprintf('%.2f', product.price) %></span>
-            <%= link_to "View", product_path(product), class: "text-blue-600 hover:text-blue-700 font-medium" %>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-xl font-semibold flex-1 text-gray-900"><%= product.name %></h3>
+              <%# TODO: Fix cultivar icon display - SVG assets need proper configuration or alternative icon solution %>
+              <% if product.cultivar_icon %>
+                <%= image_tag product.cultivar_icon,
+                    class: "w-6 h-6 #{product.cultivar_color} flex-shrink-0 ml-2",
+                    alt: product.roast_type&.titleize %>
+              <% end %>
+            </div>
+            <p class="text-gray-600 mb-4 text-sm"><%= truncate(product.description, length: 80) %></p>
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-semibold text-gray-900">$<%= sprintf('%.2f', product.price) %></span>
+              <%= link_to "View", product_path(product), class: "text-blue-600 hover:text-blue-700 font-medium" %>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
 
-  <div class="text-center mt-8">
-    <%= link_to "View All Products", products_path, class: "text-blue-600 hover:text-blue-700 font-semibold text-lg" %>
+    <div class="text-center mt-8">
+      <%= link_to "View All Products", products_path, class: "text-blue-600 hover:text-blue-700 font-semibold text-lg" %>
+    </div>
   </div>
-</div>
+</section>
 
 <!-- Newsletter / Offers -->
-<div class="card py-12 px-8 text-center max-w-3xl mx-auto">
-  <h2 class="text-3xl font-serif font-bold mb-4 text-gray-900">Stay Connected</h2>
-  <p class="text-gray-600 mb-6">Get updates on new coffees, brewing tips, and exclusive offers.</p>
+<section class="pb-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="card py-12 px-8 text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl font-serif font-bold mb-4 text-gray-900">Stay Connected</h2>
+      <p class="text-gray-600 mb-6">Get updates on new coffees, brewing tips, and exclusive offers.</p>
 
-  <form class="flex max-w-md mx-auto gap-3">
-    <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors" />
-    <button type="submit" class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors">Subscribe</button>
-  </form>
-</div>
+      <form class="flex flex-col sm:flex-row max-w-md mx-auto gap-3">
+        <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors" />
+        <button type="submit" class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
