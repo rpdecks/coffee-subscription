@@ -71,7 +71,8 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  config.active_job.queue_adapter = :sidekiq
+  enable_sidekiq = %w[1 true yes].include?(ENV["ENABLE_SIDEKIQ"].to_s.downcase) && ENV["REDIS_URL"].to_s != ""
+  config.active_job.queue_adapter = enable_sidekiq ? :sidekiq : :async
   # config.active_job.queue_name_prefix = "coffee_production"
 
   # Disable caching for Action Mailer templates even if Action Controller
