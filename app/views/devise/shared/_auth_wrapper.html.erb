@@ -1,7 +1,12 @@
-<!-- Auth Page Wrapper - Centered card -->
-<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+<!-- Auth Page Wrapper - Hero background with centered card -->
+<div class="min-h-screen relative flex items-center justify-center py-12 px-4">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <%= image_tag "hero/coffee-cherries-2.jpg", class: "h-full w-full object-cover opacity-40", alt: "" %>
+  </div>
+
   <!-- Auth Card -->
-  <div class="card max-w-md w-full p-8">
+  <div class="card max-w-md w-full p-8 shadow-xl relative z-10">
     <%= yield %>
   </div>
 </div>
