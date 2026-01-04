@@ -205,9 +205,17 @@ config.action_mailer.default_url_options = {
 
 3. **Set Environment Variable:**
 
-   ```bash
-   heroku config:set SENDGRID_API_KEY=your_api_key
-   ```
+  Fly (recommended):
+
+  ```bash
+  flyctl secrets set SENDGRID_API_KEY=your_api_key -a coffee-production
+  ```
+
+  After updating secrets, restart so all Machines pick up the new values:
+
+  ```bash
+  flyctl apps restart coffee-production
+  ```
 
 4. **Verify Domain (Recommended):**
    - Settings → Sender Authentication → Domain Authentication
@@ -217,6 +225,20 @@ config.action_mailer.default_url_options = {
 5. **Configure From Address:**
    - Use verified domain in mailers
    - Example: orders@yourdomain.com
+
+## Operational Notes
+
+### When SMTP credentials break
+
+If SendGrid rejects the credential, Rails may raise `Net::SMTPAuthenticationError` with a message like:
+
+`535 Authentication failed: The provided authorization grant is invalid, expired, or revoked`
+
+This can happen if the API key was rotated, disabled, deleted, or created without the required permissions.
+
+### Monitoring recommendation
+
+At minimum, alert on occurrences of `Net::SMTPAuthenticationError` / `535 Authentication failed` in production logs via a Fly log drain + your log/alerting provider.
 
 ## Triggering Emails
 

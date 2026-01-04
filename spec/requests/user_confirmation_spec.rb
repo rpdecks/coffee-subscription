@@ -39,6 +39,19 @@ RSpec.describe "User Registration with Email Confirmation", type: :request do
         post user_registration_path, params: valid_params
         expect(response).to redirect_to(root_path)
       end
+
+      it "shows a helpful message if confirmation email fails to send" do
+        allow_any_instance_of(ActionMailer::MessageDelivery)
+          .to receive(:deliver_now)
+          .and_raise(Net::SMTPAuthenticationError.new("535 Authentication failed"))
+
+        expect {
+          post user_registration_path, params: valid_params
+        }.to change(User, :count).by(1)
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to include("couldn't send the confirmation email")
+      end
     end
   end
 
@@ -75,6 +88,21 @@ RSpec.describe "User Registration with Email Confirmation", type: :request do
         get user_confirmation_path, params: { confirmation_token: 'invalid_token' }
         expect(response.body).to include("Confirmation token is invalid")
       end
+    end
+  end
+
+  describe "POST /users/confirmation" do
+    let(:user) { create(:user, :unconfirmed) }
+
+    it "shows a helpful message if confirmation resend email fails to send" do
+      allow_any_instance_of(ActionMailer::MessageDelivery)
+        .to receive(:deliver_now)
+        .and_raise(Net::SMTPAuthenticationError.new("535 Authentication failed"))
+
+      post user_confirmation_path, params: { user: { email: user.email } }
+
+      expect(response).to redirect_to(new_user_confirmation_path)
+      expect(flash[:alert]).to include("couldn't send the confirmation email")
     end
   end
 
