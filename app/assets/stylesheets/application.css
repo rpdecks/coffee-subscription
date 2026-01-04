@@ -145,17 +145,54 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 1rem 2rem !important;
+    padding: 0.6rem 1.1rem !important;
     border-radius: 8px !important;
-    font-weight: 600 !important;
+    font-weight: 500 !important;
+    font-size: inherit !important;
     transition: all 0.2s ease !important;
     text-decoration: none !important;
     line-height: 1.2 !important;
     cursor: pointer !important;
     background-color: transparent !important;
     color: #f6f1eb !important;
-    border: 2px solid #f6f1eb !important;
+    border: 1px solid #f6f1eb !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    white-space: nowrap !important;
+  }
+
+  @media (min-width: 360px) {
+    .btn-hero-primary,
+    .btn-hero-secondary {
+      padding: 0.65rem 1.25rem !important;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .btn-hero-primary,
+    .btn-hero-secondary {
+      padding: 0.75rem 1.5rem !important;
+    }
+  }
+
+  #home-hero-ctas a.btn-hero-primary,
+  #home-hero-ctas a.btn-hero-secondary {
+    padding: 0.6rem 1.1rem !important;
+    font-weight: 500 !important;
+    border: 1px solid #f6f1eb !important;
+  }
+
+  @media (min-width: 360px) {
+    #home-hero-ctas a.btn-hero-primary,
+    #home-hero-ctas a.btn-hero-secondary {
+      padding: 0.65rem 1.25rem !important;
+    }
+  }
+
+  @media (min-width: 640px) {
+    #home-hero-ctas a.btn-hero-primary,
+    #home-hero-ctas a.btn-hero-secondary {
+      padding: 0.75rem 1.5rem !important;
+    }
   }
 
   .btn-hero-primary:hover,

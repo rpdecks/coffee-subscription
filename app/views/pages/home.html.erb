@@ -2,19 +2,23 @@
 
 <!-- Hero Section -->
 <section class="relative w-full">
-  <div class="relative h-[360px] sm:h-[440px] lg:h-[520px]">
+  <div class="relative h-[280px] sm:h-[440px] lg:h-[520px]">
     <%= image_tag @hero_image,
         class: "absolute inset-0 h-full w-full object-cover",
         alt: "Coffee cherries at origin" %>
     <div class="absolute inset-0 bg-black/50"></div>
     <div class="relative h-full flex items-center">
-      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-4 sm:mb-6 text-cream">Fresh Roasted Coffee, Delivered</h1>
-        <p class="text-lg sm:text-xl lg:text-2xl text-cream/85 mb-8 sm:mb-10 max-w-3xl mx-auto">Small-batch coffee roasted to order and delivered on your schedule</p>
+      <div class="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold mb-2 sm:mb-6 text-cream leading-tight">Fresh Roasted Coffee, Delivered</h1>
+        <p class="text-xs sm:text-xl lg:text-2xl text-cream/85 mb-4 sm:mb-10 max-w-3xl mx-auto leading-snug">Small-batch coffee roasted to order and delivered on your schedule</p>
 
-        <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 px-6 sm:px-0">
-          <%= link_to "Start a Subscription", subscribe_path, class: "btn-hero-primary text-lg sm:text-xl max-w-sm mx-auto sm:mx-0 w-full sm:w-auto" %>
-          <%= link_to "Shop Single Bags", shop_path, class: "btn-hero-secondary text-lg sm:text-xl max-w-sm mx-auto sm:mx-0 w-full sm:w-auto" %>
+        <div id="home-hero-ctas" class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 px-2 sm:px-0 mb-3">
+          <%= link_to "Start a Subscription", subscribe_path,
+            class: "btn-hero-primary text-[11px] sm:text-base whitespace-nowrap flex-none",
+            style: "font-weight: 500 !important; border: 1px solid currentColor !important; border-radius: 6px !important; width: min(100%, 300px) !important;" %>
+          <%= link_to "Shop Single Bags", shop_path,
+            class: "btn-hero-secondary text-[11px] sm:text-base whitespace-nowrap flex-none",
+            style: "font-weight: 500 !important; border: 1px solid currentColor !important; border-radius: 6px !important; width: min(100%, 300px) !important;" %>
         </div>
       </div>
     </div>

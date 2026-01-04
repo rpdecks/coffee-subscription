@@ -62,3 +62,27 @@
 .hover\:text-blue-800:hover {
   color: #3e2723 !important;
 }
+
+/* Home hero CTA sizing (wins even if a stale precompiled application.css is served) */
+#home-hero-ctas .btn-hero-primary,
+#home-hero-ctas .btn-hero-secondary {
+  padding: 0.4rem 0.75rem !important;
+  width: min(100%, 300px) !important;
+  max-width: 300px !important;
+  box-sizing: border-box;
+}
+
+@media (min-width: 360px) {
+  #home-hero-ctas .btn-hero-primary,
+  #home-hero-ctas .btn-hero-secondary {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+@media (min-width: 640px) {
+  #home-hero-ctas .btn-hero-primary,
+  #home-hero-ctas .btn-hero-secondary {
+    padding: 0.75rem 1.5rem !important;
+    width: 300px !important;
+  }
+}
