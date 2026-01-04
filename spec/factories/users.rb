@@ -22,6 +22,10 @@ FactoryBot.define do
       confirmed_at { nil }
 
       # Manually confirm token after create to avoid email send issues in tests
+      before(:create) do |user|
+        user.skip_confirmation_notification!
+      end
+
       after(:create) do |user|
         user.update_columns(
           confirmation_token: Devise.friendly_token,

@@ -4,6 +4,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [ :create ]
   before_action :configure_account_update_params, only: [ :update ]
 
+  SMTP_DELIVERY_ERRORS = [
+    Net::SMTPAuthenticationError,
+    Net::SMTPServerBusy,
+    Net::SMTPFatalError,
+    Net::SMTPSyntaxError,
+    EOFError,
+    OpenSSL::SSL::SSLError,
+    SocketError
+  ].freeze
+
+  def create
+    super
+  rescue *SMTP_DELIVERY_ERRORS => e
+    Rails.logger.error("Signup confirmation email delivery failed: #{e.class}: #{e.message}")
+
+    flash[:alert] = "We created your account, but couldn't send the confirmation email. Please try again later or contact support."
+    redirect_to root_path
+  end
+
   protected
 
   # If you have extra params to permit, append them to the sanitizer.

@@ -1,4 +1,19 @@
 module ApplicationHelper
+  def nav_link_html_options(path, variant: :desktop, class_name: nil)
+    active = nav_active_for?(path)
+
+    classes = [
+      "nav-link",
+      (variant.to_sym == :mobile ? "nav-link--mobile" : "nav-link--desktop"),
+      (active ? "nav-link--active" : nil),
+      class_name
+    ].compact.join(" ")
+
+    options = { class: classes }
+    options[:aria] = { current: "page" } if active
+    options
+  end
+
   def format_ounces(ounces)
     return if ounces.blank?
 
@@ -45,5 +60,41 @@ module ApplicationHelper
     else
       svg_content
     end.html_safe
+  end
+
+  private
+
+  def nav_active_for?(path)
+    target_path = path.to_s
+    current = request&.path.to_s
+
+    current == target_path || current.start_with?("#{target_path}/")
+  end
+
+  def nav_link_base_classes(variant)
+    case variant.to_sym
+    when :mobile
+      "block"
+    else
+      ""
+    end
+  end
+
+  def nav_link_inactive_classes(variant)
+    case variant.to_sym
+    when :mobile
+      ""
+    else
+      ""
+    end
+  end
+
+  def nav_link_active_classes(variant)
+    case variant.to_sym
+    when :mobile
+      ""
+    else
+      ""
+    end
   end
 end

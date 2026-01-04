@@ -21,10 +21,19 @@ RSpec.describe "pages/home.html.tailwindcss", type: :view do
 
     expect(rendered).to include('whitespace-nowrap')
     expect(rendered).to include('width: min(100%, 300px)')
+    expect(rendered).to include('background-color: #f6f1eb')
 
     expect(rendered).not_to include('!px-4')
     expect(rendered).not_to include('!py-2')
     expect(rendered).not_to include('sm:!px-6')
     expect(rendered).not_to include('sm:!py-3')
+  end
+
+  it 'keeps hero subtext line length readable' do
+    render template: 'pages/home'
+
+    expect(rendered).to include('max-w-2xl')
+    expect(rendered).to include('lg:max-w-xl')
+    expect(rendered).to include('sm:leading-relaxed')
   end
 end
