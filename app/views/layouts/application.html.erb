@@ -20,8 +20,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
@@ -30,7 +30,7 @@
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
-            <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition" do %>
+            <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
               <span class="block md:hidden">
                 <%= render "shared/logo_icon" %>
               </span>
@@ -41,12 +41,12 @@
           </div>
 
           <!-- Desktop: Centered main nav -->
-          <div class="hidden md:flex items-center space-x-8 flex-1 justify-center">
-            <%= link_to "SHOP", shop_path, nav_link_html_options(shop_path, variant: :desktop) %>
-            <%= link_to "PRODUCTS", products_path, nav_link_html_options(products_path, variant: :desktop) %>
-            <%= link_to "ABOUT", about_path, nav_link_html_options(about_path, variant: :desktop) %>
+          <div class="hidden md:flex items-center space-x-8 lg:space-x-10 flex-1 justify-center">
+            <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :desktop) %>
+            <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :desktop) %>
+            <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :desktop) %>
             <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :desktop) %>
-            <%= link_to "CONTACT", contact_path, nav_link_html_options(contact_path, variant: :desktop) %>
+            <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :desktop) %>
           </div>
 
           <!-- Desktop: Account icon dropdown -->
@@ -90,11 +90,11 @@
       <div id="mobile-menu" class="hidden md:hidden bg-white">
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3 space-y-3">
           <!-- Site navigation -->
-          <%= link_to "SHOP", shop_path, nav_link_html_options(shop_path, variant: :mobile) %>
-          <%= link_to "PRODUCTS", products_path, nav_link_html_options(products_path, variant: :mobile) %>
-          <%= link_to "ABOUT", about_path, nav_link_html_options(about_path, variant: :mobile) %>
+          <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :mobile) %>
+          <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :mobile) %>
+          <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :mobile) %>
           <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :mobile) %>
-          <%= link_to "CONTACT", contact_path, nav_link_html_options(contact_path, variant: :mobile) %>
+          <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :mobile) %>
 
           <!-- Divider -->
           <hr class="border-t border-gray-200">

@@ -91,7 +91,7 @@
   border-radius: 8px !important;
 }
 
-@theme {
+:root {
   --color-espresso: #1b1a17;
   --color-espresso-light: #252320;
   --color-deshojo: #b93e3e;
@@ -108,13 +108,13 @@
 
 @layer base {
   html {
-    font-family: var(--font-family-sans);
+    font-family: var(--font-sans);
   }
 
   body {
     background-color: var(--color-espresso);
     color: var(--color-cream);
-    font-family: var(--font-family-sans);
+    font-family: var(--font-sans);
   }
 
   h1,
@@ -123,7 +123,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-family-serif);
+    font-family: var(--font-serif);
     color: var(--color-cream);
   }
 
@@ -336,9 +336,10 @@
     position: relative;
     display: inline-block;
     color: var(--color-espresso);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 600;
+    font-family: var(--font-sans);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-weight: 400;
     font-size: 0.875rem;
     line-height: 1;
     padding-bottom: 0.55rem;
@@ -346,8 +347,25 @@
     text-decoration: none;
   }
 
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0.2em;
+    right: 0.2em;
+    bottom: 0.1rem;
+    height: 1px;
+    background-color: var(--color-deshojo);
+    border-radius: 9999px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
   .nav-link:hover {
-    color: var(--color-espresso-light);
+    color: var(--color-deshojo);
+  }
+
+  .nav-link:hover::after {
+    opacity: 0.65;
   }
 
   .nav-link--active {
@@ -355,14 +373,8 @@
   }
 
   .nav-link--active::after {
-    content: "";
-    position: absolute;
-    left: 0.2em;
-    right: 0.2em;
-    bottom: 0.1rem;
     height: 2px;
-    background-color: var(--color-deshojo);
-    border-radius: 9999px;
+    opacity: 1;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   }
 
