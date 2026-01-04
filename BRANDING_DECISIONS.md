@@ -4,16 +4,24 @@
 
 ### 1. Theme All Components Dark Mode?
 
-**Choice: Yes, update all to bg-espresso, text-cream**
+**Choice: WISHLIST ITEM - Future enhancement**
 
-**Rationale:**
+**Current State:** Site is light-themed (gray-50 backgrounds, white cards, dark text)
+
+**Future Vision:** Offer users a dark mode toggle that switches to bg-espresso, text-cream
+
+**Rationale for Future Dark Mode:**
 
 - Full dark mode creates immersive, premium coffee experience
 - Matches Japanese aesthetic (minimal, contemplative)
 - Better for evening browsing (when people shop for morning coffee!)
 - Consistent brand experience across all touchpoints
+- Reduces eye strain for users who prefer dark themes
 
-**Exception:** Keep admin data tables with slight contrast (maybe espresso-lighter) for readability
+**Implementation Notes:**
+- Keep light mode as default (matches current landing page)
+- Add dark mode toggle (user preference saved in session/localStorage)
+- Exception: Keep admin data tables with slight contrast (maybe espresso-lighter) for readability in dark mode
 
 ---
 
@@ -79,20 +87,20 @@
 
 ### 5. Devise Auth Pages Themed?
 
-**Choice: Yes, match brand**
+**Choice: Yes, match current light theme brand**
 
-**Rationale:**
+**Current Implementation:**
 
-- First impression for new customers (sign up page)
-- Professional, cohesive experience
-- Dark theme reduces eye strain during sign-in
-- Shows we care about every detail
+- Light theme matching landing page (gray-50 bg, white cards)
+- Deshojo red for primary CTAs and links (replacing generic blue)
+- Serif fonts for headings (Cormorant Garamond)
+- Clean, minimal centered card design
 
-**Keep it minimal:**
-
-- Centered card on espresso background
-- Cream text, deshojo CTA buttons
-- Simple maple leaf watermark (subtle, large, faded in background)
+**Future Dark Mode:**
+- When dark mode toggle is implemented, auth pages should switch to:
+  - Centered card on espresso background
+  - Cream text, deshojo CTA buttons
+  - Simple maple leaf watermark (subtle, large, faded in background)
 
 ---
 

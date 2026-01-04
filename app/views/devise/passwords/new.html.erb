@@ -1,14 +1,14 @@
 <%= content_for :skip_container, true %>
 
 <%= render 'devise/shared/auth_wrapper' do %>
-  <h1 class="text-3xl font-serif mb-6">Reset Your Password</h1>
-  <p class="text-cream/70 mb-6">Enter your email address and we'll send you instructions to reset your password.</p>
+  <h1 class="text-3xl font-serif mb-6 text-gray-900">Reset Your Password</h1>
+  <p class="text-gray-600 mb-6">Enter your email address and we'll send you instructions to reset your password.</p>
 
   <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-6" }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 
     <div>
-      <%= f.label :email, class: "block mb-2 text-cream/70" %>
+      <%= f.label :email, class: "block mb-2 text-gray-700 font-medium" %>
       <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input-field" %>
     </div>
 
@@ -17,7 +17,7 @@
     </div>
   <% end %>
 
-  <div class="mt-6 text-center text-sm">
-    <%= link_to "Back to Sign In", new_session_path(resource_name), class: "text-deshojo hover:underline" %>
+  <div class="mt-6 text-center text-sm text-gray-600">
+    <%= link_to "Back to Sign In", new_session_path(resource_name), class: "text-deshojo hover:text-deshojo/80 hover:underline" %>
   </div>
 <% end %>

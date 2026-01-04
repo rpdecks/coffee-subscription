@@ -2,6 +2,9 @@ module.exports = {
   content: ["./app/views/**/*.html.erb", "./app/helpers/**/*.rb", "./app/javascript/**/*.js"],
   theme: {
     extend: {
+      screens: {
+        xs: "360px",
+      },
       colors: {
         espresso: "#1B1A17",
         "espresso-light": "#252320",
