@@ -10,12 +10,13 @@
     <div class="relative h-full flex items-center">
       <div class="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 text-center">
         <h1 class="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold mb-2 sm:mb-6 text-cream leading-tight">Fresh Roasted Coffee, Delivered</h1>
-        <p class="text-xs sm:text-xl lg:text-2xl text-cream/85 mb-4 sm:mb-10 max-w-3xl mx-auto leading-snug">Small-batch coffee roasted to order and delivered on your schedule</p>
+        <p class="text-xs sm:text-xl lg:text-2xl text-cream/85 mb-4 sm:mb-10 max-w-2xl lg:max-w-xl mx-auto leading-snug sm:leading-relaxed">Small-batch coffee roasted to order and delivered on your schedule</p>
 
         <div id="home-hero-ctas" class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 px-2 sm:px-0 mb-3">
           <%= link_to "Start a Subscription", subscribe_path,
+            id: "home-hero-primary-cta",
             class: "btn-hero-primary text-[11px] sm:text-base whitespace-nowrap flex-none",
-            style: "font-weight: 500 !important; border: 1px solid currentColor !important; border-radius: 6px !important; width: min(100%, 300px) !important;" %>
+            style: "font-weight: 500 !important; border: 1px solid currentColor !important; border-radius: 6px !important; width: min(100%, 300px) !important; background-color: #f6f1eb !important; color: #1b1a17 !important;" %>
           <%= link_to "Shop Single Bags", shop_path,
             class: "btn-hero-secondary text-[11px] sm:text-base whitespace-nowrap flex-none",
             style: "font-weight: 500 !important; border: 1px solid currentColor !important; border-radius: 6px !important; width: min(100%, 300px) !important;" %>
@@ -39,27 +40,27 @@
 <!-- How It Works -->
 <section class="bg-gray-50 py-12 sm:py-16 border-y border-gray-200">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900">How It Works</h2>
+    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900 tracking-tight">How It Works</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
-    <div class="text-center">
-      <div class="text-6xl mb-6">1️⃣</div>
-      <h3 class="text-xl font-semibold mb-3 text-gray-900">Choose Your Roast & Cadence</h3>
-      <p class="text-gray-600">Select from our curated coffees and pick a delivery frequency that fits your routine.</p>
-    </div>
+    <ol class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8" role="list">
+      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
+        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">1</div>
+        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Choose Your Roast &amp; Cadence</h3>
+        <p class="text-gray-600 leading-relaxed">Select from our curated coffees and pick a delivery frequency that fits your routine.</p>
+      </li>
 
-    <div class="text-center">
-      <div class="text-6xl mb-6">2️⃣</div>
-      <h3 class="text-xl font-semibold mb-3 text-gray-900">Roasted Fresh</h3>
-      <p class="text-gray-600">We roast your coffee to order, never keeping beans on shelves for weeks.</p>
-    </div>
+      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
+        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">2</div>
+        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Roasted Fresh</h3>
+        <p class="text-gray-600 leading-relaxed">We roast your coffee to order, never keeping beans on shelves for weeks.</p>
+      </li>
 
-    <div class="text-center">
-      <div class="text-6xl mb-6">3️⃣</div>
-      <h3 class="text-xl font-semibold mb-3 text-gray-900">Delivered on Schedule</h3>
-      <p class="text-gray-600">Your coffee arrives on your chosen schedule. Pause, skip, or adjust anytime.</p>
-    </div>
-    </div>
+      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
+        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">3</div>
+        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Delivered on Schedule</h3>
+        <p class="text-gray-600 leading-relaxed">Your coffee arrives on your chosen schedule. Pause, skip, or adjust anytime.</p>
+      </li>
+    </ol>
   </div>
 </section>
 

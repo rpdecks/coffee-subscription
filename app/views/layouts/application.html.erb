@@ -26,9 +26,9 @@
   </head>
 
   <body class="bg-white text-gray-900 font-sans overflow-x-clip">
-    <nav class="bg-white w-screen">
+    <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-6 transition-all duration-200 ease-out">
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16 gap-3">
+        <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition" do %>
               <span class="block md:hidden">
@@ -42,11 +42,11 @@
 
           <!-- Desktop: Centered main nav -->
           <div class="hidden md:flex items-center space-x-8 flex-1 justify-center">
-            <%= link_to "Shop", shop_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
-            <%= link_to "Products", products_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
-            <%= link_to "About", about_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
-            <%= link_to "FAQ", faq_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
-            <%= link_to "Contact", contact_path, class: "text-gray-700 hover:text-gray-900 transition-colors" %>
+            <%= link_to "SHOP", shop_path, nav_link_html_options(shop_path, variant: :desktop) %>
+            <%= link_to "PRODUCTS", products_path, nav_link_html_options(products_path, variant: :desktop) %>
+            <%= link_to "ABOUT", about_path, nav_link_html_options(about_path, variant: :desktop) %>
+            <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :desktop) %>
+            <%= link_to "CONTACT", contact_path, nav_link_html_options(contact_path, variant: :desktop) %>
           </div>
 
           <!-- Desktop: Account icon dropdown -->
@@ -90,26 +90,26 @@
       <div id="mobile-menu" class="hidden md:hidden bg-white">
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3 space-y-3">
           <!-- Site navigation -->
-          <%= link_to "Shop", shop_path, class: "block py-2 nav-link" %>
-          <%= link_to "Products", products_path, class: "block py-2 nav-link" %>
-          <%= link_to "About", about_path, class: "block py-2 nav-link" %>
-          <%= link_to "FAQ", faq_path, class: "block py-2 nav-link" %>
-          <%= link_to "Contact", contact_path, class: "block py-2 nav-link" %>
+          <%= link_to "SHOP", shop_path, nav_link_html_options(shop_path, variant: :mobile) %>
+          <%= link_to "PRODUCTS", products_path, nav_link_html_options(products_path, variant: :mobile) %>
+          <%= link_to "ABOUT", about_path, nav_link_html_options(about_path, variant: :mobile) %>
+          <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :mobile) %>
+          <%= link_to "CONTACT", contact_path, nav_link_html_options(contact_path, variant: :mobile) %>
 
           <!-- Divider -->
           <hr class="border-t border-gray-200">
 
           <!-- Account section -->
           <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_root_path, class: "block py-2 nav-link" %>
-            <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block py-2 nav-link" %>
+            <%= link_to "Dashboard", dashboard_root_path, nav_link_html_options(dashboard_root_path, variant: :mobile) %>
+            <%= link_to "Edit Profile", edit_dashboard_profile_path, nav_link_html_options(edit_dashboard_profile_path, variant: :mobile) %>
             <% if current_user.admin? %>
               <%= link_to "Admin", admin_root_path, class: "block py-2 text-red-600 hover:text-red-700 font-medium" %>
             <% end %>
-            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-left py-2 nav-link w-full" %>
+            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block py-2 text-gray-700 hover:text-gray-900 transition-colors" %>
           <% else %>
-            <%= link_to "Sign In", new_user_session_path, class: "block py-2 nav-link" %>
-            <%= link_to "Sign Up", new_user_registration_path, class: "block py-2 nav-link font-medium" %>
+            <%= link_to "Sign In", new_user_session_path, nav_link_html_options(new_user_session_path, variant: :mobile) %>
+            <%= link_to "Sign Up", new_user_registration_path, nav_link_html_options(new_user_registration_path, variant: :mobile, class_name: "font-medium") %>
           <% end %>
         </div>
       </div>
@@ -117,6 +117,52 @@
 
     <script>
       document.addEventListener('turbo:load', () => {
+        // Header scroll behavior
+        const siteHeader = document.getElementById('site-header');
+        if (siteHeader) {
+          const updateHeader = () => {
+            const scrolled = window.scrollY > 20;
+
+            siteHeader.classList.toggle('bg-white', scrolled);
+            siteHeader.classList.toggle('shadow-md', scrolled);
+            siteHeader.classList.toggle('py-3', scrolled);
+
+            siteHeader.classList.toggle('bg-transparent', !scrolled);
+            siteHeader.classList.toggle('shadow-none', !scrolled);
+            siteHeader.classList.toggle('py-6', !scrolled);
+          };
+
+          let ticking = false;
+          window.addEventListener('scroll', () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+              updateHeader();
+              ticking = false;
+            });
+          }, { passive: true });
+
+          updateHeader();
+        }
+
+        // Home page: focus primary hero CTA on load
+        const heroPrimaryCta = document.getElementById('home-hero-primary-cta');
+        if (heroPrimaryCta) {
+          const active = document.activeElement;
+          const noMeaningfulFocus = !active || active === document.body;
+
+          if (noMeaningfulFocus) {
+            // Defer to ensure layout is settled after Turbo render
+            requestAnimationFrame(() => {
+              try {
+                heroPrimaryCta.focus({ preventScroll: true });
+              } catch (e) {
+                heroPrimaryCta.focus();
+              }
+            });
+          }
+        }
+
         // Mobile menu toggle
         const mobileButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
