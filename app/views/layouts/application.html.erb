@@ -19,6 +19,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      .logo-only,
+      .logo-with-text {
+        display: none;
+      }
+
+      @media (max-width: 499px) {
+        .logo-only {
+          display: block;
+        }
+      }
+
+      @media (min-width: 500px) {
+        .logo-with-text {
+          display: block;
+        }
+      }
+    </style>
 
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -31,10 +49,10 @@
         <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
-              <span class="block md:hidden h-16 w-16 text-espresso">
+              <span class="logo-only h-16 w-16 text-espresso">
                 <%= render "shared/logo_icon" %>
               </span>
-              <span class="hidden md:block">
+              <span class="logo-with-text">
                 <%= render "shared/logo_full" %>
               </span>
             <% end %>
