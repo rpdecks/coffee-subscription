@@ -91,7 +91,7 @@
         <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-200 ease-out" aria-hidden="true"></div>
 
         <div class="relative h-full w-full overflow-y-auto overscroll-contain flex items-start justify-center p-6">
-          <div id="mobile-menu-panel" class="w-full max-w-md max-h-[calc(100vh-3rem)] overflow-y-auto rounded-card bg-white text-espresso opacity-0 translate-y-2 scale-95 transition-all duration-200 ease-out">
+          <div id="mobile-menu-panel" class="w-full max-w-md max-h-[calc(100vh-3rem)] overflow-y-auto rounded-card bg-white text-espresso opacity-0 translate-y-2 scale-95 transition-all duration-200 ease-out shadow-[0_35px_60px_rgba(0,0,0,0.25)]">
             <div class="px-7 py-6">
               <div class="flex items-center justify-end">
                 <button id="mobile-menu-close-button" type="button" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition" aria-label="Close menu">
@@ -102,7 +102,10 @@
 
             <div class="px-7 pb-10">
               <nav class="text-center font-serif tracking-wide">
-                <div class="space-y-6">
+                <% if user_signed_in? %>
+                  <p class="text-sm uppercase tracking-[0.4em] text-gray-500 mb-6">Hi, <%= current_user.first_name.presence || current_user.email.to_s.split('@').first.capitalize.presence || 'Member' %></p>
+                <% end %>
+                <div class="space-y-5">
                   <%= link_to "Shop", shop_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "Products", products_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "About", about_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
@@ -112,7 +115,7 @@
 
                 <hr class="my-8 border-t border-gray-200">
 
-                <div class="space-y-6">
+                <div class="space-y-5">
                   <% if user_signed_in? %>
                     <%= link_to "Dashboard", dashboard_root_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                     <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
