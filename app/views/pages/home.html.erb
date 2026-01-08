@@ -117,8 +117,21 @@
       <h2 class="text-3xl font-serif font-bold mb-4 text-gray-900">Stay Connected</h2>
       <p class="text-gray-600 mb-6">Get updates on new coffees, brewing tips, and exclusive offers.</p>
 
-      <form class="flex flex-col sm:flex-row max-w-md mx-auto gap-3">
-        <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors" />
+      <form
+        class="flex flex-col sm:flex-row max-w-md mx-auto gap-3"
+        method="POST"
+        action="https://buttondown.com/api/emails/embed-subscribe/acercoffee"
+        target="_blank"
+      >
+        <label class="sr-only" for="bd-email">Email address</label>
+        <input
+          name="email"
+          id="bd-email"
+          type="email"
+          placeholder="Your email address"
+          class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors"
+          required
+        />
         <button type="submit" class="btn-secondary">Subscribe</button>
       </form>
     </div>
