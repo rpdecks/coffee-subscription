@@ -59,4 +59,7 @@ class PagesController < ApplicationController
 
     redirect_to contact_path
   end
+
+  def thank_you
+  end
 end
