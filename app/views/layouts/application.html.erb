@@ -26,12 +26,12 @@
   </head>
 
   <body class="bg-white text-gray-900 font-sans overflow-x-clip">
-    <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-5 transition-all duration-200 ease-out">
+    <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-4 transition-all duration-200 ease-out">
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
-              <span class="block md:hidden">
+              <span class="block md:hidden h-16 w-16 text-espresso">
                 <%= render "shared/logo_icon" %>
               </span>
               <span class="hidden md:block">
@@ -294,29 +294,39 @@
       <%= yield %>
     </main>
 
-    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-16">
-      <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Acer Coffee</h3>
-            <p class="text-gray-400 text-sm">Freshly roasted coffee, delivered to your door.</p>
+    <footer class="bg-gray-950 border-t border-gray-800 text-white mt-16">
+      <div class="container mx-auto px-4 py-10 sm:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-sm">
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 bg-slate-900 rounded-full flex items-center justify-center border border-gray-700">
+                <%= render "shared/logo_icon", class: "text-white" %>
+              </span>
+              <h3 class="font-serif text-xl font-semibold tracking-tight">Acer Coffee</h3>
+            </div>
+            <p class="text-gray-300 leading-relaxed">Small-batch roasters crafting East Coast-ready coffees with clarity, balance, and confidence.</p>
+            <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Seed to cup, roasted to taste.</p>
           </div>
+
           <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Quick Links</h3>
-            <ul class="space-y-2 text-sm">
-              <li><%= link_to "Products", products_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "About", about_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "FAQ", faq_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "Contact", contact_path, class: "text-gray-400 hover:text-white" %></li>
+            <h3 class="font-serif text-xl font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li><%= link_to "Shop", shop_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "About", about_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "FAQ", faq_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "Contact", contact_path, class: "hover:text-white transition" %></li>
             </ul>
           </div>
-          <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Contact</h3>
-            <p class="text-gray-400 text-sm">Questions? <%= link_to "Get in touch", contact_path, class: "text-white hover:text-gray-300 underline" %></p>
+
+          <div class="space-y-3">
+            <h3 class="font-serif text-xl font-semibold">Contact</h3>
+            <p class="text-gray-300 leading-relaxed">Prefer to talk to someone? We’re here for questions about roasting, orders, or tasting notes.</p>
+            <p class="text-gray-200"> <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Email</span><br><%= mail_to "hello@acercoffee.com", "hello@acercoffee.com", class: "font-medium text-white hover:text-deshojo" %></p>
           </div>
         </div>
-        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-          <p>&copy; <%= Time.current.year %> Acer Coffee. All rights reserved.</p>
+
+        <div class="border-t border-gray-900 mt-10 pt-8 text-center text-gray-500 text-xs sm:text-sm">
+          <p>© 2026 Acer Coffee. All rights reserved.</p>
         </div>
       </div>
     </footer>
