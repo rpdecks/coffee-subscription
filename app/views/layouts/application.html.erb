@@ -78,7 +78,7 @@
           </div>
 
           <!-- Mobile menu button -->
-          <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900">
+          <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900" aria-controls="mobile-menu" aria-expanded="false">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -86,31 +86,48 @@
         </div>
       </div>
 
-      <!-- Mobile menu -->
-      <div id="mobile-menu" class="hidden md:hidden bg-white">
-        <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3 space-y-3">
-          <!-- Site navigation -->
-          <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :mobile) %>
-          <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :mobile) %>
-          <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :mobile) %>
-          <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :mobile) %>
-          <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :mobile) %>
+      <!-- Mobile menu (full-screen overlay) -->
+      <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-200 ease-out" aria-hidden="true"></div>
 
-          <!-- Divider -->
-          <hr class="border-t border-gray-200">
+        <div class="relative h-full w-full overflow-y-auto overscroll-contain flex items-start justify-center p-6">
+          <div id="mobile-menu-panel" class="w-full max-w-md max-h-[calc(100vh-3rem)] overflow-y-auto rounded-card bg-white text-espresso opacity-0 translate-y-2 scale-95 transition-all duration-200 ease-out">
+            <div class="px-7 py-6">
+              <div class="flex items-center justify-end">
+                <button id="mobile-menu-close-button" type="button" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition" aria-label="Close menu">
+                  Close
+                </button>
+              </div>
+            </div>
 
-          <!-- Account section -->
-          <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_root_path, nav_link_html_options(dashboard_root_path, variant: :mobile) %>
-            <%= link_to "Edit Profile", edit_dashboard_profile_path, nav_link_html_options(edit_dashboard_profile_path, variant: :mobile) %>
-            <% if current_user.admin? %>
-              <%= link_to "Admin", admin_root_path, class: "block py-2 text-red-600 hover:text-red-700 font-medium" %>
-            <% end %>
-            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block py-2 text-gray-700 hover:text-gray-900 transition-colors" %>
-          <% else %>
-            <%= link_to "Sign In", new_user_session_path, nav_link_html_options(new_user_session_path, variant: :mobile) %>
-            <%= link_to "Sign Up", new_user_registration_path, nav_link_html_options(new_user_registration_path, variant: :mobile, class_name: "font-medium") %>
-          <% end %>
+            <div class="px-7 pb-10">
+              <nav class="text-center font-serif tracking-wide">
+                <div class="space-y-6">
+                  <%= link_to "Shop", shop_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "Products", products_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "About", about_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "FAQ", faq_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "Contact", contact_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                </div>
+
+                <hr class="my-8 border-t border-gray-200">
+
+                <div class="space-y-6">
+                  <% if user_signed_in? %>
+                    <%= link_to "Dashboard", dashboard_root_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <% if current_user.admin? %>
+                      <%= link_to "Admin", admin_root_path, class: "block text-2xl py-3 rounded-brand text-deshojo hover:bg-gray-50 hover:opacity-90 transition" %>
+                    <% end %>
+                    <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-center text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <% else %>
+                    <%= link_to "Sign In", new_user_session_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <%= link_to "Sign Up", new_user_registration_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <% end %>
+                </div>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -166,18 +183,69 @@
         // Mobile menu toggle
         const mobileButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+        const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+        const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
 
-        if (mobileButton && mobileMenu) {
+        if (mobileButton && mobileMenu && mobileMenuBackdrop && mobileMenuPanel && mobileMenuCloseButton) {
           const newMobileButton = mobileButton.cloneNode(true);
           mobileButton.parentNode.replaceChild(newMobileButton, mobileButton);
 
+          const onMobileMenuKeyDown = (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+          };
+
+          const openMobileMenu = () => {
+            mobileMenu.classList.remove('hidden');
+            newMobileButton.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('overflow-hidden');
+            document.addEventListener('keydown', onMobileMenuKeyDown);
+
+            requestAnimationFrame(() => {
+              mobileMenuBackdrop.classList.remove('opacity-0');
+              mobileMenuBackdrop.classList.add('opacity-100');
+
+              mobileMenuPanel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
+              mobileMenuPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+            });
+          };
+
+          const closeMobileMenu = () => {
+            newMobileButton.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('overflow-hidden');
+            document.removeEventListener('keydown', onMobileMenuKeyDown);
+
+            mobileMenuBackdrop.classList.remove('opacity-100');
+            mobileMenuBackdrop.classList.add('opacity-0');
+
+            mobileMenuPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+            mobileMenuPanel.classList.add('opacity-0', 'translate-y-2', 'scale-95');
+
+            window.setTimeout(() => {
+              mobileMenu.classList.add('hidden');
+            }, 200);
+          };
+
           newMobileButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            if (isOpen) {
+              closeMobileMenu();
+            } else {
+              openMobileMenu();
+            }
+          });
+
+          mobileMenuBackdrop.addEventListener('click', () => {
+            closeMobileMenu();
+          });
+
+          mobileMenuCloseButton.addEventListener('click', () => {
+            closeMobileMenu();
           });
 
           mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-              mobileMenu.classList.add('hidden');
+              closeMobileMenu();
             });
           });
         }
