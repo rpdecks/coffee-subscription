@@ -9,8 +9,8 @@
     <div class="absolute inset-0 bg-black/50"></div>
     <div class="relative h-full flex items-center">
       <div class="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold mb-2 sm:mb-6 text-cream leading-tight">Fresh Roasted Coffee, Delivered</h1>
-        <p class="text-xs sm:text-xl lg:text-2xl text-cream/85 mb-4 sm:mb-10 max-w-2xl lg:max-w-xl mx-auto leading-snug sm:leading-relaxed">Small-batch coffee roasted to order and delivered on your schedule</p>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold mb-2 sm:mb-6 text-cream leading-tight">Fresh Roasted Coffee, Delivered</h1>
+        <p class="text-base sm:text-xl lg:text-2xl text-cream/85 mb-4 sm:mb-10 max-w-2xl lg:max-w-xl mx-auto leading-snug sm:leading-relaxed">Small-batch coffee roasted to order and delivered on your schedule</p>
 
         <div id="home-hero-ctas" class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 px-2 sm:px-0 mb-3">
           <%= link_to "Start a Subscription", subscribe_path,
@@ -29,10 +29,8 @@
 <!-- Brand Story -->
 <section class="py-12 sm:py-16">
   <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">
-    We're a small-batch roasting operation committed to bringing you exceptional coffee.
-    Every bag is roasted to order, ensuring you receive the freshest beans possible.
-    From our roastery to your cup, we're focused on craft, quality, and consistency.
+    <p class="text-base sm:text-lg text-gray-700 leading-relaxed font-sans tracking-tight text-center">
+      We're a small-batch roasting operation committed to bringing you exceptional coffee. Every bag is roasted to order, ensuring you receive the freshest beans possible. From our roastery to your cup, we're focused on craft, quality, and consistency.
     </p>
   </div>
 </section>
@@ -42,25 +40,25 @@
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900 tracking-tight">How It Works</h2>
 
-    <ol class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8" role="list">
-      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
-        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">1</div>
-        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Choose Your Roast &amp; Cadence</h3>
-        <p class="text-gray-600 leading-relaxed">Select from our curated coffees and pick a delivery frequency that fits your routine.</p>
-      </li>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+      <article class="flex flex-col items-center text-center rounded-card border border-gray-200 bg-white p-6 sm:p-8 shadow-sm transition hover:shadow-xl">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream font-semibold text-lg mb-4">1</div>
+        <h3 class="font-serif text-2xl text-gray-900 mb-2">Choose Your Roast &amp; Cadence</h3>
+        <p class="font-sans text-base text-gray-600 leading-relaxed">Select your favorite roast and delivery frequency so every drop lands when it should.</p>
+      </article>
 
-      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
-        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">2</div>
-        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Roasted Fresh</h3>
-        <p class="text-gray-600 leading-relaxed">We roast your coffee to order, never keeping beans on shelves for weeks.</p>
-      </li>
+      <article class="flex flex-col items-center text-center rounded-card border border-gray-200 bg-white p-6 sm:p-8 shadow-sm transition hover:shadow-xl">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream font-semibold text-lg mb-4">2</div>
+        <h3 class="font-serif text-2xl text-gray-900 mb-2">Roasted Just for You</h3>
+        <p class="font-sans text-base text-gray-600 leading-relaxed">We roast in small batches to order, keeping beans bright, aromatic, and perfectly timed.</p>
+      </article>
 
-      <li class="card rounded-card p-6 sm:p-8 text-center h-full">
-        <div class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream text-lg font-semibold" aria-hidden="true">3</div>
-        <h3 class="text-xl sm:text-2xl font-serif font-semibold mb-2 text-gray-900">Delivered on Schedule</h3>
-        <p class="text-gray-600 leading-relaxed">Your coffee arrives on your chosen schedule. Pause, skip, or adjust anytime.</p>
-      </li>
-    </ol>
+      <article class="flex flex-col items-center text-center rounded-card border border-gray-200 bg-white p-6 sm:p-8 shadow-sm transition hover:shadow-xl">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-deshojo text-cream font-semibold text-lg mb-4">3</div>
+        <h3 class="font-serif text-2xl text-gray-900 mb-2">Delivered with Confidence</h3>
+        <p class="font-sans text-base text-gray-600 leading-relaxed">Your coffee arrives discreetly packaged, ready for brew day. Pause, skip, or adjust anytime.</p>
+      </article>
+    </div>
   </div>
 </section>
 
@@ -69,32 +67,43 @@
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl sm:text-4xl font-serif font-bold text-center mb-10 sm:mb-12 text-gray-900">Featured Coffees</h2>
 
-    <% @featured_products = Product.coffee.active.limit(3) %>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <% @featured_products.each do |product| %>
-        <div class="card overflow-hidden">
-          <div class="h-48 bg-gray-100 flex items-center justify-center">
-            <span class="text-gray-300 text-6xl">☕</span>
-          </div>
-          <div class="p-6">
-            <div class="flex items-start justify-between mb-2">
-              <h3 class="text-xl font-semibold flex-1 text-gray-900"><%= product.name %></h3>
-              <%# TODO: Fix cultivar icon display - SVG assets need proper configuration or alternative icon solution %>
-              <% if product.cultivar_icon %>
-                <%= image_tag product.cultivar_icon,
-                    class: "w-6 h-6 #{product.cultivar_color} flex-shrink-0 ml-2",
-                    alt: product.roast_type&.titleize %>
+    <% featured_products = Array(@featured_products) %>
+    <% if featured_products.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+        <% featured_products.each do |product| %>
+          <article class="flex flex-col overflow-hidden rounded-card border border-gray-200 bg-white shadow-sm transition hover:shadow-xl">
+            <div class="relative h-48 w-full overflow-hidden bg-black">
+              <% featured = product.featured_image_attachment || product.image %>
+              <% if featured.present? %>
+                <%= image_tag featured, class: "h-full w-full object-cover mix-blend-screen opacity-90", alt: product.name %>
+              <% else %>
+                <div class="flex h-full items-center justify-center text-gray-300 text-6xl">☕</div>
               <% end %>
             </div>
-            <p class="text-gray-600 mb-4 text-sm"><%= truncate(product.description, length: 80) %></p>
-            <div class="flex justify-between items-center">
-              <span class="text-lg font-semibold text-gray-900">$<%= sprintf('%.2f', product.price) %></span>
-              <%= link_to "View", product_path(product), class: "text-blue-600 hover:text-blue-700 font-medium" %>
+
+            <div class="flex flex-1 flex-col gap-3 px-6 pb-6 pt-5">
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="text-xl font-serif font-semibold text-gray-900"><%= product.name %></h3>
+                <% if product.cultivar_icon.present? %>
+                  <%= image_tag asset_path(product.cultivar_icon), class: "w-6 h-6 flex-shrink-0", alt: "#{product.name} icon" %>
+                <% end %>
+              </div>
+
+              <p class="text-base font-sans text-gray-600 leading-6 mt-0.5">
+                <%= truncate(product.description.presence || "Small-batch coffee roasted to order.", length: 140) %>
+              </p>
+
+              <div class="mt-auto flex items-center justify-between pt-2 text-base">
+                <span class="text-lg font-semibold text-gray-900"><%= number_to_currency(product.price) %></span>
+                <%= link_to "View", product_path(product), class: "text-deshojo hover:text-deshojo/80 font-medium" %>
+              </div>
             </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="py-10 text-center text-gray-500">New coffees coming soon; check back shortly.</p>
+    <% end %>
 
     <div class="text-center mt-8">
       <%= link_to "View All Products", products_path, class: "text-blue-600 hover:text-blue-700 font-semibold text-lg" %>
@@ -109,8 +118,21 @@
       <h2 class="text-3xl font-serif font-bold mb-4 text-gray-900">Stay Connected</h2>
       <p class="text-gray-600 mb-6">Get updates on new coffees, brewing tips, and exclusive offers.</p>
 
-      <form class="flex flex-col sm:flex-row max-w-md mx-auto gap-3">
-        <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors" />
+      <form
+        class="flex flex-col sm:flex-row max-w-md mx-auto gap-3"
+        method="POST"
+        action="https://buttondown.com/api/emails/embed-subscribe/acercoffee"
+        target="_blank"
+      >
+        <label class="sr-only" for="bd-email">Email address</label>
+        <input
+          name="email"
+          id="bd-email"
+          type="email"
+          placeholder="Your email address"
+          class="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900 transition-colors"
+          required
+        />
         <button type="submit" class="btn-secondary">Subscribe</button>
       </form>
     </div>

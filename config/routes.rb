@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get "about", to: "pages#about"
   get "faq", to: "pages#faq"
   get "contact", to: "pages#contact"
+  get "thank-you", to: "pages#thank_you"
   post "contact", to: "pages#create_contact"
 
   # Products

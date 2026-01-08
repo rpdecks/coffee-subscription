@@ -19,6 +19,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      .logo-only,
+      .logo-with-text {
+        display: none;
+      }
+
+      @media (max-width: 499px) {
+        .logo-only {
+          display: block;
+        }
+      }
+
+      @media (min-width: 500px) {
+        .logo-with-text {
+          display: block;
+        }
+      }
+    </style>
 
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -26,15 +44,15 @@
   </head>
 
   <body class="bg-white text-gray-900 font-sans overflow-x-clip">
-    <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-6 transition-all duration-200 ease-out">
+    <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-4 transition-all duration-200 ease-out">
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
-              <span class="block md:hidden">
+              <span class="logo-only h-16 w-16 text-espresso">
                 <%= render "shared/logo_icon" %>
               </span>
-              <span class="hidden md:block">
+              <span class="logo-with-text">
                 <%= render "shared/logo_full" %>
               </span>
             <% end %>
@@ -78,7 +96,7 @@
           </div>
 
           <!-- Mobile menu button -->
-          <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900">
+          <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900" aria-controls="mobile-menu" aria-expanded="false">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -86,31 +104,51 @@
         </div>
       </div>
 
-      <!-- Mobile menu -->
-      <div id="mobile-menu" class="hidden md:hidden bg-white">
-        <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3 space-y-3">
-          <!-- Site navigation -->
-          <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :mobile) %>
-          <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :mobile) %>
-          <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :mobile) %>
-          <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :mobile) %>
-          <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :mobile) %>
+      <!-- Mobile menu (full-screen overlay) -->
+      <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-200 ease-out" aria-hidden="true"></div>
 
-          <!-- Divider -->
-          <hr class="border-t border-gray-200">
+        <div class="relative h-full w-full overflow-y-auto overscroll-contain flex items-start justify-center p-6">
+          <div id="mobile-menu-panel" class="w-full max-w-md max-h-[calc(100vh-3rem)] overflow-y-auto rounded-card bg-white text-espresso opacity-0 translate-y-2 scale-95 transition-all duration-200 ease-out shadow-[0_35px_60px_rgba(0,0,0,0.25)]">
+            <div class="px-7 py-6">
+              <div class="flex items-center justify-end">
+                <button id="mobile-menu-close-button" type="button" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition" aria-label="Close menu">
+                  Close
+                </button>
+              </div>
+            </div>
 
-          <!-- Account section -->
-          <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_root_path, nav_link_html_options(dashboard_root_path, variant: :mobile) %>
-            <%= link_to "Edit Profile", edit_dashboard_profile_path, nav_link_html_options(edit_dashboard_profile_path, variant: :mobile) %>
-            <% if current_user.admin? %>
-              <%= link_to "Admin", admin_root_path, class: "block py-2 text-red-600 hover:text-red-700 font-medium" %>
-            <% end %>
-            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block py-2 text-gray-700 hover:text-gray-900 transition-colors" %>
-          <% else %>
-            <%= link_to "Sign In", new_user_session_path, nav_link_html_options(new_user_session_path, variant: :mobile) %>
-            <%= link_to "Sign Up", new_user_registration_path, nav_link_html_options(new_user_registration_path, variant: :mobile, class_name: "font-medium") %>
-          <% end %>
+            <div class="px-7 pb-10">
+              <nav class="text-center font-serif tracking-wide">
+                <% if user_signed_in? %>
+                  <p class="text-sm uppercase tracking-[0.4em] text-gray-500 mb-6">Hi, <%= current_user.first_name.presence || current_user.email.to_s.split('@').first.capitalize.presence || 'Member' %></p>
+                <% end %>
+                <div class="space-y-5">
+                  <%= link_to "Shop", shop_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "Products", products_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "About", about_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "FAQ", faq_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "Contact", contact_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                </div>
+
+                <hr class="my-8 border-t border-gray-200">
+
+                <div class="space-y-5">
+                  <% if user_signed_in? %>
+                    <%= link_to "Dashboard", dashboard_root_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <% if current_user.admin? %>
+                      <%= link_to "Admin", admin_root_path, class: "block text-2xl py-3 rounded-brand text-deshojo hover:bg-gray-50 hover:opacity-90 transition" %>
+                    <% end %>
+                    <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-center text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <% else %>
+                    <%= link_to "Sign In", new_user_session_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                    <%= link_to "Sign Up", new_user_registration_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <% end %>
+                </div>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -129,7 +167,7 @@
 
             siteHeader.classList.toggle('bg-transparent', !scrolled);
             siteHeader.classList.toggle('shadow-none', !scrolled);
-            siteHeader.classList.toggle('py-6', !scrolled);
+            siteHeader.classList.toggle('py-5', !scrolled);
           };
 
           let ticking = false;
@@ -166,18 +204,69 @@
         // Mobile menu toggle
         const mobileButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+        const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+        const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
 
-        if (mobileButton && mobileMenu) {
+        if (mobileButton && mobileMenu && mobileMenuBackdrop && mobileMenuPanel && mobileMenuCloseButton) {
           const newMobileButton = mobileButton.cloneNode(true);
           mobileButton.parentNode.replaceChild(newMobileButton, mobileButton);
 
+          const onMobileMenuKeyDown = (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+          };
+
+          const openMobileMenu = () => {
+            mobileMenu.classList.remove('hidden');
+            newMobileButton.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('overflow-hidden');
+            document.addEventListener('keydown', onMobileMenuKeyDown);
+
+            requestAnimationFrame(() => {
+              mobileMenuBackdrop.classList.remove('opacity-0');
+              mobileMenuBackdrop.classList.add('opacity-100');
+
+              mobileMenuPanel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
+              mobileMenuPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+            });
+          };
+
+          const closeMobileMenu = () => {
+            newMobileButton.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('overflow-hidden');
+            document.removeEventListener('keydown', onMobileMenuKeyDown);
+
+            mobileMenuBackdrop.classList.remove('opacity-100');
+            mobileMenuBackdrop.classList.add('opacity-0');
+
+            mobileMenuPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+            mobileMenuPanel.classList.add('opacity-0', 'translate-y-2', 'scale-95');
+
+            window.setTimeout(() => {
+              mobileMenu.classList.add('hidden');
+            }, 200);
+          };
+
           newMobileButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            if (isOpen) {
+              closeMobileMenu();
+            } else {
+              openMobileMenu();
+            }
+          });
+
+          mobileMenuBackdrop.addEventListener('click', () => {
+            closeMobileMenu();
+          });
+
+          mobileMenuCloseButton.addEventListener('click', () => {
+            closeMobileMenu();
           });
 
           mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-              mobileMenu.classList.add('hidden');
+              closeMobileMenu();
             });
           });
         }
@@ -223,29 +312,39 @@
       <%= yield %>
     </main>
 
-    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-16">
-      <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Acer Coffee</h3>
-            <p class="text-gray-400 text-sm">Freshly roasted coffee, delivered to your door.</p>
+    <footer class="bg-gray-950 border-t border-gray-800 text-white mt-16">
+      <div class="container mx-auto px-4 py-10 sm:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-sm">
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 bg-slate-900 rounded-full flex items-center justify-center border border-gray-700">
+                <%= render "shared/logo_icon", class: "text-white" %>
+              </span>
+              <h3 class="font-serif text-xl font-semibold tracking-tight">Acer Coffee</h3>
+            </div>
+            <p class="text-gray-300 leading-relaxed">Small-batch roasters crafting East Coast-ready coffees with clarity, balance, and confidence.</p>
+            <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Seed to cup, roasted to taste.</p>
           </div>
+
           <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Quick Links</h3>
-            <ul class="space-y-2 text-sm">
-              <li><%= link_to "Products", products_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "About", about_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "FAQ", faq_path, class: "text-gray-400 hover:text-white" %></li>
-              <li><%= link_to "Contact", contact_path, class: "text-gray-400 hover:text-white" %></li>
+            <h3 class="font-serif text-xl font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li><%= link_to "Shop", shop_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "About", about_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "FAQ", faq_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "Contact", contact_path, class: "hover:text-white transition" %></li>
             </ul>
           </div>
-          <div>
-            <h3 class="font-serif text-lg font-semibold mb-4">Contact</h3>
-            <p class="text-gray-400 text-sm">Questions? <%= link_to "Get in touch", contact_path, class: "text-white hover:text-gray-300 underline" %></p>
+
+          <div class="space-y-3">
+            <h3 class="font-serif text-xl font-semibold">Contact</h3>
+            <p class="text-gray-300 leading-relaxed">Prefer to talk to someone? We’re here for questions about roasting, orders, or tasting notes.</p>
+            <p class="text-gray-200"> <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Email</span><br><%= mail_to "hello@acercoffee.com", "hello@acercoffee.com", class: "font-medium text-white hover:text-deshojo" %></p>
           </div>
         </div>
-        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-          <p>&copy; <%= Time.current.year %> Acer Coffee. All rights reserved.</p>
+
+        <div class="border-t border-gray-900 mt-10 pt-8 text-center text-gray-500 text-xs sm:text-sm">
+          <p>© 2026 Acer Coffee. All rights reserved.</p>
         </div>
       </div>
     </footer>

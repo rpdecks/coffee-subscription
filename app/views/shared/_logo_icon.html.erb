@@ -1,1 +1,5 @@
-<%= render "shared/acer_wordmark" %>
+<%
+svg_classes = ["h-full", "w-full"]
+svg_classes << local_assigns[:class] if local_assigns.key?(:class)
+%>
+<%= inline_svg "brand/logos/acer-coffee-icon.svg", class: svg_classes.join(" ") %>
