@@ -10,6 +10,7 @@ class PagesController < ApplicationController
     hero_index = 3 unless hero_index.between?(1, hero_images.length)
 
     @hero_image = hero_images[hero_index - 1]
+    @featured_products = Product.coffee.active.visible_in_shop.with_attached_image.order(:name).limit(3)
   end
 
   def about
