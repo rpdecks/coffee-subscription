@@ -36,7 +36,7 @@ gem "pundit"
 gem "stripe"
 
 # AWS S3 for Active Storage
-gem "aws-sdk-s3", "~> 1.0"
+gem "aws-sdk-s3", "~> 1.211"
 
 # Background jobs
 gem "sidekiq", "~> 8.0"
