@@ -11,16 +11,14 @@
           <div class="bg-green-50 p-4 rounded-lg">
             <p class="font-semibold text-lg mb-2"><%= @subscription.subscription_plan.name %></p>
             <p class="text-gray-700">Status: <span class="capitalize"><%= @subscription.status %></span></p>
-            <% if @subscription.next_delivery_date %>
-              <p class="text-gray-700">Next Delivery: <%= @subscription.next_delivery_date.strftime("%B %d, %Y") %></p>
-            <% end %>
+            <p class="text-gray-700">We’ll email you when your next order ships.</p>
             <div class="mt-4 space-x-2">
               <%= link_to "Manage Subscription", dashboard_subscription_path(@subscription), class: "text-brown hover:text-brown-dark font-medium" %>
             </div>
           </div>
         <% else %>
           <div class="bg-gray-50 p-4 rounded-lg">
-            <p class="text-gray-700 mb-4">You don't have an active subscription yet.</p>
+            <p class="text-gray-700 mb-4">You don't have a subscription yet.</p>
             <%= link_to "Browse Subscription Plans", products_path, class: "bg-brown text-white px-4 py-2 rounded hover:bg-brown-dark inline-block" %>
           </div>
         <% end %>
