@@ -183,7 +183,7 @@ class WebhooksController < ApplicationController
         bag_size: metadata["bag_size"] || "12oz",
         quantity: 1,
         status: :active,
-        next_delivery_date: Date.today + (metadata["frequency"] || plan.frequency).to_i.days,
+        next_delivery_date: Date.current.to_date + plan.frequency_in_days.days,
         shipping_address: shipping_address,
         payment_method: user.payment_methods.default.first || user.payment_methods.first
       )
@@ -244,7 +244,7 @@ class WebhooksController < ApplicationController
       bag_size: metadata["bag_size"] || "12oz",
       quantity: 1,
       status: :active,
-      next_delivery_date: Date.today + (metadata["frequency"] || plan.frequency).to_i.days,
+      next_delivery_date: Date.current.to_date + plan.frequency_in_days.days,
       shipping_address: user.addresses.first,
       payment_method: user.payment_methods.default.first || user.payment_methods.first
     )

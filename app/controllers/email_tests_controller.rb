@@ -74,7 +74,7 @@ class EmailTestsController < ApplicationController
       user: current_user,
       subscription_plan: plan,
       status: :active,
-      next_delivery_date: Date.today + plan.frequency_in_days.days
+      next_delivery_date: Date.current.to_date + plan.frequency_in_days.days
     )
   end
 
