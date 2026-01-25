@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   get "/favicon.ico", to: redirect("/icon.png")
 
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   devise_for :users, controllers: {
     registrations: "users/registrations",
     confirmations: "users/confirmations"

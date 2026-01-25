@@ -77,9 +77,10 @@
 
 1. Start Rails server: `bin/rails server`
 2. Navigate to page that triggers email
-3. Email will open automatically in browser
-4. Review email content and styling
-5. Test responsive design using browser dev tools
+3. Email will open automatically in browser (Letter Opener)
+4. Optional: browse all captured emails at `http://localhost:3000/letter_opener`
+5. Review email content and styling
+6. Test responsive design using browser dev tools
 
 ## How to Trigger Each Email
 
