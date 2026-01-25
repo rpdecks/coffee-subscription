@@ -5,24 +5,20 @@
 
 <p>Hi <%= first_name %>,</p>
 
-<p>Thanks for subscribing. Your Acer Coffee subscription has been created, and your first delivery is scheduled.</p>
+<p>Thanks for subscribing. Your Acer Coffee subscription has been created. We’ll email you when your subscription renews and when it ships.</p>
 
 <div style="background: #f9fafb; padding: 20px; margin: 24px 0; border-radius: 8px; border: 1px solid #e5e7eb;">
   <h3 style="color: #111827; margin: 0 0 10px 0; font-size: 18px;">
-    <%= @plan.frequency.titleize %> &middot; <%= pluralize(bags_per_delivery, "bag") %>
+    <%= @plan.name.presence || "#{@plan.frequency.titleize} · #{pluralize(bags_per_delivery, "bag")}" %>
   </h3>
 
   <ul style="margin: 0; padding-left: 18px; color: #374151; font-size: 14px; line-height: 1.6;">
     <li><strong>Delivery frequency:</strong> <%= @plan.frequency.titleize %></li>
     <li><strong>Bags per delivery:</strong> <%= bags_per_delivery %></li>
     <li><strong>Price:</strong> <%= number_to_currency(@plan.price) %> per delivery</li>
-    <% if @subscription.next_delivery_date.present? %>
-      <li><strong>First delivery:</strong> <%= @subscription.next_delivery_date.strftime("%B %-d, %Y") %></li>
-    <% end %>
+    <li><strong>First order:</strong> Usually ships within 3–5 business days</li>
   </ul>
 </div>
-
-<p>We’ll create and ship each order according to your schedule. You’ll receive an email confirmation when an order is placed.</p>
 
 <p>You can manage your subscription anytime from your dashboard, including pausing deliveries or updating your preferences.</p>
 

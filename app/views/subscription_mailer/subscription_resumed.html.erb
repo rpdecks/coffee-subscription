@@ -1,19 +1,17 @@
-<h2 style="color: #1f2937; margin-top: 0;">🎉 Welcome Back!</h2>
+<% first_name = @customer&.first_name.presence || "there" %>
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
 
-<p>Hi <%= @customer.first_name %>,</p>
+<h2 style="color: #111827; margin-top: 0;">Subscription resumed</h2>
 
-<p>Your <strong><%= @plan.name %></strong> subscription has been resumed!</p>
+<p>Hi <%= first_name %>,</p>
 
-<div style="background: #f0fdf4; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #10b981;">
-  <% if @subscription.next_delivery_date %>
-    <p style="margin: 0; color: #065f46;">
-      <strong>📅 Next delivery:</strong> <%= @subscription.next_delivery_date.strftime("%B %d, %Y") %>
-    </p>
-  <% end %>
-</div>
+<p>Your <%= @plan.frequency.titleize %> &middot; <%= pluralize(bags_per_delivery, "bag") %> subscription has been resumed.</p>
 
-<p>We're glad to have you back. Get ready for fresh coffee!</p>
+<p>Your next shipment will usually be prepared and shipped within 3–5 business days after resuming.</p>
+
+<p>We’ll email you again when it ships.</p>
 
 <p style="margin-top: 24px;">
-  <strong>The Acer Coffee Team</strong>
+  —<br>
+  Acer Coffee
 </p>

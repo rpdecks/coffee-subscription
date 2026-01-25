@@ -1,0 +1,13 @@
+Subscription resumed
+
+Hi <%= @customer&.first_name.presence || "there" %>,
+
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
+Your <%= @plan.frequency.titleize %> · <%= pluralize(bags_per_delivery, "bag") %> subscription has been resumed.
+
+Your next shipment will usually be prepared and shipped within 3–5 business days after resuming.
+
+We’ll email you again when it ships.
+
+—
+Acer Coffee

@@ -1,0 +1,13 @@
+Subscription paused
+
+Hi <%= @customer&.first_name.presence || "there" %>,
+
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
+Your <%= @plan.frequency.titleize %> · <%= pluralize(bags_per_delivery, "bag") %> subscription is now paused.
+
+You won’t be charged while your subscription is paused, and no shipments will be created.
+
+When you’re ready, you can resume your subscription anytime from your dashboard.
+
+—
+Acer Coffee

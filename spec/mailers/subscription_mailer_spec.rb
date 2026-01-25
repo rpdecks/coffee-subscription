@@ -15,14 +15,24 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     let(:mail) { SubscriptionMailer.subscription_created(subscription) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Welcome to your coffee subscription!")
+      expect(mail.subject).to eq("Your Acer Coffee subscription is set")
       expect(mail.to).to eq([ "subscriber@example.com" ])
-      expect(mail.from).to eq([ "orders@acercoffee.com" ])
+      expect(mail.from.join(",")).to include("hello@acercoffee.com")
     end
 
     it "renders the body" do
-      expect(mail.body.encoded).to match(user.first_name)
-      expect(mail.body.encoded).to match("Monthly Blend")
+      text = mail.text_part&.body&.decoded
+      html = mail.html_part&.body&.decoded
+
+      expect(text).to include(user.first_name)
+      expect(text).to include("Monthly Blend")
+      expect(text).to include("ships within 3")
+      expect(text).to include("Thanks for subscribing. Your Acer Coffee subscription has been created. We’ll email you when your subscription renews and when it ships.")
+
+      expect(html).to include(user.first_name)
+      expect(html).to include("Monthly Blend")
+      expect(html).to include("ships within 3")
+      expect(html).to include("Thanks for subscribing. Your Acer Coffee subscription has been created. We’ll email you when your subscription renews and when it ships.")
     end
   end
 
@@ -30,14 +40,31 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     let(:mail) { SubscriptionMailer.subscription_paused(subscription) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Your subscription has been paused")
+      expect(mail.subject).to eq("Your Acer Coffee subscription is paused")
       expect(mail.to).to eq([ "subscriber@example.com" ])
-      expect(mail.from).to eq([ "orders@acercoffee.com" ])
+      expect(mail.from.join(",")).to include("hello@acercoffee.com")
     end
 
     it "renders the body" do
-      expect(mail.body.encoded).to match(user.first_name)
-      expect(mail.body.encoded).to match("Monthly Blend")
+      text = mail.text_part&.body&.decoded
+      html = mail.html_part&.body&.decoded
+
+      bags_per_delivery = subscription.quantity.presence || subscription_plan.bags_per_delivery
+      bags_label = bags_per_delivery == 1 ? "1 bag" : "#{bags_per_delivery} bags"
+
+      expect(text).to include(user.first_name)
+      expect(text).to include(subscription_plan.frequency.titleize)
+      expect(text).to include(bags_label)
+      expect(text).to include("subscription is now paused")
+      expect(text).to include("no shipments will be created")
+      expect(text).to include("resume your subscription anytime")
+
+      expect(html).to include(user.first_name)
+      expect(html).to include(subscription_plan.frequency.titleize)
+      expect(html).to include(bags_label)
+      expect(html).to include("subscription is now paused")
+      expect(html).to include("no shipments will be created")
+      expect(html).to include("resume your subscription anytime")
     end
   end
 
@@ -45,14 +72,35 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     let(:mail) { SubscriptionMailer.subscription_resumed(subscription) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Your subscription has been resumed")
+      expect(mail.subject).to eq("Your Acer Coffee subscription has been resumed")
       expect(mail.to).to eq([ "subscriber@example.com" ])
-      expect(mail.from).to eq([ "orders@acercoffee.com" ])
+      expect(mail.from.join(",")).to include("hello@acercoffee.com")
     end
 
     it "renders the body" do
-      expect(mail.body.encoded).to match(user.first_name)
-      expect(mail.body.encoded).to match("Monthly Blend")
+      text = mail.text_part&.body&.decoded
+      html = mail.html_part&.body&.decoded
+
+      bags_per_delivery = subscription.quantity.presence || subscription_plan.bags_per_delivery
+      bags_label = bags_per_delivery == 1 ? "1 bag" : "#{bags_per_delivery} bags"
+
+      expect(text).to include(user.first_name)
+      expect(text).to include(subscription_plan.frequency.titleize)
+      expect(text).to include(bags_label)
+      expect(text).to include("subscription has been resumed")
+      expect(text).to include("within 3")
+      expect(text).to include("business days")
+      expect(text).to include("after resuming")
+      expect(text).to include("We’ll email you again when it ships")
+
+      expect(html).to include(user.first_name)
+      expect(html).to include(subscription_plan.frequency.titleize)
+      expect(html).to include(bags_label)
+      expect(html).to include("subscription has been resumed")
+      expect(html).to include("within 3")
+      expect(html).to include("business days")
+      expect(html).to include("after resuming")
+      expect(html).to include("We’ll email you again when it ships")
     end
   end
 
@@ -62,12 +110,31 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq("Your subscription has been cancelled")
       expect(mail.to).to eq([ "subscriber@example.com" ])
-      expect(mail.from).to eq([ "orders@acercoffee.com" ])
+      expect(mail.from.join(",")).to include("hello@acercoffee.com")
     end
 
     it "renders the body" do
-      expect(mail.body.encoded).to match(user.first_name)
-      expect(mail.body.encoded).to match("Monthly Blend")
+      text = mail.text_part&.body&.decoded
+      html = mail.html_part&.body&.decoded
+
+      bags_per_delivery = subscription.quantity.presence || subscription_plan.bags_per_delivery
+      bags_label = bags_per_delivery == 1 ? "1 bag" : "#{bags_per_delivery} bags"
+
+      expect(text).to include(user.first_name)
+      expect(text).to include(subscription_plan.frequency.titleize)
+      expect(text).to include(bags_label)
+      expect(text).to include("subscription has been cancelled")
+      expect(text).to include("welcome to reply to this email")
+      expect(text).to include("start a new subscription")
+      expect(text).to include("Thanks for having been a customer")
+
+      expect(html).to include(user.first_name)
+      expect(html).to include(subscription_plan.frequency.titleize)
+      expect(html).to include(bags_label)
+      expect(html).to include("subscription has been cancelled")
+      expect(html).to include("welcome to reply to this email")
+      expect(html).to include("start a new subscription")
+      expect(html).to include("Thanks for having been a customer")
     end
   end
 
@@ -79,22 +146,33 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     end
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Payment failed for your coffee subscription")
+      expect(mail.subject).to eq("There was an issue with your Acer Coffee subscription payment")
       expect(mail.to).to eq([ "subscriber@example.com" ])
-      expect(mail.from).to eq([ "orders@acercoffee.com" ])
+      expect(mail.from.join(",")).to include("hello@acercoffee.com")
     end
 
     it "renders the body" do
-      expect(mail.body.encoded).to match(user.first_name)
-      expect(mail.body.encoded).to match("Monthly Blend")
-    end
+      text = mail.text_part&.body&.decoded
+      html = mail.html_part&.body&.decoded
 
-    it "includes the failed payment count" do
-      expect(mail.body.encoded).to match("twice")
-    end
+      bags_per_delivery = subscription.quantity.presence || subscription_plan.bags_per_delivery
+      bags_label = bags_per_delivery == 1 ? "1 bag" : "#{bags_per_delivery} bags"
 
-    it "includes the update payment URL" do
-      expect(mail.body.encoded).to match("dashboard/payment_methods")
+      expect(text).to include(user.first_name)
+      expect(text).to include(subscription_plan.frequency.titleize)
+      expect(text).to include(bags_label)
+      expect(text).to include("problem processing the payment")
+      expect(text).to include("take care of the rest")
+      expect(text).to include("Update Payment Method")
+      expect(text).to include("dashboard/payment_methods")
+
+      expect(html).to include(user.first_name)
+      expect(html).to include(subscription_plan.frequency.titleize)
+      expect(html).to include(bags_label)
+      expect(html).to include("problem processing the payment")
+      expect(html).to include("take care of the rest")
+      expect(html).to include("Update Payment Method")
+      expect(html).to include("dashboard/payment_methods")
     end
   end
 end

@@ -1,42 +1,32 @@
-<h2 style="color: #1f2937; margin-top: 0;">⚠️ Payment Issue with Your Subscription</h2>
+<% first_name = @customer&.first_name.presence || "there" %>
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
 
-<p>Hi <%= @customer.full_name %>,</p>
+<h2 style="color: #111827; margin-top: 0;">Payment issue with your coffee subscription</h2>
 
-<div style="background: #fee2e2; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #ef4444;">
-  <p style="margin: 0; color: #991b1b; font-weight: 600;">
-    Payment Failed
-  </p>
-  <p style="margin: 12px 0 0 0; color: #7f1d1d; font-size: 14px;">
-    We were unable to process your payment for your <%= @plan.name %> subscription.
-  </p>
-</div>
+<p>Hi <%= first_name %>,</p>
 
-<p>
-  <% if @failed_count == 1 %>
-    This is the first time we've had trouble processing your payment. Don't worry - we'll try again automatically.
-  <% elsif @failed_count == 2 %>
-    We've now attempted to charge your payment method twice without success. We'll make one more automatic attempt.
-  <% elsif @failed_count >= 3 %>
-    We've made <%= @failed_count %> attempts to charge your payment method without success. Your subscription may be suspended soon.
-  <% end %>
-</p>
+<p>We ran into a problem processing the payment for your <%= @plan.frequency.titleize %> &middot; <%= pluralize(bags_per_delivery, "bag") %> subscription.</p>
 
-<div style="background: #f9fafb; padding: 20px; margin: 24px 0; border-radius: 8px;">
-  <p style="margin: 0 0 12px 0; font-weight: 600; color: #1f2937;">What you can do:</p>
-  <ul style="margin: 0; padding-left: 20px; color: #6b7280;">
-    <li>Check that your payment method has sufficient funds</li>
-    <li>Verify that your card hasn't expired</li>
-    <li>Update your payment method if needed</li>
+<p>No worries — this happens from time to time.</p>
+
+<div style="background: #f3f4f6; padding: 18px; margin: 24px 0; border-radius: 8px; border: 1px solid #e5e7eb;">
+  <p style="margin: 0 0 12px 0; font-weight: 600; color: #111827;">What you can do:</p>
+  <ul style="margin: 0; padding-left: 20px; color: #374151;">
+    <li>Check that your payment method is still valid</li>
+    <li>Make sure your card hasn’t expired</li>
+    <li>Update your payment details if needed</li>
   </ul>
 </div>
 
+<p>Once your payment method is updated, we’ll take care of the rest and continue your subscription as usual.</p>
+
 <div style="text-align: center; margin: 32px 0;">
-  <%= link_to "Update Payment Method", @update_payment_url, style: "display: inline-block; padding: 12px 24px; background-color: #8B4513; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600;" %>
+  <%= link_to "Update Payment Method", @update_payment_url, style: "display: inline-block; padding: 12px 24px; background-color: #d9a07b; color: #111827; text-decoration: none; border-radius: 6px; font-weight: 600;" %>
 </div>
 
-<p>If you have any questions or need assistance, please don't hesitate to reply to this email.</p>
+<p>If you have any questions or need help, just reply to this email and we’ll take care of it.</p>
 
 <p style="margin-top: 24px;">
-  Best regards,<br>
-  <strong>The Acer Coffee Team</strong>
+  —<br>
+  Acer Coffee
 </p>

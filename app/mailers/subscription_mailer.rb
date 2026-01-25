@@ -20,7 +20,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Your subscription has been paused"
+      subject: "Your Acer Coffee subscription is paused"
     )
   end
 
@@ -31,7 +31,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Your subscription has been resumed"
+      subject: "Your Acer Coffee subscription has been resumed"
     )
   end
 
@@ -68,7 +68,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Payment failed for your coffee subscription"
+      subject: "There was an issue with your Acer Coffee subscription payment"
     )
   end
 end
