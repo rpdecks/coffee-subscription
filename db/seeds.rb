@@ -21,6 +21,85 @@ if Rails.env.production?
   puts "\n⚠️  Proceeding with production database seed..."
 end
 
+def seed_subscription_plans!
+  plans = [
+    {
+      name: "Weekly - 1 Bag",
+      description: "One 12oz bag delivered every week. Perfect for daily coffee drinkers.",
+      frequency: :weekly,
+      bags_per_delivery: 1,
+      price_cents: 1800,
+      active: true
+    },
+    {
+      name: "Weekly - 2 Bags",
+      description: "Two 12oz bags delivered every week. Ideal for households that go through coffee fast.",
+      frequency: :weekly,
+      bags_per_delivery: 2,
+      price_cents: 3400,
+      active: true
+    },
+    {
+      name: "Bi-Weekly - 1 Bag",
+      description: "One 12oz bag delivered every two weeks. Great if you brew a few times a week.",
+      frequency: :biweekly,
+      bags_per_delivery: 1,
+      price_cents: 1700,
+      active: true
+    },
+    {
+      name: "Bi-Weekly - 2 Bags",
+      description: "Two 12oz bags delivered every two weeks. Great for couples or heavy drinkers.",
+      frequency: :biweekly,
+      bags_per_delivery: 2,
+      price_cents: 3400,
+      active: true
+    },
+    {
+      name: "Monthly - 1 Bag",
+      description: "One 12oz bag delivered monthly. Easy way to keep your shelf stocked.",
+      frequency: :monthly,
+      bags_per_delivery: 1,
+      price_cents: 1600,
+      active: true
+    },
+    {
+      name: "Monthly - 2 Bags",
+      description: "Two 12oz bags delivered monthly. Ideal for moderate coffee consumption.",
+      frequency: :monthly,
+      bags_per_delivery: 2,
+      price_cents: 3200,
+      active: true
+    },
+    {
+      name: "Monthly - 4 Bags",
+      description: "Four 12oz bags delivered monthly. Perfect for families or offices.",
+      frequency: :monthly,
+      bags_per_delivery: 4,
+      price_cents: 6000,
+      active: true
+    }
+  ]
+
+  plans.each do |attrs|
+    plan = SubscriptionPlan.find_or_initialize_by(name: attrs[:name])
+    plan.assign_attributes(attrs)
+    plan.save!
+  end
+end
+
+# Default behavior: seed subscription plans without wiping your DB.
+# To run the full demo/reset seed (destructive), set DEMO_SEED=1 (or SEED_RESET=1).
+demo_seed = Rails.env.production? || ActiveModel::Type::Boolean.new.cast(ENV["DEMO_SEED"] || ENV["SEED_RESET"])
+
+unless demo_seed
+  puts "Seeding subscription plans (non-destructive)..."
+  seed_subscription_plans!
+  puts "✅ Seeded #{SubscriptionPlan.active.count} active subscription plans"
+  puts "\nTip: run full demo seed with DEMO_SEED=1 bin/rails db:seed"
+  return
+end
+
 # Clear existing data in correct order to avoid FK constraints
 puts "Clearing existing data..."
 OrderItem.destroy_all

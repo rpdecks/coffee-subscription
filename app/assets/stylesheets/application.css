@@ -112,8 +112,6 @@
   }
 
   body {
-    background-color: var(--color-espresso);
-    color: var(--color-cream);
     font-family: var(--font-sans);
   }
 
@@ -124,16 +122,13 @@
   h5,
   h6 {
     font-family: var(--font-serif);
-    color: var(--color-cream);
   }
 
   p {
-    color: rgb(246 241 235 / 0.85);
   }
 
   small,
   .meta {
-    color: rgb(246 241 235 / 0.7);
     font-size: 0.875rem;
   }
 }

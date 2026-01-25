@@ -190,8 +190,7 @@ class WebhooksController < ApplicationController
 
       if subscription.save
         Rails.logger.info("Created subscription #{subscription.id} from webhook")
-        # Send welcome email
-        # SubscriptionMailer.welcome(subscription).deliver_later
+        SubscriptionMailer.subscription_created(subscription).deliver_later
       else
         Rails.logger.error("Failed to create subscription: #{subscription.errors.full_messages}")
       end
@@ -249,6 +248,7 @@ class WebhooksController < ApplicationController
       shipping_address: user.addresses.first,
       payment_method: user.payment_methods.default.first || user.payment_methods.first
     )
+      .tap { |sub| SubscriptionMailer.subscription_created(sub).deliver_later }
   end
 
   def handle_subscription_updated(stripe_subscription)

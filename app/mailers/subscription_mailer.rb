@@ -9,7 +9,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Welcome to your coffee subscription!"
+      subject: "Your Acer Coffee subscription is set"
     )
   end
 
