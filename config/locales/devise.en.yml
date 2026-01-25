@@ -24,7 +24,7 @@ en:
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:
-        subject: "Email Changed"
+        subject: "Your Acer Coffee email address was updated"
       password_change:
         subject: "Your Acer Coffee password was changed"
     omniauth_callbacks:
