@@ -49,11 +49,11 @@
         <div class="flex justify-between items-center gap-3">
           <div class="flex items-center min-w-0 overflow-hidden text-espresso">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
-              <span class="logo-only h-16 w-16 text-espresso">
+              <span class="logo-only h-20 w-20 text-espresso">
                 <%= render "shared/logo_icon" %>
               </span>
               <span class="logo-with-text">
-                <%= render "shared/logo_full" %>
+                <%= render "shared/logo_full", class: "h-14" %>
               </span>
             <% end %>
           </div>
