@@ -24,13 +24,13 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = "Acer Coffee <orders@acercoffee.com>"
+  config.mailer_sender = ENV.fetch("AUTH_FROM_EMAIL", "Acer Coffee <support@acercoffee.com>")
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
 
   # Configure the parent class responsible to send e-mails.
-  # config.parent_mailer = 'ActionMailer::Base'
+  config.parent_mailer = "ApplicationMailer"
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and

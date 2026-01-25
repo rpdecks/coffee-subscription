@@ -1,5 +1,6 @@
 class SubscriptionMailer < ApplicationMailer
-  default from: "Acer Coffee <orders@acercoffee.com>"
+  default from: ENV.fetch("SUBSCRIPTIONS_FROM_EMAIL", ENV.fetch("DEFAULT_FROM_EMAIL", "Acer Coffee <hello@acercoffee.com>")),
+          reply_to: ENV.fetch("SUPPORT_EMAIL", "support@acercoffee.com")
 
   def subscription_created(subscription)
     @subscription = subscription
