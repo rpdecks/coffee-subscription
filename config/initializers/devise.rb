@@ -27,7 +27,7 @@ Devise.setup do |config|
   config.mailer_sender = ENV.fetch("AUTH_FROM_EMAIL", "Acer Coffee <support@acercoffee.com>")
 
   # Configure the class responsible to send e-mails.
-  # config.mailer = 'Devise::Mailer'
+  config.mailer = "DeviseMailer"
 
   # Configure the parent class responsible to send e-mails.
   config.parent_mailer = "ApplicationMailer"

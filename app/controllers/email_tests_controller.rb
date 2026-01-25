@@ -46,11 +46,11 @@ class EmailTestsController < ApplicationController
       current_user.send_confirmation_instructions
     when "reset_password_instructions"
       token = Devise.friendly_token
-      Devise::Mailer.reset_password_instructions(current_user, token).deliver_now
+      Devise.mailer.reset_password_instructions(current_user, token).deliver_now
     when "password_change"
-      Devise::Mailer.password_change(current_user).deliver_now
+      Devise.mailer.password_change(current_user).deliver_now
     when "email_changed"
-      Devise::Mailer.email_changed(current_user).deliver_now
+      Devise.mailer.email_changed(current_user).deliver_now
     end
 
     redirect_to email_tests_path, notice: "Test email sent! Check your browser for the preview."
