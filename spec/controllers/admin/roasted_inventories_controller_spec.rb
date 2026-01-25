@@ -43,7 +43,7 @@ RSpec.describe Admin::RoastedInventoriesController, type: :controller do
           quantity: -1
         }
       }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Select a coffee SKU")
     end
   end
