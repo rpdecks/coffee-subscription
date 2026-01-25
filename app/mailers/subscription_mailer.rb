@@ -1,5 +1,6 @@
 class SubscriptionMailer < ApplicationMailer
-  default from: "Acer Coffee <orders@acercoffee.com>"
+  default from: ENV.fetch("SUBSCRIPTIONS_FROM_EMAIL", ENV.fetch("DEFAULT_FROM_EMAIL", "Acer Coffee <hello@acercoffee.com>")),
+          reply_to: ENV.fetch("SUPPORT_EMAIL", "support@acercoffee.com")
 
   def subscription_created(subscription)
     @subscription = subscription
@@ -8,7 +9,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Welcome to your coffee subscription!"
+      subject: "Your Acer Coffee subscription is set"
     )
   end
 
@@ -19,7 +20,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Your subscription has been paused"
+      subject: "Your Acer Coffee subscription is paused"
     )
   end
 
@@ -30,7 +31,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Your subscription has been resumed"
+      subject: "Your Acer Coffee subscription has been resumed"
     )
   end
 
@@ -67,7 +68,7 @@ class SubscriptionMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Payment failed for your coffee subscription"
+      subject: "There was an issue with your Acer Coffee subscription payment"
     )
   end
 end

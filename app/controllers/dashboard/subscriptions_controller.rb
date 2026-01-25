@@ -57,7 +57,7 @@ module Dashboard
 
           @subscription.update(status: :active, next_delivery_date: calculate_next_delivery_date)
           # SubscriptionMailer.subscription_resumed(@subscription).deliver_later
-          redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. Next delivery: #{@subscription.next_delivery_date.strftime('%B %d, %Y')}."
+          redirect_to dashboard_subscription_path(@subscription), notice: "Your subscription has been resumed. We’ll email you when your next order ships."
         rescue StripeService::StripeError => e
           redirect_to dashboard_subscription_path(@subscription), alert: "Unable to resume subscription: #{e.message}"
         end
@@ -87,16 +87,12 @@ module Dashboard
 
     def skip_delivery
       if @subscription.active?
-        frequency_days = case @subscription.subscription_plan.frequency
-        when "weekly" then 7
-        when "biweekly" then 14
-        when "monthly" then 30
-        end
-
-        new_delivery_date = @subscription.next_delivery_date + frequency_days.days
+        frequency_days = @subscription.subscription_plan.frequency_in_days
+        candidate = @subscription.next_delivery_date.to_date + frequency_days.days
+        new_delivery_date = candidate
         @subscription.update(next_delivery_date: new_delivery_date)
 
-        redirect_to dashboard_subscription_path(@subscription), notice: "Next delivery skipped. Your new delivery date is #{new_delivery_date.strftime('%B %d, %Y')}."
+        redirect_to dashboard_subscription_path(@subscription), notice: "Next shipment skipped. We’ll email you when your next order ships."
       else
         redirect_to dashboard_subscription_path(@subscription), alert: "Cannot skip delivery for inactive subscription."
       end
@@ -121,13 +117,9 @@ module Dashboard
     end
 
     def calculate_next_delivery_date
-      frequency_days = case @subscription.subscription_plan.frequency
-      when "weekly" then 7
-      when "biweekly" then 14
-      when "monthly" then 30
-      end
+      return Date.current.to_date unless @subscription&.subscription_plan
 
-      Date.today + frequency_days.days
+      Date.current.to_date + @subscription.subscription_plan.frequency_in_days.days
     end
   end
 end

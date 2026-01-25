@@ -1,33 +1,23 @@
-Payment Issue with Your Subscription
-=====================================
+Payment issue with your coffee subscription
 
-Hi <%= @customer.full_name %>,
+Hi <%= @customer&.first_name.presence || "there" %>,
 
-⚠️ PAYMENT FAILED
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
+We ran into a problem processing the payment for your <%= @plan.frequency.titleize %> · <%= pluralize(bags_per_delivery, "bag") %> subscription.
 
-We were unable to process your payment for your <%= @plan.name %> subscription.
-
-<% if @failed_count == 1 %>
-This is the first time we've had trouble processing your payment. Don't worry - we'll try again automatically.
-<% elsif @failed_count == 2 %>
-We've now attempted to charge your payment method twice without success. We'll make one more automatic attempt.
-<% elsif @failed_count >= 3 %>
-We've made <%= @failed_count %> attempts to charge your payment method without success. Your subscription may be suspended soon.
-<% end %>
+No worries — this happens from time to time.
 
 What you can do:
-- Check that your payment method has sufficient funds
-- Verify that your card hasn't expired
-- Update your payment method if needed
+- Check that your payment method is still valid
+- Make sure your card hasn’t expired
+- Update your payment details if needed
 
-Update your payment method here:
+Once your payment method is updated, we’ll take care of the rest and continue your subscription as usual.
+
+Update Payment Method:
 <%= @update_payment_url %>
 
-If you have any questions or need assistance, please don't hesitate to contact our support team.
+If you have any questions or need help, just reply to this email and we’ll take care of it.
 
-Best regards,
-The Coffee Subscription Team
-
----
-You're receiving this email because you have an active coffee subscription.
-If you believe this is a mistake, please contact us immediately.
+—
+Acer Coffee

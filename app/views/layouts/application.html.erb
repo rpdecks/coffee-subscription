@@ -46,20 +46,20 @@
   <body class="bg-white text-gray-900 font-sans overflow-x-clip">
     <nav id="site-header" class="site-header w-screen bg-transparent shadow-none py-4 transition-all duration-200 ease-out">
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center gap-3">
-          <div class="flex items-center min-w-0 overflow-hidden text-espresso">
+        <div class="grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div class="flex items-center min-w-0 overflow-hidden text-espresso justify-self-start">
             <%= link_to root_path, class: "flex items-center min-w-0 hover:opacity-90 transition -mt-px" do %>
-              <span class="logo-only h-16 w-16 text-espresso">
+              <span class="logo-only h-20 w-20 text-espresso">
                 <%= render "shared/logo_icon" %>
               </span>
               <span class="logo-with-text">
-                <%= render "shared/logo_full" %>
+                <%= render "shared/logo_full", class: "h-10 max-w-[260px] lg:h-14 lg:max-w-none" %>
               </span>
             <% end %>
           </div>
 
           <!-- Desktop: Centered main nav -->
-          <div class="hidden md:flex items-center space-x-8 lg:space-x-10 flex-1 justify-center">
+          <div class="hidden md:flex items-center space-x-6 lg:space-x-10 justify-self-center">
             <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :desktop) %>
             <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :desktop) %>
             <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :desktop) %>
@@ -67,40 +67,42 @@
             <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :desktop) %>
           </div>
 
-          <!-- Desktop: Account icon dropdown -->
-          <div class="hidden md:block relative">
-            <button id="account-menu-button" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors text-gray-700 overflow-hidden bg-gray-200">
-              <% if user_signed_in? && current_user.avatar.attached? %>
-                <%= image_tag current_user.avatar.variant(resize_to_fill: [50, 50]), alt: current_user.full_name, class: "w-full h-full object-cover" %>
-              <% else %>
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              <% end %>
-            </button>
-
-            <!-- Account dropdown -->
-            <div id="account-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-              <% if user_signed_in? %>
-                <%= link_to "Dashboard", dashboard_root_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
-                <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
-                <% if current_user.admin? %>
-                  <%= link_to "Admin", admin_root_path, class: "block px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors font-medium" %>
+          <div class="flex items-center justify-self-end justify-end gap-2">
+            <!-- Desktop: Account icon dropdown -->
+            <div class="hidden md:block relative">
+              <button id="account-menu-button" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors text-gray-700 overflow-hidden bg-gray-200">
+                <% if user_signed_in? && current_user.avatar.attached? %>
+                  <%= image_tag current_user.avatar.variant(resize_to_fill: [50, 50]), alt: current_user.full_name, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                 <% end %>
-                <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
-              <% else %>
-                <%= link_to "Sign In", new_user_session_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
-                <%= link_to "Sign Up", new_user_registration_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors font-medium" %>
-              <% end %>
-            </div>
-          </div>
+              </button>
 
-          <!-- Mobile menu button -->
-          <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900" aria-controls="mobile-menu" aria-expanded="false">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+              <!-- Account dropdown -->
+              <div id="account-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                <% if user_signed_in? %>
+                  <%= link_to "Dashboard", dashboard_root_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
+                  <%= link_to "Edit Profile", edit_dashboard_profile_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
+                  <% if current_user.admin? %>
+                    <%= link_to "Admin", admin_root_path, class: "block px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors font-medium" %>
+                  <% end %>
+                  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
+                <% else %>
+                  <%= link_to "Sign In", new_user_session_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors" %>
+                  <%= link_to "Sign Up", new_user_registration_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors font-medium" %>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button id="mobile-menu-button" class="md:hidden flex-shrink-0 p-2 text-gray-700 hover:text-gray-900" aria-controls="mobile-menu" aria-expanded="false">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,16 +1,15 @@
-<div class="email-footer">
-  <div style="margin-bottom: 16px;">
-    <strong style="color: #1f2937;">Acer Coffee</strong>
+<% business_name = ENV.fetch("BUSINESS_NAME", "Acer Coffee") %>
+<% support_email = ENV.fetch("SUPPORT_EMAIL", "support@acercoffee.com") %>
+<% support_subject = "Help with my coffee" %>
+<% support_mailto = "mailto:#{support_email}?subject=#{ERB::Util.url_encode(support_subject)}" %>
+<% homepage_url = root_url rescue (ENV["APP_HOST"].present? ? "https://#{ENV["APP_HOST"]}" : "https://acercoffee.com") %>
+
+<div style="background-color: #f9fafb; padding: 24px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #6b7280; border-top: 1px solid #e5e7eb;">
+  <div style="margin-bottom: 6px; font-weight: 700; color: #1f2937;">
+    <a href="<%= homepage_url %>" style="color: #1f2937; text-decoration: none;"><%= business_name %></a>
   </div>
-  <div style="margin-bottom: 8px;">
-    Premium craft coffee, delivered fresh to your door
-  </div>
-  <div style="margin-bottom: 16px; color: #9ca3af;">
-    orders@acercoffee.com
-  </div>
-  <div style="font-size: 12px; color: #9ca3af; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-    You're receiving this email because you have an account with Acer Coffee.
-    <br>
-    Questions? Just reply to this email.
+
+  <div style="margin-bottom: 0; color: #9ca3af;">
+    <a href="<%= support_mailto %>" style="color: #9ca3af; text-decoration: none;"><%= support_email %></a>
   </div>
 </div>

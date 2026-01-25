@@ -13,7 +13,7 @@ RSpec.describe ContactMailer, type: :mailer do
 
     it "renders the headers" do
       expect(mail.subject).to eq("Contact Form: Test Subject")
-      expect(mail.to).to eq([ "orders@acercoffee.com" ])
+      expect(mail.to).to eq([ "support@acercoffee.com" ])
       expect(mail.reply_to).to eq([ "john@example.com" ])
     end
 

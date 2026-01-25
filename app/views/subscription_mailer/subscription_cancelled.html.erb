@@ -1,18 +1,15 @@
-<h2 style="color: #1f2937; margin-top: 0;">Subscription Cancelled</h2>
+<% first_name = @customer&.first_name.presence || "there" %>
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
 
-<p>Hi <%= @customer.first_name %>,</p>
+<p>Hi <%= first_name %>,</p>
 
-<p>Your <strong><%= @plan.name %></strong> subscription has been cancelled.</p>
+<p>Your <%= @plan.frequency.titleize %> &middot; <%= pluralize(bags_per_delivery, "bag") %> subscription has been cancelled.</p>
 
-<div style="background: #f3f4f6; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #6b7280;">
-  <p style="margin: 0; color: #374151; font-size: 14px;">
-    We're sorry to see you go! If there's anything we could have done better, please let us know by replying to this email.
-  </p>
-</div>
+<p>If there’s anything we could have done better, you’re welcome to reply to this email and let us know.</p>
 
-<p>You can always start a new subscription anytime from our website. We'd love to have you back!</p>
+<p>You can start a new subscription anytime from our website if it makes sense for you in the future.</p>
 
 <p style="margin-top: 24px;">
-  Thanks for being a customer,<br>
-  <strong>The Acer Coffee Team</strong>
+  Thanks for having been a customer,<br>
+  Acer Coffee
 </p>

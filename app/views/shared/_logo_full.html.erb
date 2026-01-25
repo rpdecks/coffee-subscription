@@ -1,1 +1,5 @@
-<%= render "shared/acer_wordmark" %>
+<%
+svg_classes = ["w-auto"]
+svg_classes << (local_assigns[:class].presence || "h-10")
+%>
+<%= inline_svg "brand/logos/acer-logo-full.svg", class: (["acer-logo-full"] + svg_classes).join(" ") %>

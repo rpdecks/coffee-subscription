@@ -1,0 +1,18 @@
+Welcome to your coffee subscription
+
+Hi <%= @customer&.first_name.presence || "there" %>,
+
+Thanks for subscribing. Your Acer Coffee subscription has been created. We’ll email you when your subscription renews and when it ships.
+
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
+<%= @plan.name.presence || "#{@plan.frequency.titleize} · #{pluralize(bags_per_delivery, "bag")}" %>
+
+- Delivery frequency: <%= @plan.frequency.titleize %>
+- Bags per delivery: <%= bags_per_delivery %>
+- Price: <%= number_to_currency(@plan.price) %> per delivery
+- First order: Usually ships within 3-5 business days
+
+You can manage your subscription anytime from your dashboard, including pausing deliveries or updating your preferences.
+
+—
+Acer Coffee

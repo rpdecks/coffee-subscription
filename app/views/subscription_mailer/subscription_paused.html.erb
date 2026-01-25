@@ -1,20 +1,17 @@
-<h2 style="color: #1f2937; margin-top: 0;">⏸️ Subscription Paused</h2>
+<% first_name = @customer&.first_name.presence || "there" %>
+<% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
 
-<p>Hi <%= @customer.first_name %>,</p>
+<h2 style="color: #111827; margin-top: 0;">Subscription paused</h2>
 
-<p>Your <strong><%= @plan.name %></strong> subscription has been paused.</p>
+<p>Hi <%= first_name %>,</p>
 
-<div style="background: #fef3c7; padding: 20px; margin: 24px 0; border-radius: 8px; border-left: 4px solid #f59e0b;">
-  <p style="margin: 0; color: #92400e;">
-    <strong>⚠️ Your subscription is now paused</strong>
-  </p>
-  <p style="margin: 12px 0 0 0; color: #78350f; font-size: 14px;">
-    You won't be charged during this time, and no orders will be created.
-  </p>
-</div>
+<p>Your <%= @plan.frequency.titleize %> &middot; <%= pluralize(bags_per_delivery, "bag") %> subscription is now paused.</p>
 
-<p>When you're ready for your next delivery, simply resume your subscription from your dashboard.</p>
+<p>You won’t be charged while your subscription is paused, and no shipments will be created.</p>
+
+<p>When you’re ready, you can resume your subscription anytime from your dashboard.</p>
 
 <p style="margin-top: 24px;">
-  <strong>The Acer Coffee Team</strong>
+  —<br>
+  Acer Coffee
 </p>

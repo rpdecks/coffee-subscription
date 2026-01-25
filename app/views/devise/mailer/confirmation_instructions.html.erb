@@ -1,16 +1,15 @@
-<h2 style="color: #1f2937; margin-top: 0;">Welcome to Acer Coffee!</h2>
+<h2 style="color: #1f2937; margin-top: 0;">Welcome to Acer Coffee</h2>
 
-<p>Hi there,</p>
+<p>Hi,</p>
 
-<p>Thanks for signing up! Before you can start exploring our premium craft coffee, we need to verify your email address.</p>
+<p>Thanks for signing up. Before we get started, we just need to confirm this is really your email address.</p>
+
+<p>Once confirmed, you’ll have access to your account and future updates about your coffee.</p>
 
 <div style="text-align: center; margin: 32px 0;">
-  <%= link_to 'Confirm My Email', confirmation_url(@resource, confirmation_token: @token), style: "display: inline-block; padding: 14px 28px; background-color: #8B4513; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;" %>
+  <%= link_to 'Verify email', confirmation_url(@resource, confirmation_token: @token), style: "display: inline-block; padding: 14px 28px; background-color: #8B4513; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;" %>
 </div>
 
 <p style="color: #6b7280; font-size: 14px;">This link will expire in 24 hours.</p>
 
-<p style="margin-top: 24px;">
-  Welcome aboard!<br>
-  <strong>The Acer Coffee Team</strong>
-</p>
+<p style="margin-top: 24px;">—<br><strong>Acer Coffee</strong></p>
