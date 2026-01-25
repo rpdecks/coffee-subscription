@@ -26,7 +26,9 @@ RSpec.describe Subscription, type: :model do
 
     describe ".active_subscriptions" do
       it "returns only active subscriptions" do
-        expect(Subscription.active_subscriptions).to eq([ active_sub ])
+        expect(Subscription.active_subscriptions).to include(active_sub)
+        expect(Subscription.active_subscriptions).not_to include(paused_sub, cancelled_sub)
+        expect(Subscription.active_subscriptions.pluck(:status).uniq).to eq([ "active" ])
       end
     end
 

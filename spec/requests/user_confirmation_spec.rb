@@ -32,7 +32,7 @@ RSpec.describe "User Registration with Email Confirmation", type: :request do
 
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([ 'newuser@example.com' ])
-        expect(mail.subject).to eq('Confirmation instructions')
+        expect(mail.subject).to eq(I18n.t("devise.mailer.confirmation_instructions.subject"))
       end
 
       it "redirects to root with message" do
