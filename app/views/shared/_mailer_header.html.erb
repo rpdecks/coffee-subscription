@@ -1,0 +1,10 @@
+<tr>
+  <td align="center" class="px py" style="background-color: #111827; padding: 28px 24px; border-bottom: 2px solid #1f2937;">
+    <div style="color: #ffffff;">
+      <% homepage_url = root_url rescue (ENV["APP_HOST"].present? ? "https://#{ENV["APP_HOST"]}" : "https://acercoffee.com") %>
+      <a href="<%= homepage_url %>" style="display: inline-block; text-decoration: none; color: #ffffff;">
+        <%= inline_svg "brand/logos/acer-logo-full.svg", style: "height: 52px; width: auto; max-width: 100%; display: block; color: #ffffff;" %>
+      </a>
+    </div>
+  </td>
+</tr>

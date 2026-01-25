@@ -54,12 +54,48 @@ module ApplicationHelper
 
     svg_content = File.read(file_path)
 
-    # Add CSS classes if provided
-    if options[:class]
-      svg_content.sub("<svg", "<svg class=\"#{options[:class]}\"")
-    else
-      svg_content
-    end.html_safe
+    svg_content = svg_content.sub(/\A<\?xml[^>]*\?>\s*/m, "")
+
+    if options.present?
+      svg_content = svg_content.sub(/<svg\b[^>]*>/) do |svg_tag|
+        tag = svg_tag.dup
+
+        if options[:class].present?
+          escaped_class = ERB::Util.html_escape(options[:class].to_s)
+          if tag.match?(/\bclass=\"/)
+            tag.sub!(/\bclass=\"([^\"]*)\"/) { %(class="#{$1} #{escaped_class}") }
+          else
+            tag.sub!("<svg", "<svg class=\"#{escaped_class}\"")
+          end
+        end
+
+        if options[:style].present?
+          escaped_style = ERB::Util.html_escape(options[:style].to_s)
+          if tag.match?(/\bstyle=\"/)
+            tag.sub!(/\bstyle=\"([^\"]*)\"/) { %(style="#{$1}; #{escaped_style}") }
+          else
+            tag.sub!("<svg", "<svg style=\"#{escaped_style}\"")
+          end
+        end
+
+        if options[:width].present? && !tag.match?(/\bwidth=\"/)
+          tag.sub!("<svg", "<svg width=\"#{ERB::Util.html_escape(options[:width].to_s)}\"")
+        end
+
+        if options[:height].present? && !tag.match?(/\bheight=\"/)
+          tag.sub!("<svg", "<svg height=\"#{ERB::Util.html_escape(options[:height].to_s)}\"")
+        end
+
+        if options[:aria_label].present?
+          escaped_label = ERB::Util.html_escape(options[:aria_label].to_s)
+          tag.sub!("<svg", "<svg aria-label=\"#{escaped_label}\" role=\"img\"")
+        end
+
+        tag
+      end
+    end
+
+    svg_content.html_safe
   end
 
   private
