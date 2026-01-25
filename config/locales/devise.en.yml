@@ -20,7 +20,7 @@ en:
       confirmation_instructions:
         subject: "Confirm your Acer Coffee email"
       reset_password_instructions:
-        subject: "Reset password instructions"
+        subject: "Reset your Acer Coffee password"
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:
