@@ -9,7 +9,7 @@ class OrderMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Order Confirmation - #{@order.order_number}"
+      subject: "Order confirmed — #{@order.order_number}"
     )
   end
 
@@ -30,7 +30,7 @@ class OrderMailer < ApplicationMailer
 
     mail(
       to: @customer.email,
-      subject: "Your order has shipped! - #{@order.order_number}"
+      subject: "Your order has shipped — #{@order.order_number}"
     )
   end
 
