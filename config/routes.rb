@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get "faq", to: "pages#faq"
   get "contact", to: "pages#contact"
   get "thank-you", to: "pages#thank_you"
+  get "newsletter/thanks", to: "pages#newsletter_thanks", as: :newsletter_thanks
+  post "newsletter/subscribe", to: "newsletter_subscriptions#create", as: :newsletter_subscribe
   post "contact", to: "pages#create_contact"
 
   # Products

@@ -1,0 +1,36 @@
+<section class="py-16">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <div class="card p-10 text-center">
+      <% if flash[:alert].present? %>
+        <h1 class="text-3xl font-serif font-bold text-gray-900">We couldn't subscribe you</h1>
+        <p class="mt-4 text-gray-600">
+          Please try again in a minute. If it keeps failing, the address may be blocked by newsletter spam protection.
+        </p>
+      <% else %>
+        <h1 class="text-3xl font-serif font-bold text-gray-900">Check your inbox</h1>
+        <p class="mt-4 text-gray-600">
+          Thanks for signing up — Buttondown just sent a confirmation email.
+          Click the link in that email to finish subscribing.
+        </p>
+      <% end %>
+
+      <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          class="btn-secondary"
+          href="https://mail.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open Gmail
+        </a>
+        <a class="btn-tertiary" href="/">Back to home</a>
+      </div>
+
+      <% unless flash[:alert].present? %>
+        <p class="mt-6 text-sm text-gray-500">
+          If you don’t see it, check spam/promotions and search for “Acer Coffee”.
+        </p>
+      <% end %>
+    </div>
+  </div>
+</section>
