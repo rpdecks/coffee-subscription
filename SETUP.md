@@ -167,6 +167,40 @@ rails generate controller ControllerName action1 action2
 rails generate model ModelName field1:type field2:type
 ```
 
+## Newsletter (Buttondown)
+
+This app can subscribe emails to Buttondown via the server-side endpoint `POST /newsletter/subscribe`.
+
+### Localhost
+
+You have two good options. I recommend **development credentials** for convenience.
+
+**Option A — Rails development credentials (recommended)**
+
+1. Run `bin/rails credentials:edit --environment development`
+2. Add:
+
+```yml
+buttondown:
+  api_key: your_buttondown_api_key
+```
+
+**Option B — Environment variable (quick test)**
+
+Run the server with:
+
+```bash
+BUTTONDOWN_API_KEY=your_buttondown_api_key bin/dev
+```
+
+### Fly (production)
+
+Set the secret on Fly (don’t commit it to git):
+
+```bash
+fly secrets set BUTTONDOWN_API_KEY=your_buttondown_api_key
+```
+
 ## File Structure
 
 ```
