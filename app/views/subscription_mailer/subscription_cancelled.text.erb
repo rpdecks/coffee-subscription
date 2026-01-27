@@ -3,9 +3,7 @@ Hi <%= @customer&.first_name.presence || "there" %>,
 <% bags_per_delivery = @subscription.quantity.presence || @plan.bags_per_delivery %>
 Your <%= @plan.frequency.titleize %> · <%= pluralize(bags_per_delivery, "bag") %> subscription has been cancelled.
 
-If there’s anything we could have done better, you’re welcome to reply to this email and let us know.
-
-You can start a new subscription anytime from our website if it makes sense for you in the future.
+We’d love your feedback. If there is anything we could have done better or differently, please email us and let us know.
 
 Thanks for having been a customer,
 Acer Coffee

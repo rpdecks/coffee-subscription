@@ -10,7 +10,7 @@ RSpec.describe OrderMailer, type: :mailer do
     let(:mail) { OrderMailer.order_confirmation(order) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Order Confirmation - ORD-12345")
+      expect(mail.subject).to eq("Order confirmed — ORD-12345")
       expect(mail.to).to eq([ "customer@example.com" ])
       expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end
@@ -29,7 +29,7 @@ RSpec.describe OrderMailer, type: :mailer do
     let(:mail) { OrderMailer.order_shipped(order) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("Your order has shipped! - ORD-12345")
+      expect(mail.subject).to eq("Your order has shipped — ORD-12345")
       expect(mail.to).to eq([ "customer@example.com" ])
       expect(mail.from).to eq([ "orders@acercoffee.com" ])
     end

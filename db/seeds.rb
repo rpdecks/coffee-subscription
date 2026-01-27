@@ -88,6 +88,106 @@ def seed_subscription_plans!
   end
 end
 
+def seed_dev_preview_user_with_order_history!
+  return unless Rails.env.development?
+
+  email = "rp@acercoffee.com"
+  password = ENV.fetch("DEV_SEED_PASSWORD", "ChangeMe123!")
+
+  user = User.find_or_initialize_by(email: email)
+  user.first_name ||= "Robert"
+  user.last_name ||= "Phillips"
+  user.phone ||= "555-234-5678"
+  user.role = :admin
+
+  if user.new_record? || user.encrypted_password.blank?
+    user.password = password
+    user.password_confirmation = password
+  end
+
+  user.skip_confirmation! if user.respond_to?(:skip_confirmation!)
+  user.save!
+
+  address = user.addresses.find_or_create_by!(
+    address_type: :shipping,
+    street_address: "123 Maple St",
+    city: "Knoxville",
+    state: "TN",
+    zip_code: "37902",
+    country: "US"
+  ) do |a|
+    a.is_default = true
+  end
+
+  plan = SubscriptionPlan.active.order(:price_cents).first
+  return unless plan
+
+  subscription = user.subscriptions.active.first
+  if subscription.present?
+    subscription.update!(subscription_plan: plan, shipping_address: address) if subscription.subscription_plan_id != plan.id
+  else
+    subscription = user.subscriptions.create!(
+      subscription_plan: plan,
+      shipping_address: address,
+      status: :active,
+      next_delivery_date: Date.current.to_date + plan.frequency_in_days.days,
+      quantity: 1
+    )
+  end
+
+  products = Product.coffee.active.to_a
+  if products.empty?
+    products << Product.find_or_create_by!(name: "Seed Coffee") do |p|
+      p.product_type = :coffee
+      p.roast_type = :signature
+      p.description = "Development seed product for email previews."
+      p.price_cents = 1500
+      p.weight_oz = 12
+      p.inventory_count = 100
+      p.active = true
+      p.visible_in_shop = false
+    end
+  end
+
+  seed_orders = [
+    { number: "SEED-RP-0001", status: :delivered, created_at: 40.days.ago, shipped_at: 38.days.ago, delivered_at: 36.days.ago },
+    { number: "SEED-RP-0002", status: :delivered, created_at: 25.days.ago, shipped_at: 23.days.ago, delivered_at: 21.days.ago },
+    { number: "SEED-RP-0003", status: :shipped, created_at: 10.days.ago, shipped_at: 8.days.ago },
+    { number: "SEED-RP-0004", status: :roasting, created_at: 3.days.ago },
+    { number: "SEED-RP-0005", status: :processing, created_at: 1.day.ago }
+  ]
+
+  seed_orders.each do |attrs|
+    order = Order.find_or_initialize_by(order_number: attrs[:number])
+    order.user = user
+    order.subscription = subscription
+    order.shipping_address = address
+    order.order_type = :subscription
+    order.status = attrs[:status]
+    order.created_at ||= attrs[:created_at]
+    order.shipped_at = attrs[:shipped_at] if attrs[:shipped_at]
+    order.delivered_at = attrs[:delivered_at] if attrs[:delivered_at]
+    order.tracking_number ||= "TRACK#{attrs[:number].delete("-")}" if order.shipped? || order.delivered?
+    order.save!
+
+    if order.order_items.none?
+      1.upto(plan.bags_per_delivery || 1) do
+        OrderItem.create!(
+          order: order,
+          product: products.sample,
+          quantity: 1
+        )
+      end
+
+      order.calculate_totals
+      order.shipping_cents ||= 500
+      order.tax_cents ||= 0
+      order.total_cents = order.subtotal_cents.to_i + order.shipping_cents.to_i + order.tax_cents.to_i
+      order.save!
+    end
+  end
+end
+
 # Default behavior: seed subscription plans without wiping your DB.
 # To run the full demo/reset seed (destructive), set DEMO_SEED=1 (or SEED_RESET=1).
 demo_seed = Rails.env.production? || ActiveModel::Type::Boolean.new.cast(ENV["DEMO_SEED"] || ENV["SEED_RESET"])
@@ -95,7 +195,11 @@ demo_seed = Rails.env.production? || ActiveModel::Type::Boolean.new.cast(ENV["DE
 unless demo_seed
   puts "Seeding subscription plans (non-destructive)..."
   seed_subscription_plans!
+  seed_dev_preview_user_with_order_history!
   puts "✅ Seeded #{SubscriptionPlan.active.count} active subscription plans"
+  if Rails.env.development?
+    puts "✅ Ensured dev preview account: rp@acercoffee.com (subscription + order history)"
+  end
   puts "\nTip: run full demo seed with DEMO_SEED=1 bin/rails db:seed"
   return
 end

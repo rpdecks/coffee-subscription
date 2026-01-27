@@ -57,14 +57,14 @@ RSpec.describe SubscriptionMailer, type: :mailer do
       expect(text).to include(bags_label)
       expect(text).to include("subscription is now paused")
       expect(text).to include("no shipments will be created")
-      expect(text).to include("resume your subscription anytime")
+      expect(text).to include("Resume your subscription anytime")
 
       expect(html).to include(user.first_name)
       expect(html).to include(subscription_plan.frequency.titleize)
       expect(html).to include(bags_label)
       expect(html).to include("subscription is now paused")
       expect(html).to include("no shipments will be created")
-      expect(html).to include("resume your subscription anytime")
+      expect(html).to include("Resume your subscription anytime")
     end
   end
 
@@ -124,16 +124,16 @@ RSpec.describe SubscriptionMailer, type: :mailer do
       expect(text).to include(subscription_plan.frequency.titleize)
       expect(text).to include(bags_label)
       expect(text).to include("subscription has been cancelled")
-      expect(text).to include("welcome to reply to this email")
-      expect(text).to include("start a new subscription")
+      expect(text).to include("We’d love your feedback")
+      expect(text).to include("please email us and let us know")
       expect(text).to include("Thanks for having been a customer")
 
       expect(html).to include(user.first_name)
       expect(html).to include(subscription_plan.frequency.titleize)
       expect(html).to include(bags_label)
       expect(html).to include("subscription has been cancelled")
-      expect(html).to include("welcome to reply to this email")
-      expect(html).to include("start a new subscription")
+      expect(html).to include("We’d love your feedback")
+      expect(html).to include("please email us and let us know")
       expect(html).to include("Thanks for having been a customer")
     end
   end
