@@ -2,6 +2,12 @@
 require "rubygems"
 require "bundler/setup"
 
-ARGV.unshift("--ensure-latest")
+ensure_latest = ENV.fetch("BRAKEMAN_ENSURE_LATEST", "").downcase
+
+if ensure_latest == "true"
+	ARGV.unshift("--ensure-latest")
+elsif ENV["CI"].to_s.downcase != "true"
+	ARGV.unshift("--ensure-latest")
+end
 
 load Gem.bin_path("brakeman", "brakeman")
