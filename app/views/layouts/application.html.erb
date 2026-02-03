@@ -62,6 +62,7 @@
           <div class="hidden md:flex items-center space-x-6 lg:space-x-10 justify-self-center">
             <%= link_to "Shop", shop_path, nav_link_html_options(shop_path, variant: :desktop) %>
             <%= link_to "Products", products_path, nav_link_html_options(products_path, variant: :desktop) %>
+            <%= link_to "Gear", gear_path, nav_link_html_options(gear_path, variant: :desktop) %>
             <%= link_to "About", about_path, nav_link_html_options(about_path, variant: :desktop) %>
             <%= link_to "FAQ", faq_path, nav_link_html_options(faq_path, variant: :desktop) %>
             <%= link_to "Contact", contact_path, nav_link_html_options(contact_path, variant: :desktop) %>
@@ -128,6 +129,7 @@
                 <div class="space-y-5">
                   <%= link_to "Shop", shop_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "Products", products_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
+                  <%= link_to "Gear", gear_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "About", about_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "FAQ", faq_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
                   <%= link_to "Contact", contact_path, class: "block text-2xl py-3 rounded-brand hover:bg-gray-50 hover:text-deshojo transition" %>
@@ -332,6 +334,7 @@
             <h3 class="font-serif text-xl font-semibold mb-4">Quick Links</h3>
             <ul class="space-y-2 text-sm text-gray-300">
               <li><%= link_to "Shop", shop_path, class: "hover:text-white transition" %></li>
+              <li><%= link_to "Gear", gear_path, class: "hover:text-white transition" %></li>
               <li><%= link_to "About", about_path, class: "hover:text-white transition" %></li>
               <li><%= link_to "FAQ", faq_path, class: "hover:text-white transition" %></li>
               <li><%= link_to "Contact", contact_path, class: "hover:text-white transition" %></li>
