@@ -16,6 +16,10 @@ class PagesController < ApplicationController
   def about
   end
 
+  def gear
+    @gear = GearCatalog.load
+  end
+
   def faq
   end
 
