@@ -1,0 +1,102 @@
+title: Tools & Gear I Use
+meta_description: >-
+  A curated list of coffee, roasting, packaging, and shop tools I personally use and recommend while building Acer Coffee.
+
+# Keep this page calm + trust-forward.
+# Add more items organically as you reference them in content.
+
+intro:
+  - These are tools I actually use while roasting, packaging, and building Acer Coffee.
+  - I only recommend what I’ve learned to trust through experience.
+  - Some links on this page are affiliate links. If you purchase through them, it helps support Acer Coffee at no extra cost to you.
+
+sections:
+  - title: Brewing
+    items:
+      - name: Baratza Encore Grinder
+        description: A dependable, long-term home grinder has lasted me 10 years.
+        why_useful: For filter and immersion brewing, grind consistency is one of the biggest levers for better coffee at home. A capable grinder does more for your coffee than most equipment upgrades.
+        why_this_one: Longevity and support. This grinder has already lasted a decade, and after replacing a wear part, I expect it to last another. Baratza’s service culture and parts availability are exceptional — you can actually maintain and improve the machine instead of replacing it.
+        personal_note: >-
+          I mostly use this grinder for filter and immersion brewing. It can grind fine enough for espresso too (I haven’t tried that myself). I’ve been using my Encore for about 10 years, and it’s still going strong. Recently I replaced the burr and upgraded it to the Baratza M2 Conical Burr, and the difference was immediately noticeable — not just in grind quality, but in speed and in the cup. I could taste it. After the burr upgrade, I told my wife how genuinely happy it made me. It wasn’t just a technical improvement — it was even sweeter and more rewarding having done it myself! Their support and community adoption are fantastic.
+        image: gear/baratza-encore.jpg
+        image_alt: Baratza Encore coffee grinder
+        url: https://amzn.to/4rvjxIN
+        tags: [brewing, grinder]
+
+      - name: Electric Gooseneck Kettle (Variable Temperature)
+        description: If you like pour-over brewing, this isn’t just about aesthetics — it’s about control and repeatability.
+        note: This kettle has proven to be a durable, everyday tool that holds up to my daily use. I like to figure out how to make it taste great and do it the same way over and over.
+        why_useful: Good coffee is prepared just like a meal. Temperature stability, timing, and control work together to shape outcome. A gooseneck kettle lets you manage flow rate and placement precisely, which directly affects results.
+        why_this_one: Temperature control and timing are built in. I rely on the ability to set an exact temperature and have the kettle hold it there while I brew and pour. The integrated timer removes guesswork and helps me get consistent results.
+        why_it_matters: When temperatures and times are predictable, you can actually change in grind size, dose, or technique. That’s quality control — and it’s the difference between chasing good cups and learning from them.
+        image: gear/mecity-kettle.jpg
+        image_alt: Electric gooseneck kettle
+        url: https://amzn.to/4kegdPG
+        tags: [brewing, kettle]
+
+      - name: Ultrean Digital Kitchen Scale
+        description: A simple scale makes brewing easier to repeat — and it doesn’t need to be fancy.
+        why_useful: Measuring coffee and water by weight is the quickest way to get consistent cups.
+        why_this_one: They’re inexpensive, accurate enough for daily brewing, and come in several colors so you can keep a couple around.
+        image: gear/scale.jpg
+        image_alt: Digital kitchen scale
+        url: https://amzn.to/4ruQ5mh
+        tags: [brewing, scale]
+
+  - title: Coffee Storage
+    items:
+      - name: Coffee Tin with De-Gas Valve
+        description: A simple storage tin that keeps roasted coffee protected on the counter.
+        note: No affiliate link here — I don’t get referral credit. I’ve used this for years and still like it. Don’t wash it with water.
+        why_useful: Light and oxygen are steady enemies of freshness. A dedicated container makes it easier to stay consistent day to day.
+        why_this_one: Durable, reusable, and the de-gas valve makes it a practical alternative to leaving coffee in a half-folded bag.
+        image: gear/coffee-tin-de-gas-valve-1.jpg
+        image_alt: Coffee storage tin with de-gas valve
+        image_size: large
+        hide_link: true
+        tags: [brewing, storage]
+
+  - title: Packaging
+    items: []
+
+  - title: Coffee Roasting
+    items:
+      - name: Diedrich IR-1 Sample Roaster
+        description: The small machine that lets me develop roasts deliberately before scaling them up.
+        why_useful: Sample roasting is where I test ideas, compare lots, and refine profiles without guessing.
+        why_this_one: It’s steady, repeatable, and built for the kind of iterative work I do week to week.
+        image: gear/diedrich.jpg
+        image_alt: Diedrich IR-1 sample roaster
+        tags: [roasting]
+
+      - name: Behmor (Home Roaster)
+        description: A practical home roaster for learning the fundamentals and getting reps in — great for dabbling.
+        why_useful: It makes the feedback loop tangible — time, heat, and airflow become real when you roast your own.
+        why_this_one: I’ve owned a few over the years, and it’s still the one I point curious beginners toward for an approachable start.
+        image: gear/behmor.jpg
+        image_alt: Behmor home coffee roaster
+        tags: [roasting]
+
+  - title: Shop & Workspace
+    items: []
+
+  - title: Books & Learning
+    items:
+      - name: The World Atlas of Coffee (3rd Edition) — James Hoffmann
+        description: A clear, well-structured reference for understanding coffee origins, processing, and how those choices show up in the cup.
+        why_useful: It gives you a shared vocabulary for flavor and helps connect “where it came from” to “what it tastes like.”
+        why_this_one: Thoughtful writing, strong visuals, and it’s the kind of book you’ll keep reaching for over time.
+        image: gear/hoffman-atlas.jpg
+        image_alt: The World Atlas of Coffee book cover
+        url: https://amzn.to/4buoT2l
+        tags: [books, learning]
+
+      - name: The Coffee Roaster's Companion — Scott Rao
+        description: A compact, practical guide that focuses on what to pay attention to during a roast.
+        why_useful: It helps you think in terms of cause and effect — airflow, heat, time — and how those choices shape development.
+        why_this_one: Direct, experience-based advice that’s easy to revisit when you’re refining profiles.
+        image: gear/rao_companion.jpg
+        image_alt: The Coffee Roaster's Companion book cover
+        url: https://amzn.to/4qVqWkP
+        tags: [books, learning, roasting]

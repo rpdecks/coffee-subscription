@@ -1,0 +1,116 @@
+<% content_for :title, @gear.fetch("title") %>
+<% if @gear["meta_description"].present? %>
+  <% content_for :head do %>
+    <meta name="description" content="<%= @gear.fetch("meta_description") %>">
+  <% end %>
+<% end %>
+
+<div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+  <header class="space-y-4">
+    <h1 class="font-serif text-4xl sm:text-5xl tracking-tight text-espresso"><%= @gear.fetch("title") %></h1>
+
+    <div class="space-y-3 text-base sm:text-lg leading-relaxed text-gray-700">
+      <% @gear.fetch("intro").each do |line| %>
+        <p><%= line %></p>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="mt-12 space-y-14">
+    <% @gear.fetch("sections").each do |section| %>
+      <section class="space-y-6">
+        <h2 class="font-serif text-2xl sm:text-3xl tracking-tight text-espresso"><%= section.fetch("title") %></h2>
+
+        <% if section.fetch("items").blank? %>
+          <p class="text-gray-600">I’ll add notes here as these tools come up in real use.</p>
+        <% else %>
+          <div class="space-y-10">
+            <% section.fetch("items").each do |item| %>
+              <article class="border-t border-gray-200 pt-8">
+                <% image_size = item["image_size"].presence %>
+                <div class="grid grid-cols-1 sm:grid-cols-[168px_1fr] gap-5 sm:gap-7 items-start">
+                  <% if item["image"].present? %>
+                    <figure class="sm:sticky sm:top-24">
+                      <% frame_padding = image_size == "large" ? "p-1 sm:p-2" : "p-3 sm:p-4" %>
+                      <div class="aspect-[4/3] sm:aspect-[3/4] w-full overflow-hidden rounded-xl border border-gray-200 bg-white <%= frame_padding %>">
+                        <% image_src = item.fetch("image") %>
+                        <% alt_text = item["image_alt"].presence || item.fetch("name") %>
+
+                        <% if image_src.to_s.start_with?("http://", "https://") %>
+                          <%= image_tag image_src, alt: alt_text, loading: "lazy", decoding: "async", class: "h-full w-full object-contain" %>
+                        <% else %>
+                          <%= image_tag image_src, alt: alt_text, loading: "lazy", decoding: "async", class: "h-full w-full object-contain" %>
+                        <% end %>
+                      </div>
+                    </figure>
+                  <% end %>
+
+                  <div>
+                    <h3 class="text-xl sm:text-2xl font-semibold text-gray-900"><%= item.fetch("name") %></h3>
+
+                    <div class="mt-3 max-w-prose text-gray-700 leading-relaxed">
+                      <p class="mt-2"><%= item.fetch("description") %></p>
+
+                      <% if item["note"].present? %>
+                        <p class="mt-4"><%= item.fetch("note") %></p>
+                      <% end %>
+
+                      <div class="mt-5">
+                        <p class="font-medium text-gray-900">Why it’s useful:</p>
+                        <p class="mt-1"><%= item.fetch("why_useful") %></p>
+                      </div>
+
+                      <div class="mt-5">
+                        <p class="font-medium text-gray-900">Why this one:</p>
+                        <p class="mt-1"><%= item.fetch("why_this_one") %></p>
+                      </div>
+
+                      <% if item["why_it_matters"].present? %>
+                        <div class="mt-5">
+                          <p class="font-medium text-gray-900">Why it matters:</p>
+                          <p class="mt-1"><%= item.fetch("why_it_matters") %></p>
+                        </div>
+                      <% end %>
+
+                      <% if item["personal_note"].present? %>
+                        <div class="mt-5">
+                          <p class="font-medium text-gray-900">Personal note:</p>
+                          <p class="mt-1 text-gray-600"><%= item.fetch("personal_note") %></p>
+                        </div>
+                      <% end %>
+                    </div>
+
+                    <div class="mt-5">
+                      <% unless item["hide_link"] %>
+                        <% if item["url"].present? %>
+                          <% href = item.fetch("url") %>
+                          <% is_amazon = amazon_url?(href) %>
+                          <% link_text = is_amazon ? "View on Amazon →" : "View →" %>
+                          <% rel_value = is_amazon ? "nofollow sponsored noopener noreferrer" : "noopener noreferrer" %>
+                          <% resolved_href = is_amazon ? amazon_affiliate_url(href) : href %>
+
+                          <%= link_to link_text,
+                            resolved_href,
+                            target: "_blank",
+                            rel: rel_value,
+                            class: "inline-flex items-center gap-2 text-sm font-medium text-deshojo hover:opacity-90 transition" %>
+                        <% else %>
+                          <span class="text-sm text-gray-500">Link coming soon.</span>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+
+  <footer class="mt-16 pt-8 border-t border-gray-200 text-sm text-gray-500 leading-relaxed space-y-2">
+    <p>Acer Coffee participates in affiliate programs, including Amazon Associates.</p>
+    <p>This page is updated as my tools and workflow evolve.</p>
+  </footer>
+</div>
