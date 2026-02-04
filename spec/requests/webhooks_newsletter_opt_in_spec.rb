@@ -27,4 +27,31 @@ RSpec.describe "Stripe webhook newsletter opt-in", type: :request do
 
     expect(response).to have_http_status(:ok)
   end
+
+  it "does not subscribe the user when checkout metadata does not include opt-in" do
+    create(:user, email: "customer@example.com", stripe_customer_id: "cus_123")
+
+    allow(ButtondownService).to receive(:configured?).and_return(true)
+    expect(ButtondownService).not_to receive(:subscribe)
+
+    payload = {
+      id: "evt_2",
+      type: "checkout.session.completed",
+      data: {
+        object: {
+          id: "cs_test_2",
+          customer: "cus_123",
+          metadata: {
+            "order_type" => "one_time",
+            "cart_items" => "[]",
+            "newsletter_opt_in" => "0"
+          }
+        }
+      }
+    }
+
+    post "/webhooks/stripe", params: payload.to_json, headers: { "CONTENT_TYPE" => "application/json" }
+
+    expect(response).to have_http_status(:ok)
+  end
 end
