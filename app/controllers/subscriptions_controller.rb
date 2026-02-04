@@ -20,7 +20,7 @@ class SubscriptionsController < ApplicationController
   # Step 4: Proceed to checkout with Stripe
   def checkout
     unless user_signed_in?
-      session[:subscription_params] = params.permit(:plan_id, :bag_size, :frequency, :grind_type, :coffee_id)
+      session[:subscription_params] = params.permit(:plan_id, :bag_size, :frequency, :grind_type, :coffee_id, :newsletter_opt_in)
       flash[:notice] = "Please sign in or create an account to complete your subscription"
       redirect_to new_user_registration_path
       return
@@ -61,6 +61,8 @@ class SubscriptionsController < ApplicationController
 
     # Create Stripe checkout session
     begin
+      newsletter_opt_in = ActiveModel::Type::Boolean.new.cast(params[:newsletter_opt_in])
+
       checkout_session = StripeService.create_checkout_session(
         user: current_user,
         plan: plan,
@@ -71,7 +73,8 @@ class SubscriptionsController < ApplicationController
           frequency: params[:frequency] || plan.frequency,
           grind_type: params[:grind_type],
           coffee_id: params[:coffee_id],
-          shipping_address_id: shipping_address.id.to_s
+          shipping_address_id: shipping_address.id.to_s,
+          newsletter_opt_in: newsletter_opt_in ? "1" : "0"
         }
       )
 
