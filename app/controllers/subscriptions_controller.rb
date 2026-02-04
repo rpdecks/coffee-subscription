@@ -75,7 +75,7 @@ class SubscriptionsController < ApplicationController
           coffee_id: params[:coffee_id],
           shipping_address_id: shipping_address.id.to_s,
           newsletter_opt_in: newsletter_opt_in ? "1" : "0"
-        }
+        }.stringify_keys
       )
 
       redirect_to checkout_session.url, allow_other_host: true

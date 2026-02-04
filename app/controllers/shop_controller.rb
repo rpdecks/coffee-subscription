@@ -98,7 +98,7 @@ class ShopController < ApplicationController
       metadata: {
         cart_items: cart_items.to_json,
         newsletter_opt_in: newsletter_opt_in ? "1" : "0"
-      }
+      }.stringify_keys
     )
 
     render json: { checkout_url: session.url }
