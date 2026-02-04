@@ -19,11 +19,6 @@ class DeviseMailer < Devise::Mailer
     super
   end
 
-  def unlock_instructions(record, token, opts = {})
-    disable_sendgrid_click_tracking!
-    super
-  end
-
   private
 
   def disable_sendgrid_click_tracking!
