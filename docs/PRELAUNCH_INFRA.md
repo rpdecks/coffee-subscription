@@ -23,6 +23,8 @@ These defaults are controlled via environment variables.
 
   `flyctl scale count -a coffee-production sidekiq=0`
 
+  Note: pre-launch configs no longer define a `sidekiq` process group in `fly.toml`, so once you've deployed that change there should be nothing left to scale.
+
 2. **Unset Redis secret (optional, recommended for clarity)**
 
 If Redis is not being used at runtime, remove it:
@@ -42,6 +44,10 @@ If Redis is not being used at runtime, remove it:
   `flyctl secrets set -a coffee-production ENABLE_REDIS=true`
 
 2. **Enable Sidekiq workers + ActiveJob adapter**
+
+- Re-add the Sidekiq process group in `fly.toml`:
+
+  `sidekiq = 'bundle exec sidekiq'`
 
 - Enable Sidekiq adapter:
 
