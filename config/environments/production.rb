@@ -90,7 +90,10 @@ Rails.application.configure do
     authentication: :plain,
     enable_starttls_auto: true
   }
-  config.action_mailer.default_url_options = { host: ENV["APP_HOST"] || "coffee-rp-71e57fa6059c.herokuapp.com" }
+
+  app_host = ENV["APP_HOST"].to_s
+  app_host = "acercoffee.com" if app_host.empty?
+  config.action_mailer.default_url_options = { host: app_host, protocol: "https" }
   config.action_mailer.raise_delivery_errors = true
 
   # Ignore bad email addresses and do not raise email delivery errors.
