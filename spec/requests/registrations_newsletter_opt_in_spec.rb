@@ -35,4 +35,22 @@ RSpec.describe "Registration newsletter opt-in", type: :request do
 
     expect(User.find_by(email: "nooptin@example.com")).to be_present
   end
+
+  it "does not block signup if Buttondown is not configured" do
+    allow(ButtondownService).to receive(:configured?).and_return(false)
+    expect(ButtondownService).not_to receive(:subscribe)
+
+    post user_registration_path, params: {
+      user: {
+        first_name: "New",
+        last_name: "User",
+        email: "optin-but-unconfigured@example.com",
+        password: "password123",
+        password_confirmation: "password123",
+        newsletter_opt_in: "1"
+      }
+    }
+
+    expect(User.find_by(email: "optin-but-unconfigured@example.com")).to be_present
+  end
 end
