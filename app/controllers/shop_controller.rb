@@ -68,6 +68,8 @@ class ShopController < ApplicationController
       return
     end
 
+    newsletter_opt_in = ActiveModel::Type::Boolean.new.cast(params[:newsletter_opt_in])
+
     cart_items = params[:cart_items] || []
     if cart_items.empty?
       render json: { error: "Cart is empty" }, status: :unprocessable_content
@@ -94,7 +96,8 @@ class ShopController < ApplicationController
       success_url: shop_success_url,
       cancel_url: shop_checkout_url,
       metadata: {
-        cart_items: cart_items.to_json
+        cart_items: cart_items.to_json,
+        newsletter_opt_in: newsletter_opt_in ? "1" : "0"
       }
     )
 

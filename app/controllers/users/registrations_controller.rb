@@ -15,7 +15,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   ].freeze
 
   def create
-    super
+    super do |resource|
+      next unless resource&.persisted?
+
+      opt_in = ActiveModel::Type::Boolean.new.cast(params.dig(:user, :newsletter_opt_in))
+      next unless opt_in
+
+      NewsletterOptInService.subscribe(email: resource.email)
+    end
   rescue *SMTP_DELIVERY_ERRORS => e
     Rails.logger.error("Signup confirmation email delivery failed: #{e.class}: #{e.message}")
 
@@ -27,7 +34,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # If you have extra params to permit, append them to the sanitizer.
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :first_name, :last_name, :phone ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :first_name, :last_name, :phone, :newsletter_opt_in ])
   end
 
   # If you have extra params to permit, append them to the sanitizer.
