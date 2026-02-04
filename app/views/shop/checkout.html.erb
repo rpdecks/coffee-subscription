@@ -69,6 +69,14 @@
 
           <!-- Checkout Button -->
           <div class="mt-8" id="checkout-button-container">
+            <div class="mb-4 flex items-start gap-3">
+              <input type="checkbox" id="newsletter-opt-in" class="mt-1 h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-600" value="1" />
+              <div>
+                <label for="newsletter-opt-in" class="text-sm font-medium text-gray-700">Subscribe to the newsletter</label>
+                <p class="text-xs text-gray-500">Optional. You can sign up again anytime.</p>
+              </div>
+            </div>
+
             <button onclick="createCheckoutSession()"
                     class="w-full bg-amber-600 text-white py-4 rounded-lg hover:bg-amber-700 transition font-bold text-lg">
               Proceed to Checkout
@@ -81,6 +89,7 @@
         <script>
           async function createCheckoutSession() {
             const button = document.querySelector('#checkout-button-container button');
+            const newsletterOptIn = document.querySelector('#newsletter-opt-in')?.checked;
             button.disabled = true;
             button.textContent = 'Processing...';
 
@@ -95,7 +104,7 @@
                   'Content-Type': 'application/json',
                   'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
                 },
-                body: JSON.stringify({ cart_items: cartItems })
+                body: JSON.stringify({ cart_items: cartItems, newsletter_opt_in: newsletterOptIn ? '1' : '0' })
               });
 
               const data = await response.json();
