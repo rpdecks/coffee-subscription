@@ -1,0 +1,34 @@
+<section class="py-16 sm:py-20 bg-gray-50 min-h-[70vh]">
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <div class="rounded-card border border-gray-200 bg-white p-8 sm:p-12 shadow-xl">
+      <h1 class="text-4xl sm:text-5xl font-serif font-semibold text-gray-900 mb-4">Brewing tips</h1>
+      <p class="text-lg text-gray-700 leading-relaxed mb-2">
+        We’re building out guides on dial-in, brew methods, and how to get the best out of each roast.
+      </p>
+      <p class="text-sm text-gray-500 mb-8">In the meantime, here are a few good places to start.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-card border border-gray-200 bg-cream/50 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">New to our coffees?</h2>
+          <p class="text-gray-700 mb-4">Explore what’s currently in rotation.</p>
+          <%= link_to "Explore our beans", products_path, class: "text-deshojo font-medium hover:underline" %>
+        </div>
+
+        <div class="rounded-card border border-gray-200 bg-cream/50 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Questions about subscriptions?</h2>
+          <p class="text-gray-700 mb-4">Quick answers about plans, shipping, and changes.</p>
+          <%= link_to "Read the FAQ", faq_path, class: "text-deshojo font-medium hover:underline" %>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+        <%= link_to "Subscribe to a coffee plan",
+          subscribe_path,
+          class: "inline-flex items-center justify-center rounded-full border border-deshojo bg-deshojo px-6 py-3 text-base font-semibold text-cream transition hover:bg-deshojo/90" %>
+        <%= link_to "Shop fresh roasts",
+          shop_path,
+          class: "inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-900 transition hover:bg-gray-50" %>
+      </div>
+    </div>
+  </div>
+</section>

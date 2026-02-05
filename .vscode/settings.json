@@ -1,0 +1,62 @@
+{
+  "explorer.excludeGitIgnore": false,
+  "cSpell.words": ["Baratza", "deshojo", "merch", "pagy", "Palmatum", "Yirgacheffe"],
+  "chat.tools.terminal.autoApprove": {
+    "cd": true,
+    "pwd": true,
+    "ls": true,
+    "cat": true,
+    "head": true,
+    "tail": true,
+    "grep": true,
+    "rg": true,
+    "wc": true,
+
+    "bin/dev": true,
+    "bin/rspec": true,
+    "bin/rubocop": true,
+    "bin/brakeman": true,
+    "bin/rails server": true,
+    "bin/rails tailwindcss:watch": true,
+    "bin/rails routes": true,
+    "bin/rails db:migrate": true,
+    "bin/rails db:seed": true,
+
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+status\\b/": true,
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+diff\\b/": true,
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+log\\b/": true,
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+show\\b/": true,
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+branch\\b/": true,
+    "/^git(\\s+(-C\\s+\\S+|--no-pager))*\\s+branch\\b.*\\s-(d|D|m|M|-delete|-force)\\b/": false,
+    "/^git\\s+rebase\\b/": false,
+    "/^git\\s+push\\b.*\\s--force(-with-lease)?\\b/": false,
+
+    "/^gh\\s+auth\\s+status\\b/": true,
+    "/^gh\\s+pr\\s+(status|list|view|checks)\\b/": true,
+    "/^gh\\s+pr\\s+(create|comment|review|ready|edit|close|reopen)\\b/": true,
+    "/^gh\\s+issue\\s+(list|view|status|create|comment|close|reopen)\\b/": true,
+    "/^gh\\s+repo\\s+(view|browse)\\b/": true,
+    "/^gh\\s+run\\s+(list|view)\\b/": true,
+    "/^gh\\s+workflow\\s+(list|view)\\b/": true,
+    "/^gh\\s+pr\\s+merge\\b/": false,
+    "/^gh\\s+workflow\\s+run\\b/": false,
+    "/^gh\\s+run\\s+rerun\\b/": false,
+
+    "/^fly\\s+(status|logs|releases|apps\\s+list|info)\\b/": true,
+    "/^fly\\s+deploy\\b/": false,
+    "/^fly\\s+secrets\\b/": false,
+
+    "/^bin\\/rails\\s+db:(drop|reset|purge)\\b/": false,
+
+    "rm": false,
+    "rmdir": false,
+    "dd": false,
+    "kill": false,
+    "curl": false,
+    "wget": false,
+    "chmod": false,
+    "chown": false,
+    "eval": false,
+    "sudo": false
+  }
+}

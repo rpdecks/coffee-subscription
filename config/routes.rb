@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   # Public pages
   root "pages#home"
   get "about", to: "pages#about"
+  get "blog", to: "pages#blog"
   get "gear", to: "pages#gear", as: :gear
   get "faq", to: "pages#faq"
   get "contact", to: "pages#contact"
