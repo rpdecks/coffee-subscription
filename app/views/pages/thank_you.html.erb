@@ -9,21 +9,24 @@
       <p class="text-base font-semibold text-gray-800 mb-3">While you’re here…</p>
       <ul class="space-y-4 text-gray-700 font-sans leading-relaxed">
         <li>
-          <a href="/subscribe" class="inline-flex items-center justify-center rounded-full border border-deshojo bg-deshojo px-6 py-3 text-base font-semibold text-cream transition hover:bg-deshojo/90">
-            Subscribe to a coffee plan
-          </a>
+          <%= link_to "Subscribe to a coffee plan",
+            subscribe_path,
+            class: "inline-flex items-center justify-center rounded-full border border-deshojo bg-deshojo px-6 py-3 text-base font-semibold text-cream transition hover:bg-deshojo/90" %>
         </li>
         <li class="space-y-1">
           <div class="flex items-center gap-2">
             📬
-            <a href="/shop" class="text-deshojo font-medium hover:underline">Grab a fresh roast</a>
+            <%= link_to "Grab a fresh roast", shop_path, class: "text-deshojo font-medium hover:underline" %>
           </div>
           <div class="flex items-center gap-2">
             🧭
-            <a href="/products" class="text-deshojo font-medium hover:underline">Explore our beans</a>
+            <%= link_to "Explore our beans", products_path, class: "text-deshojo font-medium hover:underline" %>
           </div>
         </li>
-        <li class="flex items-center gap-2">📖 <a href="/blog" class="text-deshojo font-medium hover:underline">Read our brewing tips</a></li>
+        <li class="flex items-center gap-2">
+          📖
+          <%= link_to "Read our brewing tips", blog_path, class: "text-deshojo font-medium hover:underline" %>
+        </li>
       </ul>
     </div>
   </div>

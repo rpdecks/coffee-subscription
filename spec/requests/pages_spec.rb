@@ -15,6 +15,13 @@ RSpec.describe "Pages", type: :request do
     end
   end
 
+  describe "GET /blog" do
+    it "returns http success" do
+      get blog_path
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe "GET /faq" do
     it "returns http success" do
       get faq_path
