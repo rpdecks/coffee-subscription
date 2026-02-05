@@ -1,0 +1,163 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: bin/dev",
+      "type": "shell",
+      "command": "bin/dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Web: rails server",
+      "type": "shell",
+      "command": "bin/rails server",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "CSS: tailwind watch",
+      "type": "shell",
+      "command": "bin/rails tailwindcss:watch",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: RSpec (all)",
+      "type": "shell",
+      "command": "bin/rspec",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint: RuboCop",
+      "type": "shell",
+      "command": "bin/rubocop",
+      "problemMatcher": []
+    },
+    {
+      "label": "Security: Brakeman",
+      "type": "shell",
+      "command": "bin/brakeman",
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: migrate",
+      "type": "shell",
+      "command": "bin/rails db:migrate",
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: seed",
+      "type": "shell",
+      "command": "bin/rails db:seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "Quality: rubocop + brakeman + rspec",
+      "dependsOn": [
+        "Lint: RuboCop",
+        "Security: Brakeman",
+        "Test: RSpec (all)"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+
+    {
+      "label": "Git: status",
+      "type": "shell",
+      "command": "git status",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git: branches",
+      "type": "shell",
+      "command": "git branch --verbose",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git: log (10)",
+      "type": "shell",
+      "command": "git --no-pager log --oneline -10",
+      "problemMatcher": []
+    },
+
+    {
+      "label": "GH: auth status",
+      "type": "shell",
+      "command": "gh auth status",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: repo view",
+      "type": "shell",
+      "command": "gh repo view --web",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR list",
+      "type": "shell",
+      "command": "gh pr list",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR view (current branch)",
+      "type": "shell",
+      "command": "gh pr view --web",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR checks (current branch)",
+      "type": "shell",
+      "command": "gh pr checks",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: runs list (10)",
+      "type": "shell",
+      "command": "gh run list -L 10",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: view latest failed run logs",
+      "type": "shell",
+      "command": "sh -lc 'id=$(gh run list -L 1 --status failure --json databaseId -q .[0].databaseId); if [ -z "$id" ] || [ "$id" = "null" ]; then echo "No failed runs found."; exit 0; fi; echo "Viewing failed log for run: $id"; gh run view "$id" --log-failed'",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: workflow list",
+      "type": "shell",
+      "command": "gh workflow list",
+      "problemMatcher": []
+    },
+
+    {
+      "label": "GH: PR create (interactive)",
+      "type": "shell",
+      "command": "gh pr create",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR ready (mark ready for review)",
+      "type": "shell",
+      "command": "gh pr ready",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR review (comment)",
+      "type": "shell",
+      "command": "gh pr review --comment",
+      "problemMatcher": []
+    },
+    {
+      "label": "GH: PR comment",
+      "type": "shell",
+      "command": "gh pr comment",
+      "problemMatcher": []
+    }
+  ]
+}

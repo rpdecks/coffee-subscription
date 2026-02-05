@@ -37,8 +37,11 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
-# Ignore IDE specific files
-.vscode/
+# Ignore IDE specific files (keep shared workspace config)
+.vscode/*
+!.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
 
 # Ignore node modules
 node_modules/
