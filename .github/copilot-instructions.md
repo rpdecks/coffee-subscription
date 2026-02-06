@@ -31,6 +31,7 @@ These are repo-specific rules for automated edits and CLI usage.
 
 - `fly status`, `fly logs`, `fly releases`
 - `fly apps list`, `fly info`
+- `flyctl apps list ...` (read-only)
 
 ### Ask first (destructive / irreversible)
 
