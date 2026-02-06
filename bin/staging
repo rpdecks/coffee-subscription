@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+
+require "json"
+require "open3"
+
+STAGING_APP = ENV.fetch("COFFEE_STAGING_APP", "coffee-staging")
+STAGING_DB_APP = ENV.fetch("COFFEE_STAGING_DB_APP", "coffee-staging-pg")
+
+def run!(cmd)
+  stdout, stderr, status = Open3.capture3(*cmd)
+  unless status.success?
+    warn(stderr.empty? ? stdout : stderr)
+    exit(status.exitstatus || 1)
+  end
+  stdout
+end
+
+def machine_ids(app)
+  raw = run!(["flyctl", "machine", "list", "--app", app, "--json"])
+  JSON.parse(raw).map { |m| m.fetch("id") }
+rescue JSON::ParserError
+  warn "Failed to parse flyctl JSON output for app=#{app}"
+  exit 1
+end
+
+def start_machines(app)
+  ids = machine_ids(app)
+  if ids.empty?
+    puts "No machines found for #{app}"
+    return
+  end
+  ids.each do |id|
+    system("flyctl", "machine", "start", id, "--app", app) || exit($CHILD_STATUS.exitstatus || 1)
+  end
+end
+
+def stop_machines(app)
+  ids = machine_ids(app)
+  if ids.empty?
+    puts "No machines found for #{app}"
+    return
+  end
+  ids.each do |id|
+    system("flyctl", "machine", "stop", id, "--app", app) || exit($CHILD_STATUS.exitstatus || 1)
+  end
+end
+
+def show_status(app)
+  system("flyctl", "status", "--app", app) || exit($CHILD_STATUS.exitstatus || 1)
+end
+
+def usage(exit_code)
+  $stderr.puts <<~USAGE
+    Usage:
+      bin/staging start [app|db|all]
+      bin/staging stop  [app|db|all]
+      bin/staging status [app|db|all]
+
+    Defaults:
+      target = all
+
+    Environment overrides:
+      COFFEE_STAGING_APP=#{STAGING_APP}
+      COFFEE_STAGING_DB_APP=#{STAGING_DB_APP}
+  USAGE
+  exit exit_code
+end
+
+action = ARGV.shift
+target = (ARGV.shift || "all")
+
+apps = case target
+when "app" then [STAGING_APP]
+when "db" then [STAGING_DB_APP]
+when "all" then [STAGING_APP, STAGING_DB_APP]
+else
+  usage(2)
+end
+
+case action
+when "start"
+  apps.each { |a| start_machines(a) }
+when "stop"
+  apps.each { |a| stop_machines(a) }
+when "status"
+  apps.each do |a|
+    puts("\n=== #{a} ===")
+    show_status(a)
+  end
+else
+  usage(2)
+end
