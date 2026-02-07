@@ -37,6 +37,16 @@
       <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input-field" %>
     </div>
 
+    <div class="flex items-start gap-3">
+      <%= check_box_tag "user[newsletter_opt_in]", "1", false,
+                        id: "user_newsletter_opt_in",
+                        class: "mt-1 h-4 w-4 rounded border-gray-300 text-deshojo focus:ring-deshojo" %>
+      <div>
+        <%= label_tag "user_newsletter_opt_in", "Subscribe to the newsletter", class: "text-sm font-medium text-gray-700" %>
+        <p class="text-xs text-gray-500">Occasional updates on new coffees, brewing tips, and offers.</p>
+      </div>
+    </div>
+
     <div>
       <%= f.submit "Sign Up", class: "btn-primary w-full" %>
     </div>

@@ -4,6 +4,8 @@ class User < ApplicationRecord
     devise :database_authenticatable, :registerable,
       :recoverable, :rememberable, :validatable, :confirmable
 
+  attr_accessor :newsletter_opt_in
+
   def self.serialize_from_session(key, salt = nil)
     if salt.nil? && key.is_a?(Array)
       salt = key[1]

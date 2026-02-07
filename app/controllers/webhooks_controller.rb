@@ -97,6 +97,10 @@ class WebhooksController < ApplicationController
     # Get metadata
     metadata = session.metadata
 
+    if ActiveModel::Type::Boolean.new.cast(metadata["newsletter_opt_in"])
+      NewsletterOptInService.subscribe(email: user.email)
+    end
+
     # Check if this is a one-time purchase or subscription
     if metadata["order_type"] == "one_time"
       handle_one_time_purchase(session, user, metadata)

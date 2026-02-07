@@ -216,6 +216,16 @@
         <p class="text-sm text-gray-600">Final price will be calculated based on your selections above.</p>
       </div>
 
+      <div class="mt-6 flex items-start gap-3">
+        <%= check_box_tag :newsletter_opt_in, "1", false,
+                          id: "newsletter_opt_in",
+                          class: "mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" %>
+        <div>
+          <%= label_tag :newsletter_opt_in, "Subscribe to the newsletter", class: "text-sm font-medium text-gray-700" %>
+          <p class="text-xs text-gray-600">Optional. You can sign up again anytime.</p>
+        </div>
+      </div>
+
       <%= f.submit "Continue to Checkout", class: "w-full bg-blue-600 text-white px-8 py-4 rounded-lg text-xl font-semibold hover:bg-blue-700 transition-colors cursor-pointer" %>
 
       <p class="text-center text-sm text-gray-600 mt-4">

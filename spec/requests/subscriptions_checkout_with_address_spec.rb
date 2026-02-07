@@ -66,7 +66,7 @@ RSpec.describe "Subscription Checkout with Shipping Address", type: :request do
 
       it "passes shipping_address_id to Stripe metadata" do
         expect(StripeService).to receive(:create_checkout_session) do |args|
-          expect(args[:metadata][:shipping_address_id]).to be_present
+          expect(args[:metadata]["shipping_address_id"]).to be_present
           double(url: "https://checkout.stripe.com/test")
         end
 
@@ -110,7 +110,7 @@ RSpec.describe "Subscription Checkout with Shipping Address", type: :request do
 
       it "uses the existing address" do
         expect(StripeService).to receive(:create_checkout_session) do |args|
-          expect(args[:metadata][:shipping_address_id]).to eq(existing_address.id.to_s)
+          expect(args[:metadata]["shipping_address_id"]).to eq(existing_address.id.to_s)
           double(url: "https://checkout.stripe.com/test")
         end
 
