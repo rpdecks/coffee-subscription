@@ -12,8 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Run subscription order generation
+      - name: Ensure Fly machine is running
+        shell: bash
         run: |
-          flyctl ssh console -a coffee-production -C "bin/rails subscriptions:generate_orders"
+          set -euo pipefail
+
+          # This app is configured with `min_machines_running = 0`, so it may be fully stopped
+          # when the schedule fires. Ensure there's an `app` machine available to SSH into.
+          flyctl scale count -a coffee-production app=1
+      - name: Run subscription order generation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Give Fly a moment to start a machine before attempting SSH.
+          for attempt in {1..10}; do
+            if flyctl ssh console -a coffee-production -C "bin/rails subscriptions:generate_orders"; then
+              exit 0
+            fi
+
+            echo "Attempt ${attempt} failed; waiting for machine startup..." >&2
+            sleep 6
+          done
+
+          echo "Failed to run scheduled task after retries." >&2
+          exit 1
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
