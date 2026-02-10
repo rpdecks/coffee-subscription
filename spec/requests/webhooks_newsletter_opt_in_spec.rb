@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Stripe webhook newsletter opt-in", type: :request do
   it "subscribes the user when checkout metadata includes opt-in" do
-    user = create(:user, email: "customer@example.com", stripe_customer_id: "cus_123")
+    create(:user, email: "customer@example.com", stripe_customer_id: "cus_123")
 
     allow(ButtondownService).to receive(:configured?).and_return(true)
     expect(ButtondownService).to receive(:subscribe).with(email: "customer@example.com").and_return(true)
