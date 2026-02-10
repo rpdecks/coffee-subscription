@@ -20,6 +20,16 @@ jobs:
           # This app is configured with `min_machines_running = 0`, so it may be fully stopped
           # when the schedule fires. Ensure there's an `app` machine available to SSH into.
           flyctl scale count -a coffee-production app=1
+
+          # If all machines are stopped, `scale count` may keep the desired count but still leave
+          # nothing in a started state. Explicitly start one machine if needed.
+          started_id=$(flyctl machines list -a coffee-production | awk 'NR>1 && $3=="started" {print $1; exit}')
+          if [ -z "${started_id}" ]; then
+            any_id=$(flyctl machines list -a coffee-production | awk 'NR>1 {print $1; exit}')
+            if [ -n "${any_id}" ]; then
+              flyctl machine start -a coffee-production "${any_id}" || true
+            fi
+          fi
       - name: Run subscription order generation
         shell: bash
         run: |
