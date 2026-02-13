@@ -167,5 +167,22 @@ RSpec.describe "Admin::Products", type: :request do
       delete admin_product_path(product)
       expect(response).to redirect_to(admin_products_path)
     end
+
+    context "when product has order items" do
+      before { create(:order_item, product: product) }
+
+      it "does not destroy the product" do
+        expect {
+          delete admin_product_path(product)
+        }.not_to change(Product, :count)
+      end
+
+      it "redirects to product page with an alert" do
+        delete admin_product_path(product)
+        expect(response).to redirect_to(admin_product_path(product))
+        follow_redirect!
+        expect(response.body).to include("Cannot delete record because dependent order items exist")
+      end
+    end
   end
 end
