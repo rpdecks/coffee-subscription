@@ -1,0 +1,23 @@
+<tr class="<%= event.event_type.present? ? 'bg-amber-50' : '' %>">
+  <td class="px-3 py-1.5 font-mono text-gray-700"><%= event.formatted_time %></td>
+  <td class="px-3 py-1.5 font-mono font-semibold text-gray-900"><%= event.bean_temp_f %></td>
+  <td class="px-3 py-1.5 font-mono text-gray-700"><%= event.manifold_wc %></td>
+  <td class="px-3 py-1.5 text-gray-600"><%= event.air_position_display %></td>
+  <td class="px-3 py-1.5">
+    <% if event.event_type.present? %>
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold
+        <%= case event.event_type
+            when 'charge' then 'bg-blue-100 text-blue-800'
+            when 'turning_point' then 'bg-cyan-100 text-cyan-800'
+            when 'yellow' then 'bg-yellow-100 text-yellow-800'
+            when 'cinnamon' then 'bg-amber-100 text-amber-800'
+            when 'first_crack_start', 'first_crack_rolling' then 'bg-orange-100 text-orange-800'
+            when 'first_crack_end' then 'bg-red-100 text-red-800'
+            when 'drop' then 'bg-red-200 text-red-900'
+            end %>">
+        <%= event.event_type_display %>
+      </span>
+    <% end %>
+  </td>
+  <td class="px-3 py-1.5 text-gray-500 text-xs"><%= event.notes %></td>
+</tr>

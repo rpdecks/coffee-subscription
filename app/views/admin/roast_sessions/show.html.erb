@@ -1,0 +1,201 @@
+<%= content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
+<div data-controller="roast-logger"
+     data-roast-logger-session-id-value="<%= @roast_session.id %>"
+     data-roast-logger-started-at-value="<%= @roast_session.started_at&.iso8601 %>"
+     data-roast-logger-active-value="<%= @roast_session.active? %>"
+     data-roast-logger-events-url-value="<%= admin_roast_session_roast_events_path(@roast_session, format: :json) %>"
+     data-roast-logger-existing-events-value="<%= @roast_events.map { |e| { id: e.id, time_seconds: e.time_seconds, bean_temp_f: e.bean_temp_f, manifold_wc: e.manifold_wc, air_position: e.air_position, event_type: e.event_type, event_type_display: e.event_type_display, notes: e.notes } }.to_json %>">
+
+  <%# ── HEADER ── %>
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">
+        <%= @roast_session.coffee_name %>
+        <% if @roast_session.lot_id.present? %>
+          <span class="text-gray-400 text-sm font-normal ml-1">#<%= @roast_session.lot_id %></span>
+        <% end %>
+      </h1>
+      <p class="text-sm text-gray-500">
+        <%= @roast_session.process %> · <%= @roast_session.batch_size_g %>g · <%= @roast_session.gas_type.upcase %>
+        <% if @roast_session.charge_temp_target_f %>
+          · Charge Target: <%= @roast_session.charge_temp_target_f %>°F
+        <% end %>
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <% if @roast_session.active? %>
+        <%= link_to export_admin_roast_session_path(@roast_session), class: "text-sm text-gray-500 hover:text-gray-700" do %>
+          Export CSV
+        <% end %>
+        <%= button_to "END ROAST", end_roast_admin_roast_session_path(@roast_session), method: :patch, class: "px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow transition-colors cursor-pointer", data: { turbo_confirm: "End this roast session?" } %>
+      <% else %>
+        <%= link_to "Export CSV", export_admin_roast_session_path(@roast_session), class: "px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium text-sm rounded-lg transition-colors" %>
+        <%= link_to "Edit", edit_admin_roast_session_path(@roast_session), class: "px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium text-sm rounded-lg transition-colors" %>
+        <%= link_to "← All Roasts", admin_roast_sessions_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── TIMER ── %>
+  <div class="bg-gray-900 rounded-xl shadow-lg p-4 mb-4 text-center">
+    <div class="text-5xl sm:text-6xl font-mono font-bold tracking-wider"
+         data-roast-logger-target="timer"
+         style="color: <%= @roast_session.active? ? '#f59e0b' : '#9ca3af' %>">
+      <%= @roast_session.active? ? "0:00" : @roast_session.formatted_duration %>
+    </div>
+    <% if @roast_session.active? %>
+      <p class="text-gray-400 text-xs mt-1">ROAST IN PROGRESS</p>
+    <% elsif @roast_session.completed? %>
+      <p class="text-gray-400 text-xs mt-1">ROAST COMPLETE</p>
+    <% end %>
+  </div>
+
+  <% if @roast_session.active? %>
+    <%# ── LIVE INPUT PANEL ── %>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+      <%# Main data entry — spans 3 cols %>
+      <div class="lg:col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div id="event-errors"></div>
+
+        <form data-roast-logger-target="entryForm" data-action="submit->roast-logger#logEntry">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Bean Temp °F</label>
+              <input type="number" name="roast_event[bean_temp_f]"
+                     data-roast-logger-target="beanTemp"
+                     class="w-full rounded-lg border-gray-300 text-xl font-mono font-bold text-center focus:ring-amber-500 focus:border-amber-500"
+                     step="0.1" inputmode="decimal" required
+                     tabindex="1">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Manifold (wc)</label>
+              <input type="number" name="roast_event[manifold_wc]"
+                     data-roast-logger-target="manifoldWc"
+                     class="w-full rounded-lg border-gray-300 text-xl font-mono font-bold text-center focus:ring-amber-500 focus:border-amber-500"
+                     step="0.1" inputmode="decimal" required
+                     tabindex="2">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Air Position</label>
+              <select name="roast_event[air_position]"
+                      data-roast-logger-target="airPosition"
+                      class="w-full rounded-lg border-gray-300 text-sm font-medium focus:ring-amber-500 focus:border-amber-500"
+                      tabindex="3">
+                <option value="drum">DRUM</option>
+                <option value="fifty_fifty">50/50</option>
+                <option value="cooling">COOLING</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Notes</label>
+              <input type="text" name="roast_event[notes]"
+                     data-roast-logger-target="notes"
+                     class="w-full rounded-lg border-gray-300 text-sm focus:ring-amber-500 focus:border-amber-500"
+                     placeholder="Optional"
+                     tabindex="4">
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="w-full py-3 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-lg rounded-lg shadow-md transition-colors uppercase tracking-wide cursor-pointer"
+                  tabindex="5">
+            LOG ENTRY
+          </button>
+        </form>
+      </div>
+
+      <%# Event Markers sidebar %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Event Markers</h3>
+        <div class="grid grid-cols-2 lg:grid-cols-1 gap-2">
+          <% [
+            ["charge", "CHARGE", "bg-blue-600 hover:bg-blue-700"],
+            ["turning_point", "TURNING PT", "bg-cyan-600 hover:bg-cyan-700"],
+            ["yellow", "YELLOW", "bg-yellow-500 hover:bg-yellow-600 text-yellow-900"],
+            ["cinnamon", "CINNAMON", "bg-amber-700 hover:bg-amber-800"],
+            ["first_crack_start", "1C START", "bg-orange-600 hover:bg-orange-700"],
+            ["first_crack_rolling", "1C ROLLING", "bg-orange-700 hover:bg-orange-800"],
+            ["first_crack_end", "1C END", "bg-red-500 hover:bg-red-600"],
+            ["drop", "DROP", "bg-red-700 hover:bg-red-800"]
+          ].each do |event_type, label, colors| %>
+            <button type="button"
+                    class="<%= colors %> text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow transition-colors cursor-pointer"
+                    data-action="click->roast-logger#logMarker"
+                    data-roast-logger-event-type-param="<%= event_type %>">
+              <%= label %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# ── CHART ── %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+    <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Roast Curve</h3>
+    <div class="relative" style="height: 300px;">
+      <canvas data-roast-logger-target="chart"></canvas>
+    </div>
+  </div>
+
+  <%# ── DERIVED METRICS (shown when complete) ── %>
+  <% if @roast_session.completed? && @roast_session.total_roast_time_seconds %>
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+      <h3 class="text-xs font-medium text-amber-800 uppercase tracking-wide mb-3">Roast Metrics</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs text-amber-600">Total Time</p>
+          <p class="text-lg font-mono font-bold text-amber-900"><%= @roast_session.formatted_duration %></p>
+        </div>
+        <% if @roast_session.development_time_seconds %>
+          <div>
+            <p class="text-xs text-amber-600">Dev Time</p>
+            <p class="text-lg font-mono font-bold text-amber-900"><%= @roast_session.formatted_development_time %></p>
+          </div>
+          <div>
+            <p class="text-xs text-amber-600">Dev Ratio</p>
+            <p class="text-lg font-mono font-bold text-amber-900"><%= @roast_session.development_ratio %>%</p>
+          </div>
+        <% end %>
+        <% if @roast_session.weight_loss_percent %>
+          <div>
+            <p class="text-xs text-amber-600">Weight Loss</p>
+            <p class="text-lg font-mono font-bold text-amber-900"><%= @roast_session.weight_loss_percent %>%</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# ── EVENT LOG TABLE ── %>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide px-4 pt-4 pb-2">Event Log</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Temp °F</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Man. wc</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Air</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
+          </tr>
+        </thead>
+        <tbody data-roast-logger-target="eventLog" class="divide-y divide-gray-100">
+          <% @roast_events.each do |event| %>
+            <%= render partial: "admin/roast_events/event_row", locals: { event: event } %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
