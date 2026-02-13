@@ -1,0 +1,81 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">Roast Log</h1>
+    <%= link_to "New Roast", new_admin_roast_session_path, class: "px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow transition-colors" %>
+  </div>
+
+  <% if @roast_sessions.any? %>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Date</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Coffee</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Process</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Batch (g)</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Duration</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Dev Ratio</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Wt Loss</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% @roast_sessions.each do |session| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 text-sm text-gray-600">
+                <%= session.started_at&.strftime("%b %d, %Y") || "—" %>
+              </td>
+              <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                <%= session.coffee_name %>
+                <% if session.lot_id.present? %>
+                  <span class="text-gray-400 text-xs ml-1">#<%= session.lot_id %></span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600"><%= session.process || "—" %></td>
+              <td class="px-4 py-3 text-sm text-gray-600"><%= session.batch_size_g %></td>
+              <td class="px-4 py-3 text-sm font-mono text-gray-700"><%= session.formatted_duration %></td>
+              <td class="px-4 py-3 text-sm text-gray-600">
+                <%= session.development_ratio ? "#{session.development_ratio}%" : "—" %>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600">
+                <%= session.weight_loss_percent ? "#{session.weight_loss_percent}%" : "—" %>
+              </td>
+              <td class="px-4 py-3">
+                <% if session.active? %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                    Live
+                  </span>
+                <% elsif session.completed? %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                    Complete
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <%= link_to "View", admin_roast_session_path(session), class: "text-amber-600 hover:text-amber-800 font-medium" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <% if @pagy.pages > 1 %>
+        <%== @pagy.series_nav %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+      <div class="text-gray-400 mb-3">
+        <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+        </svg>
+      </div>
+      <p class="text-gray-500 text-lg">No roast sessions yet.</p>
+      <p class="text-gray-400 text-sm mt-1">Start your first roast to begin logging.</p>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,3 @@
+<%= turbo_stream.append "event-log" do %>
+  <%= render partial: "admin/roast_events/event_row", locals: { event: @roast_event } %>
+<% end %>

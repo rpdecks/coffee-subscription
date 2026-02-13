@@ -1,0 +1,7 @@
+<div id="event-errors">
+  <% if errors.any? %>
+    <div class="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg mb-3 text-sm">
+      <%= errors.full_messages.join(", ") %>
+    </div>
+  <% end %>
+</div>

@@ -35,6 +35,7 @@
               <%= link_to "Inventory", admin_inventory_index_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/inventory') ? 'bg-gray-800' : ''}" %>
               <%= link_to "Production Plan", admin_production_plan_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path == admin_production_plan_path ? 'bg-gray-800' : ''}" %>
               <%= link_to "Roasted Intake", new_admin_roasted_inventory_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path == new_admin_roasted_inventory_path ? 'bg-gray-800' : ''}" %>
+              <%= link_to "Roast Log", admin_roast_sessions_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/roast_sessions') ? 'bg-gray-800' : ''}" %>
               <%= link_to "Customers", admin_customers_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_customers_path) ? 'bg-gray-800' : ''}" %>
               <%= link_to "Email Tests", email_tests_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(email_tests_path) ? 'bg-gray-800' : ''}" %>
             </div>

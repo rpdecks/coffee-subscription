@@ -112,6 +112,13 @@ Rails.application.routes.draw do
     resources :inventory, except: [ :show ]
     resource :production_plan, only: [ :show ]
     resources :roasted_inventories, only: [ :new, :create ]
+    resources :roast_sessions do
+      member do
+        patch :end_roast
+        get :export
+      end
+      resources :roast_events, only: [ :create ]
+    end
   end
 
   # Email testing (admin only, development)

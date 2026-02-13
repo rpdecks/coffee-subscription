@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_01_213249) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -159,6 +159,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_213249) do
     t.index ["image_attachment_ids_order"], name: "index_products_on_image_attachment_ids_order", using: :gin
   end
 
+  create_table "roast_events", force: :cascade do |t|
+    t.integer "air_position", default: 2, null: false
+    t.float "bean_temp_f"
+    t.datetime "created_at", null: false
+    t.integer "event_type"
+    t.float "manifold_wc"
+    t.text "notes"
+    t.bigint "roast_session_id", null: false
+    t.integer "time_seconds", null: false
+    t.index ["event_type"], name: "index_roast_events_on_event_type"
+    t.index ["roast_session_id", "time_seconds"], name: "index_roast_events_on_roast_session_id_and_time_seconds"
+    t.index ["roast_session_id"], name: "index_roast_events_on_roast_session_id"
+  end
+
+  create_table "roast_sessions", force: :cascade do |t|
+    t.float "ambient_temp_f"
+    t.integer "batch_size_g", null: false
+    t.float "charge_temp_target_f"
+    t.string "coffee_name", null: false
+    t.datetime "created_at", null: false
+    t.float "development_ratio"
+    t.integer "development_time_seconds"
+    t.datetime "ended_at"
+    t.integer "gas_type", default: 0, null: false
+    t.integer "green_weight_g"
+    t.string "lot_id"
+    t.text "notes"
+    t.string "process"
+    t.integer "roasted_weight_g"
+    t.datetime "started_at"
+    t.integer "total_roast_time_seconds"
+    t.datetime "updated_at", null: false
+    t.float "weight_loss_percent"
+    t.index ["coffee_name"], name: "index_roast_sessions_on_coffee_name"
+    t.index ["started_at"], name: "index_roast_sessions_on_started_at"
+  end
+
   create_table "subscription_plans", force: :cascade do |t|
     t.boolean "active"
     t.integer "bags_per_delivery"
@@ -232,6 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_213249) do
   add_foreign_key "orders", "subscriptions"
   add_foreign_key "orders", "users"
   add_foreign_key "payment_methods", "users"
+  add_foreign_key "roast_events", "roast_sessions"
   add_foreign_key "subscriptions", "subscription_plans"
   add_foreign_key "subscriptions", "users"
 end
