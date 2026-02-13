@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   has_one_attached :image
   has_many_attached :images
   has_many :inventory_items, dependent: :destroy
+  has_many :order_items, dependent: :restrict_with_error
 
   after_commit :ensure_image_order_and_featured, on: [ :create, :update ]
 

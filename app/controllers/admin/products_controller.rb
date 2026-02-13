@@ -117,8 +117,11 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def destroy
-    @product.destroy
-    redirect_to admin_products_path, notice: "Product deleted successfully."
+    if @product.destroy
+      redirect_to admin_products_path, notice: "Product deleted successfully."
+    else
+      redirect_to admin_product_path(@product), alert: @product.errors.full_messages.to_sentence
+    end
   end
 
   def toggle_active
