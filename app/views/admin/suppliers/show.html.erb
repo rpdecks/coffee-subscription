@@ -14,8 +14,10 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div>
         <h3 class="text-sm font-medium text-gray-500">Website</h3>
-        <% if @supplier.url.present? %>
-          <p class="mt-1"><%= link_to @supplier.url, @supplier.url, target: "_blank", class: "text-blue-600 hover:text-blue-800" %></p>
+        <% if @supplier.safe_url %>
+          <p class="mt-1"><a href="<%= @supplier.safe_url %>" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800"><%= @supplier.url %></a></p>
+        <% elsif @supplier.url.present? %>
+          <p class="mt-1 text-gray-900"><%= @supplier.url %></p>
         <% else %>
           <p class="mt-1 text-gray-400">—</p>
         <% end %>
@@ -105,9 +107,18 @@
           </tbody>
         </table>
       </div>
-      <div class="px-6 py-3 border-t border-gray-200">
-        <%== pagy_nav(@pagy) %>
-      </div>
+      <% if @pagy.pages > 1 %>
+        <div class="px-6 py-3 border-t border-gray-200">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-gray-700">
+              Showing <span class="font-medium"><%= @pagy.from %></span> to <span class="font-medium"><%= @pagy.to %></span> of <span class="font-medium"><%= @pagy.count %></span> green coffees
+            </div>
+            <div class="flex items-center gap-2">
+              <%== @pagy.series_nav %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     <% else %>
       <div class="p-8 text-center">
         <p class="text-gray-500">No green coffees from this supplier yet.</p>
