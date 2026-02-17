@@ -1,6 +1,14 @@
 class Admin::RoastedInventoriesController < Admin::BaseController
   def new
+    prefill = params[:prefill] || {}
     @roasted_inventory = InventoryItem.new(state: :roasted, roasted_on: Date.today)
+    @prefill = {
+      product_id: prefill[:product_id],
+      green_weight_used: prefill[:green_weight_used],
+      roasted_weight: prefill[:roasted_weight],
+      lot_number: prefill[:lot_number],
+      batch_id: prefill[:batch_id]
+    }.compact
     load_products
   end
 
@@ -34,6 +42,7 @@ class Admin::RoastedInventoriesController < Admin::BaseController
     else
       flash.now[:alert] = result.errors.join(". ")
       @roasted_inventory = InventoryItem.new(state: :roasted)
+      @prefill = {}
       load_products
       render :new, status: :unprocessable_content
     end
