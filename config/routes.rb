@@ -103,7 +103,10 @@ Rails.application.routes.draw do
 
       delete "images/:attachment_id", to: "products#destroy_image", as: :destroy_image
       patch "images/:attachment_id/feature", to: "products#make_featured_image", as: :make_featured_image
+      resources :blend_components, only: [ :new, :create, :edit, :update, :destroy ]
     end
+    resources :suppliers
+    resources :green_coffees
     resources :subscription_plans do
       member do
         patch :toggle_active
