@@ -1,0 +1,103 @@
+<%= form_with model: [:admin, green_coffee], class: "space-y-6" do |f| %>
+  <% if green_coffee.errors.any? %>
+    <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+      <div class="flex">
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            There <%= green_coffee.errors.count == 1 ? 'was' : 'were' %> <%= pluralize(green_coffee.errors.count, "error") %>:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% green_coffee.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Supplier -->
+    <div class="md:col-span-2">
+      <%= f.label :supplier_id, "Supplier", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.collection_select :supplier_id, suppliers, :id, :name,
+          { prompt: "Select a supplier" },
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Name -->
+    <div class="md:col-span-2">
+      <%= f.label :name, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :name, placeholder: "e.g. Altiplano Blend, Ethiopia Guji", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Origin Country -->
+    <div>
+      <%= f.label :origin_country, "Country of Origin", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :origin_country, placeholder: "e.g. Colombia, Ethiopia", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Region -->
+    <div>
+      <%= f.label :region, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :region, placeholder: "e.g. Huila, Yirgacheffe", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Variety -->
+    <div>
+      <%= f.label :variety, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :variety, placeholder: "e.g. Caturra, Heirloom, Typica", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Process -->
+    <div>
+      <%= f.label :process, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :process, placeholder: "e.g. Washed, Natural, Honey", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Quantity -->
+    <div>
+      <%= f.label :quantity_lbs, "Quantity (lbs)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.number_field :quantity_lbs, step: 0.01, min: 0, placeholder: "0.00", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Cost per lb -->
+    <div>
+      <%= f.label :cost_per_lb, "Cost per lb ($)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.number_field :cost_per_lb, step: 0.01, min: 0, placeholder: "0.00", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Lot Number -->
+    <div>
+      <%= f.label :lot_number, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :lot_number, placeholder: "Optional", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <!-- Harvest Date -->
+    <div>
+      <%= f.label :harvest_date, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.date_field :harvest_date, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      <p class="mt-1 text-sm text-gray-500">When the coffee was harvested (for freshness tracking)</p>
+    </div>
+
+    <!-- Arrived On -->
+    <div>
+      <%= f.label :arrived_on, "Arrival Date", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.date_field :arrived_on, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      <p class="mt-1 text-sm text-gray-500">When you received this coffee</p>
+    </div>
+
+    <!-- Notes -->
+    <div class="md:col-span-2">
+      <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_area :notes, rows: 3, placeholder: "Cupping notes, blend suggestions, etc.", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+  </div>
+
+  <div class="flex gap-4 pt-4 border-t border-gray-200">
+    <%= f.submit class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer" %>
+    <%= link_to "Cancel", admin_green_coffees_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium" %>
+  </div>
+<% end %>

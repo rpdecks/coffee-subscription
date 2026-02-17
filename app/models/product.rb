@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   has_many_attached :images
   has_many :inventory_items, dependent: :destroy
   has_many :order_items, dependent: :restrict_with_error
+  has_many :blend_components, dependent: :destroy
+  has_many :green_coffees, through: :blend_components
 
   after_commit :ensure_image_order_and_featured, on: [ :create, :update ]
 
