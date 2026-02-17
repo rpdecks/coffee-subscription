@@ -1,0 +1,190 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Green Coffee Inventory</h1>
+      <p class="text-gray-600 mt-1">Track your unroasted green coffee beans by supplier and origin</p>
+    </div>
+    <%= link_to "Add Green Coffee", new_admin_green_coffee_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Total Inventory</p>
+          <p class="text-2xl font-bold text-gray-900"><%= number_with_precision(@total_lbs, precision: 1) %> lbs</p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Total Lots</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @total_lots %></p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">In Stock</p>
+          <p class="text-2xl font-bold text-green-600"><%= @in_stock_count %></p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500">Past Crop</p>
+          <p class="text-2xl font-bold text-red-600"><%= @past_crop_count %></p>
+        </div>
+        <div class="p-3 bg-red-100 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <%= form_with url: admin_green_coffees_path, method: :get, class: "space-y-4" do %>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <%= text_field_tag :search, params[:search], placeholder: "Search name, lot, origin...", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <div>
+          <%= select_tag :supplier_id,
+              options_from_collection_for_select(@suppliers, :id, :name, params[:supplier_id]),
+              prompt: "All Suppliers",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <div>
+          <%= select_tag :freshness,
+              options_for_select([["All Freshness", ""], ["Fresh (<6 mo)", "fresh"], ["Good (6-10 mo)", "good"], ["Aging (10-12 mo)", "aging"], ["Past Crop (>12 mo)", "past_crop"]], params[:freshness]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <div>
+          <%= select_tag :stock,
+              options_for_select([["All Stock", ""], ["In Stock", "in_stock"], ["Out of Stock", "out_of_stock"]], params[:stock]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <%= submit_tag "Apply Filters", class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer" %>
+        <%= link_to "Clear", admin_green_coffees_path, class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Green Coffees Table -->
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @green_coffees.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coffee</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Origin</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Freshness</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Used In</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @green_coffees.each do |gc| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= link_to gc.name, admin_green_coffee_path(gc), class: "hover:text-blue-600" %>
+                  </div>
+                  <% if gc.lot_number.present? %>
+                    <div class="text-xs text-gray-500">Lot: <%= gc.lot_number %></div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    <%= link_to gc.supplier.name, admin_supplier_path(gc.supplier), class: "hover:text-blue-600" %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900"><%= gc.display_origin.presence || "—" %></div>
+                  <% if gc.display_details.present? %>
+                    <div class="text-xs text-gray-500"><%= gc.display_details %></div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900"><%= number_with_precision(gc.quantity_lbs, precision: 1) %> lbs</div>
+                  <% if gc.quantity_lbs == 0 %>
+                    <div class="text-xs text-red-600">Out of Stock</div>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if gc.cost_per_lb %>
+                    <div class="text-sm text-gray-900"><%= number_to_currency(gc.cost_per_lb) %>/lb</div>
+                  <% else %>
+                    <span class="text-sm text-gray-400">—</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= render partial: "admin/green_coffees/freshness_badge", locals: { green_coffee: gc } %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if gc.blend_components.any? %>
+                    <div class="text-xs text-gray-600">
+                      <% gc.blend_components.each do |bc| %>
+                        <div><%= bc.product.name %> (<%= bc.percentage %>%)</div>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="text-sm text-gray-400">—</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                  <%= link_to "View", admin_green_coffee_path(gc), class: "text-blue-600 hover:text-blue-900" %>
+                  <%= link_to "Edit", edit_admin_green_coffee_path(gc), class: "text-gray-600 hover:text-gray-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="px-6 py-3 border-t border-gray-200">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% else %>
+      <div class="p-12 text-center">
+        <p class="text-gray-500 text-lg">No green coffees found.</p>
+        <p class="text-gray-400 mt-2">Add a supplier first, then add green coffee purchases.</p>
+        <div class="mt-4 flex items-center justify-center gap-3">
+          <%= link_to "Add Supplier", new_admin_supplier_path, class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+          <%= link_to "Add Green Coffee", new_admin_green_coffee_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

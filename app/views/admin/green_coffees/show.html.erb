@@ -1,0 +1,110 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex items-center gap-4">
+    <%= link_to admin_green_coffees_path, class: "text-gray-600 hover:text-gray-900" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+    <h1 class="text-3xl font-bold text-gray-900"><%= @green_coffee.name %></h1>
+    <%= render partial: "admin/green_coffees/freshness_badge", locals: { green_coffee: @green_coffee } %>
+  </div>
+
+  <!-- Details Card -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Supplier</h3>
+        <p class="mt-1 text-gray-900">
+          <%= link_to @green_coffee.supplier.name, admin_supplier_path(@green_coffee.supplier), class: "text-blue-600 hover:text-blue-800" %>
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Origin</h3>
+        <p class="mt-1 text-gray-900"><%= @green_coffee.display_origin.presence || "—" %></p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Variety / Process</h3>
+        <p class="mt-1 text-gray-900"><%= @green_coffee.display_details.presence || "—" %></p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Quantity On Hand</h3>
+        <p class="mt-1 text-2xl font-bold text-gray-900"><%= number_with_precision(@green_coffee.quantity_lbs, precision: 1) %> lbs</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Cost</h3>
+        <% if @green_coffee.cost_per_lb %>
+          <p class="mt-1 text-gray-900"><%= number_to_currency(@green_coffee.cost_per_lb) %>/lb</p>
+          <% if @green_coffee.total_cost %>
+            <p class="text-sm text-gray-500">Total: <%= number_to_currency(@green_coffee.total_cost) %></p>
+          <% end %>
+        <% else %>
+          <p class="mt-1 text-gray-400">—</p>
+        <% end %>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Lot Number</h3>
+        <p class="mt-1 text-gray-900"><%= @green_coffee.lot_number.presence || "—" %></p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Harvest Date</h3>
+        <p class="mt-1 text-gray-900"><%= @green_coffee.harvest_date&.strftime("%B %Y") || "—" %></p>
+        <% if @green_coffee.months_since_harvest %>
+          <p class="text-sm text-gray-500"><%= @green_coffee.months_since_harvest %> months ago</p>
+        <% end %>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Arrived On</h3>
+        <p class="mt-1 text-gray-900"><%= @green_coffee.arrived_on&.strftime("%m/%d/%Y") || "—" %></p>
+        <% if @green_coffee.days_since_arrival %>
+          <p class="text-sm text-gray-500"><%= @green_coffee.days_since_arrival %> days ago</p>
+        <% end %>
+      </div>
+    </div>
+    <% if @green_coffee.notes.present? %>
+      <div class="mt-6 pt-4 border-t border-gray-200">
+        <h3 class="text-sm font-medium text-gray-500">Notes</h3>
+        <p class="mt-1 text-gray-900"><%= simple_format(@green_coffee.notes) %></p>
+      </div>
+    <% end %>
+    <div class="mt-4 pt-4 border-t border-gray-200 flex gap-3">
+      <%= link_to "Edit", edit_admin_green_coffee_path(@green_coffee), class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      <%= button_to "Delete", admin_green_coffee_path(@green_coffee), method: :delete,
+        data: { turbo_confirm: "Delete #{@green_coffee.name}?" },
+        class: "px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors" %>
+    </div>
+  </div>
+
+  <!-- Used In Products (Blend Components) -->
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-bold text-gray-900">Used In Products</h2>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <% if @blend_components.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @blend_components.each do |bc| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to bc.product.name, admin_product_path(bc.product), class: "text-sm font-medium text-blue-600 hover:text-blue-800" %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= bc.percentage %>%
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="p-8 text-center">
+        <p class="text-gray-500">This green coffee isn't used in any product blends yet.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
