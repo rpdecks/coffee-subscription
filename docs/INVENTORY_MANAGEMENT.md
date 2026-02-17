@@ -163,16 +163,11 @@ When you roast 10 lbs of green coffee:
 
 ### Example 3: Palmatum Blend Management
 
-Your Palmatum blend (signature roast) is made from multiple products:
+Your Palmatum blend (signature roast) is made from multiple products.
 
-**Current Approach:**
-
-- Track individual green coffee inventories
-- When creating Palmatum blend, reduce quantities from source products
-- Create roasted Palmatum inventory entry with the blend components noted
-
-**Future Enhancement Idea:**
-You could add a `blend_components` table to formally track which products make up each blend with ratios.
+> **Note:** Blend recipe tracking is now implemented via the **Green Coffee Supply Chain** feature. See [GREEN_COFFEE_SUPPLY_CHAIN.md](GREEN_COFFEE_SUPPLY_CHAIN.md).
+>
+> Use `GreenCoffee` records to track source beans from suppliers, and `BlendComponent` records to define the recipe (percentages) on each Product. The `InventoryItem` green state is still functional but `GreenCoffee.quantity_lbs` provides richer source-level tracking.
 
 ### Example 4: Monitoring Freshness
 
@@ -201,8 +196,8 @@ The service also shows the number of outstanding orders covered in the plan and 
 Consider adding:
 
 - Automated inventory deduction when orders ship
-- Blend component tracking (for Palmatum and other blends)
-- Cost per pound tracking for COGS calculations
+- ~~Blend component tracking (for Palmatum and other blends)~~ — **Done.** See [GREEN_COFFEE_SUPPLY_CHAIN.md](GREEN_COFFEE_SUPPLY_CHAIN.md)
+- ~~Cost per pound tracking for COGS calculations~~ — **Partially done.** `GreenCoffee.cost_per_lb` and `BlendComponent.percentage` enable per-bag cost calculation
 - Inventory history/audit log
 - Barcode/QR code generation for lot tracking
 - Reorder alerts based on average usage
