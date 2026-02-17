@@ -9,6 +9,12 @@ class Supplier < ApplicationRecord
     name
   end
 
+  # Returns URL only if it uses a safe protocol, nil otherwise.
+  # This satisfies Brakeman's LinkToHref check.
+  def safe_url
+    url.presence&.match?(%r{\Ahttps?://}) ? url : nil
+  end
+
   def green_coffee_count
     green_coffees.count
   end

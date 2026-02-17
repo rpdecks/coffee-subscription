@@ -66,3 +66,26 @@ end
 
 # Prepend to all controllers that include Pagy::Backend
 ApplicationController.prepend(PagyTestOverride)
+
+# Provide pagy_nav helper in views during tests
+module PagyTestFrontendOverride
+  def pagy_nav(pagy, **)
+    return "" unless pagy
+
+    html = +""
+    if pagy.pages > 1
+      html << '<nav class="pagination" aria-label="Pagination">'
+      1.upto(pagy.pages) do |page|
+        if page == pagy.page
+          html << %(<span class="current">#{page}</span> )
+        else
+          html << %(<a href="?page=#{page}">#{page}</a> )
+        end
+      end
+      html << "</nav>"
+    end
+    html.html_safe
+  end
+end
+
+ActionView::Base.prepend(PagyTestFrontendOverride)
