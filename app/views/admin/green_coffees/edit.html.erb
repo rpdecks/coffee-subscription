@@ -1,0 +1,14 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex items-center gap-4">
+    <%= link_to admin_green_coffee_path(@green_coffee), class: "text-gray-600 hover:text-gray-900" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+    <h1 class="text-3xl font-bold text-gray-900">Edit Green Coffee</h1>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <%= render "form", green_coffee: @green_coffee, suppliers: @suppliers %>
+  </div>
+</div>
