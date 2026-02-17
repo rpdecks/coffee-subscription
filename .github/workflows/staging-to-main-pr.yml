@@ -23,6 +23,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
+          # Skip if staging has no commits ahead of main
+          AHEAD=$(git rev-list --count origin/main..origin/staging)
+          if [ "$AHEAD" -eq 0 ]; then
+            echo "staging is not ahead of main — nothing to PR"
+            exit 0
+          fi
+          echo "staging is $AHEAD commit(s) ahead of main"
+
           # Check if PR already exists
           EXISTING_PR=$(gh pr list -B main -H staging --json number -q '.[0].number' 2>/dev/null || echo "")
 
