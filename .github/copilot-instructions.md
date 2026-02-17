@@ -63,6 +63,7 @@ If asked to “fix CI”, prefer inspecting with `gh pr checks` / `gh run view -
 - Tests: RSpec via `bin/rspec`.
 - Linting: `bin/rubocop`.
 - Security scan: `bin/brakeman`.
+- Supply chain: `Supplier` → `GreenCoffee` → `BlendComponent` → `Product`. See `docs/GREEN_COFFEE_SUPPLY_CHAIN.md`.
 
 ## When debugging
 
