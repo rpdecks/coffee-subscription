@@ -22,6 +22,26 @@ RSpec.describe "Admin::RoastedInventories", type: :request do
       get new_admin_roasted_inventory_path
       expect(response.body).to include("15.00 lbs green available")
     end
+
+    context "with prefill params (duplicate)" do
+      it "pre-fills the form with values from another roast" do
+        get new_admin_roasted_inventory_path, params: {
+          prefill: {
+            product_id: product.id,
+            green_weight_used: "1.10",
+            roasted_weight: "0.94",
+            lot_number: "PAL-2026-02-16-A",
+            batch_id: "B001"
+          }
+        }
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Palmatum Blend")
+        expect(response.body).to include("1.10")
+        expect(response.body).to include("0.94")
+        expect(response.body).to include("PAL-2026-02-16-A")
+        expect(response.body).to include("B001")
+      end
+    end
   end
 
   describe "POST /admin/roasted_inventories" do

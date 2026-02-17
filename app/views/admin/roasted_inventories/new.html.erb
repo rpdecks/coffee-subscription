@@ -30,7 +30,7 @@
           <!-- Product -->
           <div class="md:col-span-2">
             <%= form.label :product_id, "Product", class: "text-sm font-medium text-gray-700" %>
-            <%= form.select :product_id, options_from_collection_for_select(@products, :id, :name), { prompt: "Select a coffee SKU" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.select :product_id, options_from_collection_for_select(@products, :id, :name, @prefill[:product_id].to_i), { prompt: "Select a coffee SKU" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
 
             <% @products.each do |product| %>
               <div class="hidden mt-2 text-sm" data-product-green="<%= product.id %>">
@@ -51,39 +51,50 @@
           <!-- Green Weight Used -->
           <div>
             <%= form.label :green_weight_used, "Green weight used (lbs)", class: "text-sm font-medium text-gray-700" %>
-            <%= form.number_field :green_weight_used, step: 0.01, min: 0, placeholder: "e.g. 1.10", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.number_field :green_weight_used, step: 0.01, min: 0, value: @prefill[:green_weight_used], placeholder: "e.g. 1.10", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
             <p class="mt-1 text-xs text-gray-500">Pre-roast weight of beans charged</p>
           </div>
 
           <!-- Roasted Weight -->
           <div>
             <%= form.label :roasted_weight, "Roasted weight (lbs)", class: "text-sm font-medium text-gray-700" %>
-            <%= form.number_field :roasted_weight, step: 0.01, min: 0, placeholder: "e.g. 0.94", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.number_field :roasted_weight, step: 0.01, min: 0, value: @prefill[:roasted_weight], placeholder: "e.g. 0.94", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
             <p class="mt-1 text-xs text-gray-500">Post-roast weight — this becomes your sellable inventory</p>
           </div>
 
           <!-- Roast Date -->
           <div>
             <%= form.label :roasted_on, "Roast Date", class: "text-sm font-medium text-gray-700" %>
-            <%= form.date_field :roasted_on, value: Date.today, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.date_field :roasted_on, value: Date.today, id: "roast-date", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
           </div>
 
           <!-- Use By -->
           <div>
-            <%= form.label :expires_on, "Use By", class: "text-sm font-medium text-gray-700" %>
-            <%= form.date_field :expires_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <label for="shelf-life-weeks" class="text-sm font-medium text-gray-700">Shelf life</label>
+            <div class="mt-1 flex gap-2">
+              <select id="shelf-life-weeks" class="block w-28 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                <option value="2">2 weeks</option>
+                <option value="3">3 weeks</option>
+                <option value="4">4 weeks</option>
+                <option value="6" selected>6 weeks</option>
+                <option value="8">8 weeks</option>
+                <option value="custom">Custom</option>
+              </select>
+              <%= form.date_field :expires_on, id: "expires-on", value: Date.today + 42, class: "block flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" %>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Auto-calculated from roast date + weeks</p>
           </div>
 
           <!-- Cropster Batch ID -->
           <div>
             <%= form.label :batch_id, "Cropster Batch ID", class: "text-sm font-medium text-gray-700" %>
-            <%= form.text_field :batch_id, placeholder: "Optional", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.text_field :batch_id, value: @prefill[:batch_id], placeholder: "Optional", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
           </div>
 
           <!-- Lot Number -->
           <div>
             <%= form.label :lot_number, "Lot / Roast Reference", class: "text-sm font-medium text-gray-700" %>
-            <%= form.text_field :lot_number, placeholder: "e.g. PAL-2026-02-16", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <%= form.text_field :lot_number, value: @prefill[:lot_number], placeholder: "e.g. PAL-2026-02-16", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
           </div>
 
           <!-- Notes -->
@@ -203,5 +214,32 @@
       });
       if (productSelect.value) productSelect.dispatchEvent(new Event("change"));
     }
+
+    // --- Shelf life / Use By auto-calc ---
+    var roastDate = document.getElementById("roast-date");
+    var shelfWeeks = document.getElementById("shelf-life-weeks");
+    var expiresOn = document.getElementById("expires-on");
+
+    function calcExpiry() {
+      var weeks = shelfWeeks.value;
+      if (weeks === "custom") return; // let user pick manually
+      var rd = roastDate.value;
+      if (!rd) return;
+      var d = new Date(rd + "T00:00:00");
+      d.setDate(d.getDate() + parseInt(weeks) * 7);
+      expiresOn.value = d.toISOString().split("T")[0];
+    }
+
+    roastDate.addEventListener("change", calcExpiry);
+    shelfWeeks.addEventListener("change", function() {
+      if (this.value === "custom") {
+        expiresOn.focus();
+      } else {
+        calcExpiry();
+      }
+    });
+
+    // Set initial expiry on load
+    calcExpiry();
   });
 </script>

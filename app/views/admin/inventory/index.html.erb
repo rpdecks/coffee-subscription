@@ -199,6 +199,21 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex gap-2 justify-end">
+                    <% if item.roasted? %>
+                      <%= link_to "Dup",
+                        new_admin_roasted_inventory_path(
+                          prefill: {
+                            product_id: item.product_id,
+                            green_weight_used: item.notes&.match(/Green used: ([\d.]+)/)
+                              &.captures&.first,
+                            roasted_weight: item.quantity,
+                            lot_number: item.lot_number,
+                            batch_id: item.batch_id
+                          }.compact
+                        ),
+                        class: "text-indigo-600 hover:text-indigo-900",
+                        title: "Duplicate as new roast" %>
+                    <% end %>
                     <%= link_to "Edit", edit_admin_inventory_path(item), class: "text-blue-600 hover:text-blue-900" %>
                     <%= button_to "Delete", admin_inventory_path(item), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
                   </div>
