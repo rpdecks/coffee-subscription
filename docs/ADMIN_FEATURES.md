@@ -132,6 +132,62 @@ Admin users can access the panel at `/admin` after logging in with an admin acco
 - Toggle active/inactive status
 - Delete product
 
+### Suppliers (`/admin/suppliers`)
+
+Manage green coffee vendors (Sweet Maria's, Royal Coffee New York, Cafe Imports, etc.).
+
+**List View:**
+
+- Paginated list (25 items per page)
+- Search by supplier name
+- Shows: name, website, contact, green coffee count, total lbs on hand
+
+**Detail View:**
+
+- Supplier info (website, contact, notes)
+- Summary stats (total coffees, total lbs)
+- Paginated list of their green coffees with links
+
+**Actions:**
+
+- Create / edit / delete suppliers
+- "Add Green Coffee" link pre-fills supplier
+
+### Green Coffee (`/admin/green_coffees`)
+
+Track individual lots of unroasted beans purchased from suppliers.
+
+**List View:**
+
+- Paginated list (25 items per page)
+- Search by name, lot number, or origin country
+- Filter by supplier, freshness status, stock status
+- Summary bar: total lbs, total lots, in-stock count, past-crop count
+- Freshness badges (fresh / good / aging / past_crop)
+
+**Detail View:**
+
+- Full lot details (origin, variety, process, harvest date, cost)
+- Freshness status with badge
+- "Used In Products" section showing blend components
+
+**Actions:**
+
+- Create / edit / delete green coffees
+- Link to supplier detail page
+
+### Blend Components (nested under Products)
+
+Define blend recipes on any Product's admin show page.
+
+- **Path:** `/admin/products/:id/blend_components/new`
+- Select a green coffee, set percentage (0–100%)
+- Validates total doesn't exceed 100%
+- Prevents duplicate green coffees per product
+- Supports single-origin (100%) and multi-origin blends
+
+See [GREEN_COFFEE_SUPPLY_CHAIN.md](GREEN_COFFEE_SUPPLY_CHAIN.md) for full schema and workflow details.
+
 ### Subscription Plans Management (`/admin/subscription_plans`)
 
 **List View:**
