@@ -22,108 +22,186 @@
     </div>
   <% end %>
 
-  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <%= form_with url: admin_roasted_inventories_path, scope: :record_roast, local: true do |form| %>
-      <div class="grid gap-6 md:grid-cols-2">
-        <!-- Product -->
-        <div class="md:col-span-2">
-          <%= form.label :product_id, "Product", class: "text-sm font-medium text-gray-700" %>
-          <%= form.select :product_id, options_from_collection_for_select(@products, :id, :name), { prompt: "Select a coffee SKU" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+  <div class="grid gap-6 lg:grid-cols-3">
+    <!-- Main Form (2/3 width on large screens) -->
+    <div class="lg:col-span-2 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <%= form_with url: admin_roasted_inventories_path, scope: :record_roast, local: true do |form| %>
+        <div class="grid gap-6 md:grid-cols-2">
+          <!-- Product -->
+          <div class="md:col-span-2">
+            <%= form.label :product_id, "Product", class: "text-sm font-medium text-gray-700" %>
+            <%= form.select :product_id, options_from_collection_for_select(@products, :id, :name), { prompt: "Select a coffee SKU" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
 
-          <!-- Green inventory info (shown after product selected) -->
-          <% @products.each do |product| %>
-            <div class="hidden mt-2 text-sm" data-product-green="<%= product.id %>">
-              <% green_qty = @green_inventory_by_product[product.id] || 0 %>
-              <% if green_qty > 0 %>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <%= number_with_precision(green_qty, precision: 2) %> lbs green available
-                </span>
-              <% else %>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  No green inventory on record
-                </span>
-              <% end %>
-            </div>
-          <% end %>
+            <% @products.each do |product| %>
+              <div class="hidden mt-2 text-sm" data-product-green="<%= product.id %>">
+                <% green_qty = @green_inventory_by_product[product.id] || 0 %>
+                <% if green_qty > 0 %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <%= number_with_precision(green_qty, precision: 2) %> lbs green available
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    No green inventory on record
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Green Weight Used -->
+          <div>
+            <%= form.label :green_weight_used, "Green weight used (lbs)", class: "text-sm font-medium text-gray-700" %>
+            <%= form.number_field :green_weight_used, step: 0.01, min: 0, placeholder: "e.g. 1.10", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <p class="mt-1 text-xs text-gray-500">Pre-roast weight of beans charged</p>
+          </div>
+
+          <!-- Roasted Weight -->
+          <div>
+            <%= form.label :roasted_weight, "Roasted weight (lbs)", class: "text-sm font-medium text-gray-700" %>
+            <%= form.number_field :roasted_weight, step: 0.01, min: 0, placeholder: "e.g. 0.94", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+            <p class="mt-1 text-xs text-gray-500">Post-roast weight — this becomes your sellable inventory</p>
+          </div>
+
+          <!-- Roast Date -->
+          <div>
+            <%= form.label :roasted_on, "Roast Date", class: "text-sm font-medium text-gray-700" %>
+            <%= form.date_field :roasted_on, value: Date.today, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <!-- Use By -->
+          <div>
+            <%= form.label :expires_on, "Use By", class: "text-sm font-medium text-gray-700" %>
+            <%= form.date_field :expires_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <!-- Cropster Batch ID -->
+          <div>
+            <%= form.label :batch_id, "Cropster Batch ID", class: "text-sm font-medium text-gray-700" %>
+            <%= form.text_field :batch_id, placeholder: "Optional", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <!-- Lot Number -->
+          <div>
+            <%= form.label :lot_number, "Lot / Roast Reference", class: "text-sm font-medium text-gray-700" %>
+            <%= form.text_field :lot_number, placeholder: "e.g. PAL-2026-02-16", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <!-- Notes -->
+          <div class="md:col-span-2">
+            <%= form.label :notes, "Notes", class: "text-sm font-medium text-gray-700" %>
+            <%= form.text_area :notes, rows: 3, placeholder: "Roast profile, observations, etc.", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
         </div>
 
-        <!-- Green Weight Used -->
-        <div>
-          <%= form.label :green_weight_used, "Green weight used (lbs)", class: "text-sm font-medium text-gray-700" %>
-          <%= form.number_field :green_weight_used, step: 0.01, min: 0, placeholder: "e.g. 1.10", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-          <p class="mt-1 text-xs text-gray-500">Pre-roast weight of beans charged</p>
+        <div class="mt-6 flex justify-end">
+          <%= form.submit "Record Roast", class: "inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Weight Converter (sidebar on large screens, below on small) -->
+    <div class="lg:col-span-1">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sticky top-6">
+        <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/><path d="m12 8-4 4 4 4"/><path d="m16 12-4 4"/></svg>
+          Weight Converter
+        </h3>
+
+        <!-- Grams → Lbs -->
+        <div class="space-y-3">
+          <div>
+            <label for="conv-grams" class="text-xs font-medium text-gray-600">Grams</label>
+            <input type="number" id="conv-grams" step="1" min="0" placeholder="e.g. 500"
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 border-t border-gray-200"></div>
+            <span class="text-xs text-gray-400">⇅</span>
+            <div class="flex-1 border-t border-gray-200"></div>
+          </div>
+          <div>
+            <label for="conv-lbs" class="text-xs font-medium text-gray-600">Pounds</label>
+            <input type="number" id="conv-lbs" step="0.01" min="0" placeholder="e.g. 1.10"
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+          </div>
         </div>
 
-        <!-- Roasted Weight -->
-        <div>
-          <%= form.label :roasted_weight, "Roasted weight (lbs)", class: "text-sm font-medium text-gray-700" %>
-          <%= form.number_field :roasted_weight, step: 0.01, min: 0, placeholder: "e.g. 0.94", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-          <p class="mt-1 text-xs text-gray-500">Post-roast weight — this becomes your sellable inventory</p>
+        <!-- Kg → Lbs -->
+        <div class="mt-4 pt-4 border-t border-gray-100 space-y-3">
+          <div>
+            <label for="conv-kg" class="text-xs font-medium text-gray-600">Kilograms</label>
+            <input type="number" id="conv-kg" step="0.01" min="0" placeholder="e.g. 0.50"
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 border-t border-gray-200"></div>
+            <span class="text-xs text-gray-400">⇅</span>
+            <div class="flex-1 border-t border-gray-200"></div>
+          </div>
+          <div>
+            <label for="conv-lbs-from-kg" class="text-xs font-medium text-gray-600">Pounds</label>
+            <input type="number" id="conv-lbs-from-kg" step="0.01" min="0" placeholder="e.g. 1.10"
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+          </div>
         </div>
 
-        <!-- Roast Date -->
-        <div>
-          <%= form.label :roasted_on, "Roast Date", class: "text-sm font-medium text-gray-700" %>
-          <%= form.date_field :roasted_on, value: Date.today, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <!-- Quick ref -->
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <p class="text-xs font-medium text-gray-600 mb-2">Common batches</p>
+          <div class="grid grid-cols-2 gap-1 text-xs text-gray-500">
+            <span>250 g</span><span class="text-right font-mono">0.55 lbs</span>
+            <span>500 g</span><span class="text-right font-mono">1.10 lbs</span>
+            <span>1 kg</span><span class="text-right font-mono">2.20 lbs</span>
+            <span>5 lbs</span><span class="text-right font-mono">2,268 g</span>
+          </div>
         </div>
 
-        <!-- Use By -->
-        <div>
-          <%= form.label :expires_on, "Use By", class: "text-sm font-medium text-gray-700" %>
-          <%= form.date_field :expires_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
-
-        <!-- Cropster Batch ID -->
-        <div>
-          <%= form.label :batch_id, "Cropster Batch ID", class: "text-sm font-medium text-gray-700" %>
-          <%= form.text_field :batch_id, placeholder: "Optional", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
-
-        <!-- Lot Number -->
-        <div>
-          <%= form.label :lot_number, "Lot / Roast Reference", class: "text-sm font-medium text-gray-700" %>
-          <%= form.text_field :lot_number, placeholder: "e.g. PAL-2026-02-16", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
-
-        <!-- Notes -->
-        <div class="md:col-span-2">
-          <%= form.label :notes, "Notes", class: "text-sm font-medium text-gray-700" %>
-          <%= form.text_area :notes, rows: 3, placeholder: "Roast profile, observations, etc.", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
+        <p class="mt-3 text-xs text-gray-400">Type in any field — the other updates instantly. Form values are always in lbs.</p>
       </div>
-
-      <div class="mt-6 flex justify-end">
-        <%= form.submit "Record Roast", class: "inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 cursor-pointer" %>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Quick Reference -->
-  <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-    <h3 class="text-sm font-medium text-gray-700 mb-2">Quick Reference</h3>
-    <div class="text-xs text-gray-500 space-y-1">
-      <p>• 500g green ≈ 1.10 lbs &nbsp;|&nbsp; 425g roasted ≈ 0.94 lbs &nbsp;(~15% loss typical)</p>
-      <p>• On submit: roasted inventory is created and green inventory is debited automatically (FIFO)</p>
-      <p>• Weight loss % is calculated and saved in the notes</p>
     </div>
   </div>
 </div>
 
 <script>
-  // Simple vanilla JS to show green inventory for selected product
   document.addEventListener("DOMContentLoaded", function() {
-    const select = document.querySelector("select[name='record_roast[product_id]']");
-    if (!select) return;
+    var GRAMS_PER_LB = 453.59237;
+    var LBS_PER_KG = 2.20462262;
 
-    select.addEventListener("change", function() {
-      // Hide all product green info
-      document.querySelectorAll("[data-product-green]").forEach(el => el.classList.add("hidden"));
-      // Show the selected one
-      const info = document.querySelector(`[data-product-green="${this.value}"]`);
-      if (info) info.classList.remove("hidden");
+    // --- Weight Converter ---
+    var convGrams = document.getElementById("conv-grams");
+    var convLbs = document.getElementById("conv-lbs");
+    var convKg = document.getElementById("conv-kg");
+    var convLbsFromKg = document.getElementById("conv-lbs-from-kg");
+
+    convGrams.addEventListener("input", function() {
+      var g = parseFloat(this.value);
+      convLbs.value = isNaN(g) ? "" : (g / GRAMS_PER_LB).toFixed(2);
     });
 
-    // Trigger on load if product already selected
-    if (select.value) select.dispatchEvent(new Event("change"));
+    convLbs.addEventListener("input", function() {
+      var lb = parseFloat(this.value);
+      convGrams.value = isNaN(lb) ? "" : Math.round(lb * GRAMS_PER_LB);
+    });
+
+    convKg.addEventListener("input", function() {
+      var kg = parseFloat(this.value);
+      convLbsFromKg.value = isNaN(kg) ? "" : (kg * LBS_PER_KG).toFixed(2);
+    });
+
+    convLbsFromKg.addEventListener("input", function() {
+      var lb = parseFloat(this.value);
+      convKg.value = isNaN(lb) ? "" : (lb / LBS_PER_KG).toFixed(2);
+    });
+
+    // --- Show green inventory for selected product ---
+    var productSelect = document.querySelector("select[name='record_roast[product_id]']");
+    if (productSelect) {
+      productSelect.addEventListener("change", function() {
+        document.querySelectorAll("[data-product-green]").forEach(function(el) { el.classList.add("hidden"); });
+        var info = document.querySelector('[data-product-green="' + this.value + '"]');
+        if (info) info.classList.remove("hidden");
+      });
+      if (productSelect.value) productSelect.dispatchEvent(new Event("change"));
+    }
   });
 </script>
