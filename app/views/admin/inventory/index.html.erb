@@ -203,10 +203,10 @@
                       <%= link_to "Dup",
                         new_admin_roasted_inventory_path(
                           prefill: {
+                            source_inventory_item_id: item.id,
                             product_id: item.product_id,
                             green_weight_used: item.notes&.match(/Green used: ([\d.]+)/)
                               &.captures&.first,
-                            roasted_weight: item.quantity,
                             lot_number: item.lot_number,
                             batch_id: item.batch_id
                           }.compact

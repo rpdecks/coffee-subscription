@@ -41,6 +41,26 @@ RSpec.describe "Admin::RoastedInventories", type: :request do
         expect(response.body).to include("PAL-2026-02-16-A")
         expect(response.body).to include("B001")
       end
+
+      it "prefills green weight used from the source roast when missing" do
+        source = create(
+          :inventory_item,
+          :roasted,
+          product: product,
+          quantity: 0.97,
+          notes: "Green used: 1.10 lbs → Roasted: 0.97 lbs (11.8% loss)"
+        )
+
+        get new_admin_roasted_inventory_path, params: {
+          prefill: {
+            source_inventory_item_id: source.id,
+            product_id: product.id
+          }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("value=\"1.10\"")
+      end
     end
   end
 
