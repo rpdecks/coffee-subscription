@@ -137,7 +137,14 @@
                   $<%= '%.2f' % product.price %>
                 </span>
 
-                <% if product.inventory_count %>
+                <% if product.coffee? %>
+                  <% bags = product.sellable_bag_count %>
+                  <% if bags.present? && bags > 0 %>
+                    <span class="text-sm text-gray-500">
+                      <%= bags %> bag(s) in stock
+                    </span>
+                  <% end %>
+                <% elsif product.inventory_count %>
                   <span class="text-sm text-gray-500">
                     <%= product.inventory_count %> in stock
                   </span>
