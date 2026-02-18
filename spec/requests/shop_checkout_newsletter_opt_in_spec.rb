@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Shop checkout newsletter opt-in", type: :request do
   let(:user) { create(:user, email: "customer@example.com") }
-  let(:product) { create(:product) }
+  let(:product) { create(:product, :merch) }
 
   before do
     sign_in user
