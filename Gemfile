@@ -39,7 +39,7 @@ gem "stripe"
 gem "aws-sdk-s3", "~> 1.0"
 
 # Background jobs
-gem "sidekiq", "~> 8.0"
+gem "sidekiq", "~> 8.1"
 
 # Form builder
 gem "simple_form"
