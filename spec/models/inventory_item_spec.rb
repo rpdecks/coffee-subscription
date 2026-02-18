@@ -11,6 +11,29 @@ RSpec.describe InventoryItem, type: :model do
     it { should validate_presence_of(:quantity) }
     it { should validate_presence_of(:state) }
     it { should validate_numericality_of(:quantity).is_greater_than_or_equal_to(0) }
+
+    describe "lot_number uniqueness" do
+      let(:product) { create(:product, product_type: :coffee) }
+
+      it "prevents duplicate lot_number within the same state" do
+        create(:inventory_item, :roasted, product: product, lot_number: "PAL-2026-02-16a")
+        dup = build(:inventory_item, :roasted, product: product, lot_number: "PAL-2026-02-16a")
+        expect(dup).not_to be_valid
+        expect(dup.errors[:lot_number]).to include("has already been used for this inventory state")
+      end
+
+      it "allows the same lot_number in different states" do
+        create(:inventory_item, :green, product: product, lot_number: "LOT-100")
+        roasted = build(:inventory_item, :roasted, product: product, lot_number: "LOT-100")
+        expect(roasted).to be_valid
+      end
+
+      it "allows multiple items with blank lot_number" do
+        create(:inventory_item, :roasted, product: product, lot_number: nil)
+        blank_lot = build(:inventory_item, :roasted, product: product, lot_number: nil)
+        expect(blank_lot).to be_valid
+      end
+    end
   end
 
   describe "enums" do
