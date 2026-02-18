@@ -89,7 +89,17 @@
                   <dd class="font-medium text-gray-900"><%= @product.roast_type.titleize %></dd>
                 </div>
               <% end %>
-              <% if @product.inventory_count %>
+              <% if @product.coffee? %>
+                <% bags = @product.sellable_bag_count %>
+                <% if bags.present? && bags > 0 %>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-600">Availability</dt>
+                    <dd class="font-medium text-gray-900">
+                      <%= bags %> bag(s) in stock
+                    </dd>
+                  </div>
+                <% end %>
+              <% elsif @product.inventory_count %>
                 <div class="flex justify-between">
                   <dt class="text-gray-600">Availability</dt>
                   <dd class="font-medium text-gray-900">

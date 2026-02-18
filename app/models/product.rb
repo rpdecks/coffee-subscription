@@ -31,7 +31,28 @@ class Product < ApplicationRecord
   end
 
   def in_stock?
+    # Coffee products are tracked in pounds via InventoryItems; sellable stock is packaged coffee
+    # converted to bags using weight_oz.
+    if coffee?
+      bags = sellable_bag_count
+      return bags.positive? unless bags.nil?
+    end
+
     inventory_count.nil? || inventory_count > 0
+  end
+
+  # For coffee products, compute the number of sellable bags based on packaged inventory.
+  # Returns an Integer count, or nil when bag sizing isn't configured.
+  def sellable_bag_count
+    return nil unless coffee?
+
+    bag_size_oz = weight_oz.to_f
+    return nil unless bag_size_oz.positive?
+
+    packaged_lbs = total_packaged_inventory.to_f
+    return 0 if packaged_lbs <= 0
+
+    ((packaged_lbs * 16.0) / bag_size_oz).floor
   end
 
   # New inventory management methods

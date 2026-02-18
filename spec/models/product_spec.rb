@@ -80,19 +80,43 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#in_stock?' do
-    it 'returns true for unlimited inventory' do
-      product = create(:product, inventory_count: nil)
-      expect(product.in_stock?).to be true
+    context 'for coffee products' do
+      it 'returns true when packaged inventory yields at least 1 bag' do
+        product = create(:product, :coffee, weight_oz: 12, inventory_count: 0)
+        create(:inventory_item, :packaged, product: product, quantity: 3.0) # 48 oz => 4 bags
+
+        expect(product.sellable_bag_count).to eq(4)
+        expect(product.in_stock?).to be true
+      end
+
+      it 'returns false when there is no packaged inventory' do
+        product = create(:product, :coffee, weight_oz: 12, inventory_count: 100)
+        expect(product.sellable_bag_count).to eq(0)
+        expect(product.in_stock?).to be false
+      end
+
+      it 'returns nil for sellable_bag_count when bag sizing is not configured' do
+        product = create(:product, :coffee, weight_oz: nil, inventory_count: 5)
+        expect(product.sellable_bag_count).to be_nil
+        expect(product.in_stock?).to be true
+      end
     end
 
-    it 'returns true for positive inventory' do
-      product = create(:product, inventory_count: 5)
-      expect(product.in_stock?).to be true
-    end
+    context 'for merch products' do
+      it 'returns true for unlimited inventory' do
+        product = create(:product, :merch, inventory_count: nil)
+        expect(product.in_stock?).to be true
+      end
 
-    it 'returns false for zero inventory' do
-      product = create(:product, inventory_count: 0)
-      expect(product.in_stock?).to be false
+      it 'returns true for positive inventory' do
+        product = create(:product, :merch, inventory_count: 5)
+        expect(product.in_stock?).to be true
+      end
+
+      it 'returns false for zero inventory' do
+        product = create(:product, :merch, inventory_count: 0)
+        expect(product.in_stock?).to be false
+      end
     end
   end
 end

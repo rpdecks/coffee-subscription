@@ -7,7 +7,7 @@ class ShopController < ApplicationController
     @category = params[:category]&.to_sym
     @roast = params[:roast]&.to_sym
 
-    @products = Product.active.visible_in_shop.in_stock
+    @products = Product.active.visible_in_shop.includes(:inventory_items)
 
     case @category
     when :coffee
@@ -21,7 +21,7 @@ class ShopController < ApplicationController
       @products = @products.where(roast_type: @roast)
     end
 
-    @products = @products.order(:name)
+    @products = @products.order(:name).select(&:in_stock?)
   end
 
   def show
