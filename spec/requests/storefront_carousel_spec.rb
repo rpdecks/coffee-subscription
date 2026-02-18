@@ -40,8 +40,8 @@ RSpec.describe "Storefront carousel", type: :request do
   end
 
   it "renders carousel controls on /shop when a product has multiple images" do
-    product_with_images = create(:product, name: "Carousel Shop With Images")
-    product_without_images = create(:product, name: "Carousel Shop Without Images")
+    product_with_images = create(:product, :merch, name: "Carousel Shop With Images")
+    product_without_images = create(:product, :merch, name: "Carousel Shop Without Images")
 
     attach_test_image(product_with_images, "a.png")
     attach_test_image(product_with_images, "b.png")
@@ -83,8 +83,8 @@ RSpec.describe "Storefront carousel", type: :request do
   end
 
   it "renders carousel controls on shop product show pages when a product has multiple images" do
-    product_with_images = create(:product, name: "Carousel Shop Show With Images")
-    product_without_images = create(:product, name: "Carousel Shop Show Without Images")
+    product_with_images = create(:product, :merch, name: "Carousel Shop Show With Images")
+    product_without_images = create(:product, :merch, name: "Carousel Shop Show Without Images")
 
     attach_test_image(product_with_images, "a.png")
     attach_test_image(product_with_images, "b.png")

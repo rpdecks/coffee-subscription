@@ -6,6 +6,8 @@ RSpec.describe ShopController, type: :controller do
   let(:user) { create(:customer_user) }
   let!(:product1) { create(:product, name: "Ethiopian Yirgacheffe", price_cents: 1800, active: true, visible_in_shop: true, product_type: :coffee, inventory_count: 10) }
   let!(:product2) { create(:product, name: "Colombian Supremo", price_cents: 1600, active: true, visible_in_shop: true, product_type: :coffee, inventory_count: 5) }
+  let!(:product1_packaged) { create(:inventory_item, :packaged, product: product1, quantity: 1.0) }
+  let!(:product2_packaged) { create(:inventory_item, :packaged, product: product2, quantity: 1.0) }
   let!(:merch_product) { create(:product, name: "Coffee Mug", price_cents: 1200, active: true, visible_in_shop: true, product_type: :merch, inventory_count: 20) }
   let!(:hidden_product) { create(:product, name: "Hidden Product", active: true, visible_in_shop: false, inventory_count: 10) }
   let!(:inactive_product) { create(:product, active: false) }
