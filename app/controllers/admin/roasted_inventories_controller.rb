@@ -1,10 +1,21 @@
 class Admin::RoastedInventoriesController < Admin::BaseController
   def new
     prefill = params[:prefill] || {}
+
+    green_weight_used = prefill[:green_weight_used]
+    if green_weight_used.blank?
+      source_item = InventoryItem.find_by(id: prefill[:source_inventory_item_id])
+      green_weight_used = parse_green_weight_used(source_item&.notes)
+    end
+
+    if green_weight_used.blank? && prefill[:product_id].present?
+      green_weight_used = last_green_weight_used_for_product(prefill[:product_id])
+    end
+
     @roasted_inventory = InventoryItem.new(state: :roasted, roasted_on: Date.today)
     @prefill = {
       product_id: prefill[:product_id],
-      green_weight_used: prefill[:green_weight_used],
+      green_weight_used: green_weight_used,
       roasted_weight: prefill[:roasted_weight],
       lot_number: prefill[:lot_number],
       batch_id: prefill[:batch_id]
@@ -63,5 +74,23 @@ class Admin::RoastedInventoriesController < Admin::BaseController
       .where(product_id: @products.select(:id))
       .group(:product_id)
       .sum(:quantity)
+  end
+
+  def parse_green_weight_used(notes)
+    notes.to_s.match(/Green used:\s*([\d.]+)/i)&.captures&.first
+  end
+
+  def last_green_weight_used_for_product(product_id)
+    pid = product_id.to_i
+    return nil if pid <= 0
+
+    InventoryItem.roasted
+      .where(product_id: pid)
+      .where("notes ILIKE ?", "%Green used:%")
+      .order(created_at: :desc)
+      .limit(20)
+      .pluck(:notes)
+      .filter_map { |n| parse_green_weight_used(n) }
+      .first
   end
 end
