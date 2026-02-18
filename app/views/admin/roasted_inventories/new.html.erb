@@ -174,51 +174,67 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var GRAMS_PER_LB = 453.59237;
-    var LBS_PER_KG = 2.20462262;
+  (function() {
+    function initRoastedInventoryForm() {
+      var GRAMS_PER_LB = 453.59237;
+      var LBS_PER_KG = 2.20462262;
 
-    // --- Weight Converter ---
-    var convGrams = document.getElementById("conv-grams");
-    var convLbs = document.getElementById("conv-lbs");
-    var convKg = document.getElementById("conv-kg");
-    var convLbsFromKg = document.getElementById("conv-lbs-from-kg");
+      // --- Weight Converter ---
+      var convGrams = document.getElementById("conv-grams");
+      var convLbs = document.getElementById("conv-lbs");
+      var convKg = document.getElementById("conv-kg");
+      var convLbsFromKg = document.getElementById("conv-lbs-from-kg");
 
-    convGrams.addEventListener("input", function() {
-      var g = parseFloat(this.value);
+      if (!convGrams || !convLbs || !convKg || !convLbsFromKg) return;
+      if (convGrams.dataset.bound === "1") return;
+      convGrams.dataset.bound = "1";
+
+    function gramsToLbs() {
+      var g = parseFloat(convGrams.value);
       convLbs.value = isNaN(g) ? "" : (g / GRAMS_PER_LB).toFixed(2);
-    });
-
-    convLbs.addEventListener("input", function() {
-      var lb = parseFloat(this.value);
+    }
+    function lbsToGrams() {
+      var lb = parseFloat(convLbs.value);
       convGrams.value = isNaN(lb) ? "" : Math.round(lb * GRAMS_PER_LB);
-    });
-
-    convKg.addEventListener("input", function() {
-      var kg = parseFloat(this.value);
+    }
+    function kgToLbs() {
+      var kg = parseFloat(convKg.value);
       convLbsFromKg.value = isNaN(kg) ? "" : (kg * LBS_PER_KG).toFixed(2);
-    });
-
-    convLbsFromKg.addEventListener("input", function() {
-      var lb = parseFloat(this.value);
+    }
+    function lbsToKg() {
+      var lb = parseFloat(convLbsFromKg.value);
       convKg.value = isNaN(lb) ? "" : (lb / LBS_PER_KG).toFixed(2);
-    });
-
-    // --- Show green inventory for selected product ---
-    var productSelect = document.querySelector("select[name='record_roast[product_id]']");
-    if (productSelect) {
-      productSelect.addEventListener("change", function() {
-        document.querySelectorAll("[data-product-green]").forEach(function(el) { el.classList.add("hidden"); });
-        var info = document.querySelector('[data-product-green="' + this.value + '"]');
-        if (info) info.classList.remove("hidden");
-      });
-      if (productSelect.value) productSelect.dispatchEvent(new Event("change"));
     }
 
-    // --- Shelf life / Use By auto-calc ---
-    var roastDate = document.getElementById("roast-date");
-    var shelfWeeks = document.getElementById("shelf-life-weeks");
-    var expiresOn = document.getElementById("expires-on");
+      convGrams.addEventListener("input", gramsToLbs);
+      convGrams.addEventListener("change", gramsToLbs);
+      convLbs.addEventListener("input", lbsToGrams);
+      convLbs.addEventListener("change", lbsToGrams);
+      convKg.addEventListener("input", kgToLbs);
+      convKg.addEventListener("change", kgToLbs);
+      convLbsFromKg.addEventListener("input", lbsToKg);
+      convLbsFromKg.addEventListener("change", lbsToKg);
+
+      // --- Show green inventory for selected product ---
+      var productSelect = document.querySelector("select[name='record_roast[product_id]']");
+      if (productSelect && productSelect.dataset.bound !== "1") {
+        productSelect.dataset.bound = "1";
+        productSelect.addEventListener("change", function() {
+          document.querySelectorAll("[data-product-green]").forEach(function(el) { el.classList.add("hidden"); });
+          var info = document.querySelector('[data-product-green="' + this.value + '"]');
+          if (info) info.classList.remove("hidden");
+        });
+        if (productSelect.value) productSelect.dispatchEvent(new Event("change"));
+      }
+
+      // --- Shelf life / Use By auto-calc ---
+      var roastDate = document.getElementById("roast-date");
+      var shelfWeeks = document.getElementById("shelf-life-weeks");
+      var expiresOn = document.getElementById("expires-on");
+
+      if (!roastDate || !shelfWeeks || !expiresOn) return;
+      if (roastDate.dataset.bound === "1") return;
+      roastDate.dataset.bound = "1";
 
     function calcExpiry() {
       var weeks = shelfWeeks.value;
@@ -230,16 +246,21 @@
       expiresOn.value = d.toISOString().split("T")[0];
     }
 
-    roastDate.addEventListener("change", calcExpiry);
-    shelfWeeks.addEventListener("change", function() {
-      if (this.value === "custom") {
-        expiresOn.focus();
-      } else {
-        calcExpiry();
-      }
-    });
+      roastDate.addEventListener("change", calcExpiry);
+      shelfWeeks.addEventListener("change", function() {
+        if (this.value === "custom") {
+          expiresOn.focus();
+        } else {
+          calcExpiry();
+        }
+      });
 
-    // Set initial expiry on load
-    calcExpiry();
-  });
+      // Set initial expiry on load
+      calcExpiry();
+    }
+
+    document.addEventListener("turbo:load", initRoastedInventoryForm);
+    document.addEventListener("DOMContentLoaded", initRoastedInventoryForm);
+    initRoastedInventoryForm();
+  })();
 </script>
