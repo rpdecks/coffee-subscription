@@ -5,6 +5,7 @@ class InventoryItem < ApplicationRecord
 
   validates :quantity, :state, presence: true
   validates :quantity, numericality: { greater_than_or_equal_to: 0 }
+  validates :lot_number, uniqueness: { scope: :state, message: "has already been used for this inventory state" }, allow_blank: true
   validate :coffee_specific_validations
 
   scope :green, -> { where(state: :green) }
