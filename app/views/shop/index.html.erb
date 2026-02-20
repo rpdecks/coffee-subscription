@@ -23,20 +23,7 @@
         <% end %>
       </div>
 
-      <!-- Roast Type Filters (Coffee only) -->
-      <% if @category == :coffee || @category.nil? %>
-        <div class="mt-4 flex flex-wrap gap-3">
-          <span class="text-sm text-gray-500 self-center font-medium">Roast:</span>
-          <%= link_to "Signature", shop_path(category: 'coffee', roast: 'signature'),
-              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
-          <%= link_to "Light", shop_path(category: 'coffee', roast: 'light'),
-              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
-          <%= link_to "Medium", shop_path(category: 'coffee', roast: 'medium'),
-              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
-          <%= link_to "Dark", shop_path(category: 'coffee', roast: 'dark'),
-              class: "px-4 py-2 rounded-lg text-sm font-medium transition bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-900" %>
-        </div>
-      <% end %>
+
     </div>
   </div>
 
