@@ -165,8 +165,7 @@ class ShopController < ApplicationController
   private
 
   def calculate_shipping(items)
-    # TODO: Implement real shipping calculation
-    # For now, flat rate shipping
-    5.00
+    # Local hand delivery only for now.
+    0.0
   end
 end
