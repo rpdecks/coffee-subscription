@@ -13,42 +13,71 @@
 
   <body class="bg-gray-50">
     <!-- Admin Navigation -->
+    <% primary_nav_links = [
+      ["Dashboard", admin_root_path, current_page?(admin_root_path)],
+      ["Orders", admin_orders_path, current_page?(admin_orders_path)],
+      ["Subscriptions", admin_subscriptions_path, current_page?(admin_subscriptions_path)],
+      ["Products", admin_products_path, current_page?(admin_products_path)],
+      ["Customers", admin_customers_path, current_page?(admin_customers_path)]
+    ] %>
+    <% operations_nav_links = [
+      ["Inventory", admin_inventory_index_path, request.path.start_with?("/admin/inventory")],
+      ["Green Coffee", admin_green_coffees_path, request.path.start_with?("/admin/green_coffees")],
+      ["Suppliers", admin_suppliers_path, request.path.start_with?("/admin/suppliers")],
+      ["Production Plan", admin_production_plan_path, request.path == admin_production_plan_path],
+      ["Roasted Intake", new_admin_roasted_inventory_path, request.path == new_admin_roasted_inventory_path]
+    ] %>
+    <% tools_nav_links = [
+      ["Plans", admin_subscription_plans_path, current_page?(admin_subscription_plans_path)],
+      ["Email Tests", email_tests_path, current_page?(email_tests_path)]
+    ] %>
+    <% all_nav_links = primary_nav_links + operations_nav_links + tools_nav_links %>
+
     <nav class="bg-gray-900 text-white shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <!-- Logo & Brand -->
-          <div class="flex items-center gap-8">
+        <div class="py-3">
+          <div class="flex items-center justify-between gap-4 min-h-10">
             <%= link_to admin_root_path, class: "flex items-center gap-2 text-xl font-bold hover:text-gray-300" do %>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              Admin Panel
+              <span class="hidden sm:inline">Admin Panel</span>
             <% end %>
 
-            <!-- Main Navigation -->
-            <div class="hidden md:flex items-center gap-1">
-              <%= link_to "Dashboard", admin_root_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_root_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Orders", admin_orders_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_orders_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Subscriptions", admin_subscriptions_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_subscriptions_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Plans", admin_subscription_plans_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_subscription_plans_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Products", admin_products_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_products_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Inventory", admin_inventory_index_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/inventory') ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Green Coffee", admin_green_coffees_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/green_coffees') ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Suppliers", admin_suppliers_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path.start_with?('/admin/suppliers') ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Production Plan", admin_production_plan_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path == admin_production_plan_path ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Roasted Intake", new_admin_roasted_inventory_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{request.path == new_admin_roasted_inventory_path ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Customers", admin_customers_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(admin_customers_path) ? 'bg-gray-800' : ''}" %>
-              <%= link_to "Email Tests", email_tests_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors #{current_page?(email_tests_path) ? 'bg-gray-800' : ''}" %>
+            <div class="hidden md:flex items-center gap-4">
+              <%= link_to "View Site", root_path, target: "_blank", class: "text-sm text-gray-300 hover:text-white" %>
+              <div class="border-l border-gray-700 h-6"></div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-300"><%= current_user.full_name %></span>
+                <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "text-sm text-gray-300 hover:text-white" %>
+              </div>
             </div>
+
+            <details class="md:hidden relative">
+              <summary class="list-none px-3 py-2 rounded-md text-sm font-medium bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer">
+                Menu
+              </summary>
+              <div class="absolute right-0 mt-2 w-72 max-w-[85vw] rounded-md border border-gray-700 bg-gray-900 shadow-lg z-50">
+                <div class="p-2 space-y-1">
+                  <% all_nav_links.each do |label, path, active| %>
+                    <%= link_to label, path, class: "block px-3 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors #{active ? 'bg-gray-800' : ''}" %>
+                  <% end %>
+
+                  <div class="pt-2 mt-2 border-t border-gray-700">
+                    <%= link_to "View Site", root_path, target: "_blank", class: "block px-3 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors" %>
+                    <div class="px-3 py-2 text-sm text-gray-300"><%= current_user.full_name %></div>
+                    <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "w-full text-left px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors" %>
+                  </div>
+                </div>
+              </div>
+            </details>
           </div>
 
-          <!-- Right Side -->
-          <div class="flex items-center gap-4">
-            <%= link_to "View Site", root_path, target: "_blank", class: "text-sm text-gray-300 hover:text-white" %>
-            <div class="border-l border-gray-700 h-6"></div>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-300"><%= current_user.full_name %></span>
-              <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "text-sm text-gray-300 hover:text-white" %>
+          <div class="hidden md:block mt-3 border-t border-gray-800 pt-3">
+            <div class="flex items-center gap-1 overflow-x-auto pb-1">
+              <% all_nav_links.each do |label, path, active| %>
+                <%= link_to label, path, class: "px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap hover:bg-gray-800 transition-colors #{active ? 'bg-gray-800' : ''}" %>
+              <% end %>
             </div>
           </div>
         </div>
