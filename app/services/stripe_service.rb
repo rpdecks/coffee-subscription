@@ -6,7 +6,16 @@ class StripeService
 
   # Create a Stripe customer for a user
   def self.create_customer(user)
-    return user.stripe_customer_id if user.stripe_customer_id.present?
+    if user.stripe_customer_id.present?
+      begin
+        Stripe::Customer.retrieve(user.stripe_customer_id)
+        return user.stripe_customer_id
+      rescue Stripe::InvalidRequestError => e
+        raise unless e.message.include?("No such customer")
+
+        Rails.logger.warn("Stripe customer missing for user #{user.id}; recreating customer record")
+      end
+    end
 
     customer = Stripe::Customer.create({
       email: user.email,
