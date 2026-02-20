@@ -71,12 +71,25 @@ RSpec.describe StripeService do
     context 'when user already has a Stripe customer ID' do
       before { user.update(stripe_customer_id: 'cus_existing') }
 
-      it 'returns the existing customer ID without API call' do
+      it 'returns the existing customer ID when customer exists in Stripe' do
+        expect(Stripe::Customer).to receive(:retrieve).with('cus_existing').and_return(double('Stripe::Customer', id: 'cus_existing'))
         expect(Stripe::Customer).not_to receive(:create)
 
         result = described_class.create_customer(user)
 
         expect(result).to eq('cus_existing')
+      end
+
+      it 'recreates the customer when the stored Stripe customer is missing' do
+        allow(Stripe::Customer).to receive(:retrieve).with('cus_existing').and_raise(
+          Stripe::InvalidRequestError.new("No such customer: 'cus_existing'", 'id')
+        )
+        expect(Stripe::Customer).to receive(:create).and_return(stripe_customer)
+
+        result = described_class.create_customer(user)
+
+        expect(result).to eq('cus_test123')
+        expect(user.reload.stripe_customer_id).to eq('cus_test123')
       end
     end
 
@@ -99,6 +112,7 @@ RSpec.describe StripeService do
 
     before do
       user.update(stripe_customer_id: 'cus_test123')
+      allow(Stripe::Customer).to receive(:retrieve).with('cus_test123').and_return(double('Stripe::Customer', id: 'cus_test123'))
     end
 
     it 'creates a checkout session with correct parameters' do
@@ -165,6 +179,7 @@ RSpec.describe StripeService do
 
     before do
       user.update(stripe_customer_id: 'cus_test123')
+      allow(Stripe::Customer).to receive(:retrieve).with('cus_test123').and_return(double('Stripe::Customer', id: 'cus_test123'))
       allow(stripe_payment_method).to receive(:attach)
     end
 
