@@ -5,7 +5,7 @@
     <h1 class="text-4xl font-serif font-bold text-gray-900 mb-8">Shopping Cart</h1>
 
     <div class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900">
-      <h3 class="text-2xl sm:text-lg font-semibold font-serif">Local pickup/deliveries only for now.</h3>
+      <h3 class="text-2xl font-semibold font-serif">Local pickup/deliveries only for now.</h3>
     </div>
 
     <div class="card p-5 sm:p-8">
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="mt-4 sm:mt-0 sm:ml-6 flex-1 min-w-0 text-center sm:text-left">
-                  <h2 class="text-2xl sm:text-lg font-semibold text-gray-900"><%= item[:product].name %></h2>
+                  <h2 class="text-2xl font-semibold text-gray-900"><%= item[:product].name %></h2>
 
                   <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "mt-2" do |f| %>
                     <div class="mt-2 flex flex-col sm:flex-row sm:items-center items-center gap-2 sm:gap-3">
