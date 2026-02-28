@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ShopController < ApplicationController
+  SOUTH_CAROLINA_SALES_TAX_RATE = BigDecimal(ENV.fetch("SOUTH_CAROLINA_SALES_TAX_RATE", "0.06"))
+
   before_action :authenticate_user!, except: [ :index, :show, :add_to_cart, :remove_from_cart, :update_cart, :clear_cart, :create_checkout_session ]
 
   def index
@@ -58,7 +60,7 @@ class ShopController < ApplicationController
     # Calculate totals
     @subtotal = @products_with_quantities.sum { |item| item[:product].price * item[:quantity] }
     @shipping = calculate_shipping(@products_with_quantities)
-    @tax = 0 # TODO: Calculate tax based on shipping address
+    @tax = calculate_tax(@subtotal)
     @total = @subtotal + @shipping + @tax
   end
 
@@ -89,14 +91,22 @@ class ShopController < ApplicationController
       return
     end
 
+    subtotal = items_with_products.sum { |item| item[:product].price * item[:quantity] }
+    shipping = calculate_shipping(items_with_products)
+    tax = calculate_tax(subtotal)
+
     # Create Stripe checkout session
     session = StripeService.create_product_checkout_session(
       user: current_user,
       cart_items: items_with_products,
+      tax_cents: (tax * 100).round,
       success_url: shop_success_url,
       cancel_url: shop_checkout_url,
       metadata: {
         cart_items: cart_items.to_json,
+        shipping_cents: (shipping * 100).round.to_s,
+        tax_cents: (tax * 100).round.to_s,
+        subtotal_cents: (subtotal * 100).round.to_s,
         newsletter_opt_in: newsletter_opt_in ? "1" : "0"
       }.stringify_keys
     )
@@ -167,5 +177,9 @@ class ShopController < ApplicationController
   def calculate_shipping(items)
     # Local hand delivery only for now.
     0.0
+  end
+
+  def calculate_tax(subtotal)
+    (BigDecimal(subtotal.to_s) * SOUTH_CAROLINA_SALES_TAX_RATE).round(2).to_f
   end
 end
