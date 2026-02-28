@@ -73,7 +73,7 @@ class StripeService
   end
 
   # Create a checkout session for one-time product purchase
-  def self.create_product_checkout_session(user:, cart_items:, success_url:, cancel_url:, metadata: {})
+  def self.create_product_checkout_session(user:, cart_items:, success_url:, cancel_url:, tax_cents: 0, metadata: {})
     # Ensure user has a Stripe customer ID
     stripe_customer_id = create_customer(user)
 
@@ -96,6 +96,19 @@ class StripeService
           unit_amount: item[:product].price_cents
         },
         quantity: item[:quantity]
+      }
+    end
+
+    if tax_cents.to_i.positive?
+      line_items << {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Sales Tax"
+          },
+          unit_amount: tax_cents.to_i
+        },
+        quantity: 1
       }
     end
 

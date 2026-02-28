@@ -148,6 +148,8 @@ class WebhooksController < ApplicationController
     end
 
     # Calculate totals
+    order.shipping_cents = metadata["shipping_cents"].to_i if metadata["shipping_cents"].present?
+    order.tax_cents = metadata["tax_cents"].to_i if metadata["tax_cents"].present?
     order.calculate_totals
     order.save!
 

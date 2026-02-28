@@ -402,6 +402,24 @@ RSpec.describe StripeService do
       expect(session).to eq(stripe_checkout_session)
     end
 
+    it 'adds a sales tax line item when tax_cents is provided' do
+      expect(Stripe::Checkout::Session).to receive(:create) do |params|
+        tax_item = params[:line_items].find { |line_item| line_item.dig(:price_data, :product_data, :name) == 'Sales Tax' }
+        expect(tax_item).to be_present
+        expect(tax_item.dig(:price_data, :unit_amount)).to eq(520)
+        expect(tax_item[:quantity]).to eq(1)
+        stripe_checkout_session
+      end
+
+      described_class.create_product_checkout_session(
+        user: user,
+        cart_items: cart_items,
+        tax_cents: 520,
+        success_url: success_url,
+        cancel_url: cancel_url
+      )
+    end
+
     context 'when user does not have a Stripe customer ID' do
       it 'creates a new Stripe customer' do
         expect(Stripe::Customer).to receive(:create).with(

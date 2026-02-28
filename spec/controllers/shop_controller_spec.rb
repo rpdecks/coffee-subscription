@@ -114,7 +114,8 @@ RSpec.describe ShopController, type: :controller do
           get :checkout
           expect(assigns(:subtotal)).to eq(52.0) # (18 * 2) + (16 * 1)
           expect(assigns(:shipping)).to eq(0.0)
-          expect(assigns(:total)).to eq(52.0)
+          expect(assigns(:tax)).to eq(3.12)
+          expect(assigns(:total)).to eq(55.12)
         end
       end
     end
@@ -156,6 +157,7 @@ RSpec.describe ShopController, type: :controller do
           expect(StripeService).to receive(:create_product_checkout_session).with(
             hash_including(
               user: user,
+              tax_cents: 312,
               success_url: shop_success_url,
               cancel_url: shop_checkout_url
             )
