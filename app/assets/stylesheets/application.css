@@ -162,22 +162,7 @@
   display: block;
 }
 
-.checkout-product-copy {
-  margin-left: 0;
-  text-align: center !important;
-}
 
-.checkout-product-copy h2,
-.checkout-product-copy p {
-  text-align: inherit !important;
-}
-
-@media (min-width: 640px) {
-  .checkout-product-copy {
-    margin-left: 10px;
-    text-align: left !important;
-  }
-}
 
 @layer components {
   /* Buttons - Hero CTAs (high contrast over imagery) */

@@ -1,5 +1,23 @@
 <% content_for :title, "Checkout - Acer Coffee" %>
 
+<style>
+  [id^="checkout-product-copy-"],
+  [id^="checkout-product-copy-"] h2,
+  [id^="checkout-product-copy-"] p {
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    [id^="checkout-product-copy-"] {
+      margin-left: 10px;
+    }
+    [id^="checkout-product-copy-"] h2,
+    [id^="checkout-product-copy-"] p {
+      text-align: left;
+    }
+  }
+</style>
+
 <div class="min-h-screen bg-gray-50">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <h1 class="text-4xl font-serif font-bold text-gray-900 mb-8">Shopping Cart</h1>
@@ -39,7 +57,7 @@
                   <% end %>
                 </div>
 
-                <div class="checkout-product-copy flex-1 min-w-0">
+                <div id="checkout-product-copy-<%= item[:product].id %>" class="flex-1 min-w-0">
                   <h2 class="text-2xl sm:text-2xl font-semibold text-gray-900"><%= item[:product].name %></h2>
                   <p class="mt-1 text-xl font-bold text-gray-900 sm:hidden">
                     $<%= '%.2f' % (item[:product].price * item[:quantity]) %>
