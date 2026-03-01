@@ -13,24 +13,25 @@
         <!-- Cart Items -->
         <div class="divide-y divide-gray-200 mb-8">
           <% @products_with_quantities.each do |item| %>
-            <div class="py-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div class="flex flex-col sm:flex-row sm:items-start flex-1 min-w-0">
-                <div class="w-24 h-24 mx-auto sm:mx-0 bg-white rounded-lg border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0">
+            <div class="py-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-start">
+              <div class="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-start flex-1 min-w-0">
+                 <div class="checkout-cart-thumb mx-auto sm:mx-0 bg-white rounded-lg border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0"
+                   style="width: 8rem; height: 8rem; min-width: 8rem; max-width: 8rem; min-height: 8rem; max-height: 8rem;">
                   <% featured_image = item[:product].featured_image_attachment %>
                   <% if featured_image.present? %>
                     <%= image_tag featured_image,
                         alt: item[:product].name,
                         width: 96,
                         height: 96,
-                      class: "block w-full h-full",
-                      style: "object-fit: cover; object-position: center;" %>
+                      class: "checkout-cart-thumb-image block !w-full !h-full",
+                      style: "width: 100%; height: 100%; object-fit: cover; object-position: center;" %>
                   <% elsif item[:product].carousel_images.any? %>
                     <%= image_tag item[:product].carousel_images.first,
                         alt: item[:product].name,
                         width: 96,
                         height: 96,
-                      class: "block w-full h-full",
-                      style: "object-fit: cover; object-position: center;" %>
+                      class: "checkout-cart-thumb-image block !w-full !h-full",
+                      style: "width: 100%; height: 100%; object-fit: cover; object-position: center;" %>
                   <% else %>
                     <svg class="w-10 h-10 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z"/>
@@ -38,45 +39,66 @@
                   <% end %>
                 </div>
 
-                <div class="mt-0 ml-6 sm:ml-6 flex-1 min-w-0 text-left">
-                  <h2 class="text-lg sm:text-2xl font-semibold text-gray-900 text-left"><%= item[:product].name %></h2>
-                  <p class="mt-1 text-base font-bold text-gray-900 text-left sm:hidden">
+                <div class="checkout-product-copy flex-1 min-w-0">
+                  <h2 class="text-2xl sm:text-2xl font-semibold text-gray-900"><%= item[:product].name %></h2>
+                  <p class="mt-1 text-xl font-bold text-gray-900 sm:hidden">
                     $<%= '%.2f' % (item[:product].price * item[:quantity]) %>
                   </p>
 
-                  <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "mt-2 hidden sm:block" do |f| %>
-                      <div class="mt-2 flex flex-col sm:flex-row sm:items-center items-center gap-2 sm:gap-3 sm:pl-1">
-                      <%= f.number_field :quantity, value: item[:quantity], min: 0, max: 10,
-                        class: "input-field text-right text-sm !px-2",
-                        style: "width: 3.5rem; min-width: 3.5rem; max-width: 3.5rem;" %>
-                      <div class="flex items-center justify-center sm:justify-start gap-3 text-sm">
-                        <%= f.submit "Update", class: "text-gray-700 hover:text-gray-900" %>
-                        <%= link_to "Remove", shop_remove_from_cart_path(item[:product].id),
-                            method: :delete, data: { turbo_method: :delete },
-                            class: "text-red-600 hover:text-red-700" %>
-                      </div>
-                    </div>
-                  <% end %>
                 </div>
               </div>
 
-              <div class="text-right sm:ml-6 sm:pt-0">
+              <div class="text-right sm:ml-auto sm:pt-0">
                 <p class="hidden sm:block text-lg font-bold text-gray-900">
                   $<%= '%.2f' % (item[:product].price * item[:quantity]) %>
                 </p>
 
-                <div class="sm:hidden mt-3 flex flex-col items-end gap-2">
-                  <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "w-full flex flex-col items-end" do |f| %>
-                    <%= f.number_field :quantity, value: item[:quantity], min: 0, max: 10,
-                        class: "input-field text-right text-sm !px-2",
-                        style: "width: 3rem; min-width: 3rem; max-width: 3rem;" %>
-                    <div class="mt-3 w-full flex items-center justify-end gap-4 text-sm font-medium">
-                      <%= f.submit "Update", class: "text-gray-700 hover:text-gray-900 font-medium py-1" %>
-                      <%= link_to "Remove", shop_remove_from_cart_path(item[:product].id),
-                          method: :delete, data: { turbo_method: :delete },
-                          class: "text-red-600 hover:text-red-700 font-medium py-1" %>
-                    </div>
-                  <% end %>
+                <div class="hidden sm:mt-0 sm:flex sm:flex-col sm:items-end sm:gap-2">
+                  <div class="sm:flex sm:items-center sm:gap-3">
+                    <span class="text-sm font-normal text-gray-700">Qty:</span>
+
+                    <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "inline" do |f| %>
+                      <%= f.hidden_field :quantity, value: item[:quantity] - 1 %>
+                      <%= f.submit "−",
+                          class: "h-8 w-8 rounded-full border border-gray-700 text-gray-700 text-sm leading-none hover:bg-gray-100 #{'opacity-40 cursor-not-allowed border-gray-300 text-gray-300 hover:bg-transparent' if item[:quantity] <= 1}",
+                          disabled: item[:quantity] <= 1 %>
+                    <% end %>
+
+                    <span class="inline-flex h-8 min-w-8 items-center justify-center rounded bg-gray-100 px-3 text-sm text-gray-900"><%= item[:quantity] %></span>
+
+                    <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "inline" do |f| %>
+                      <%= f.hidden_field :quantity, value: item[:quantity] + 1 %>
+                      <%= f.submit "+", class: "h-8 w-8 rounded-full border border-gray-700 text-gray-700 text-sm leading-none hover:bg-gray-100" %>
+                    <% end %>
+                  </div>
+
+                  <%= link_to "Remove", shop_remove_from_cart_path(item[:product].id),
+                      method: :delete, data: { turbo_method: :delete },
+                      class: "text-red-600 hover:text-red-700 text-sm font-medium" %>
+                </div>
+
+                <div class="sm:hidden mt-0 w-full flex flex-col items-center gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg font-normal text-gray-700">Qty:</span>
+
+                    <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "inline" do |f| %>
+                      <%= f.hidden_field :quantity, value: item[:quantity] - 1 %>
+                      <%= f.submit "−",
+                          class: "h-8 w-8 rounded-full border border-gray-700 text-gray-700 text-base leading-none hover:bg-gray-100 #{'opacity-40 cursor-not-allowed border-gray-300 text-gray-300 hover:bg-transparent' if item[:quantity] <= 1}",
+                          disabled: item[:quantity] <= 1 %>
+                    <% end %>
+
+                    <span class="inline-flex h-9 min-w-9 items-center justify-center rounded bg-gray-100 px-2 text-base text-gray-900"><%= item[:quantity] %></span>
+
+                    <%= form_with url: shop_update_cart_path(item[:product].id), method: :patch, local: true, class: "inline" do |f| %>
+                      <%= f.hidden_field :quantity, value: item[:quantity] + 1 %>
+                      <%= f.submit "+", class: "h-8 w-8 rounded-full border border-gray-700 text-gray-700 text-base leading-none hover:bg-gray-100" %>
+                    <% end %>
+                  </div>
+
+                  <%= link_to "✕ Remove", shop_remove_from_cart_path(item[:product].id),
+                      method: :delete, data: { turbo_method: :delete },
+                      class: "text-gray-600 hover:text-gray-800 text-base font-semibold" %>
                 </div>
               </div>
             </div>

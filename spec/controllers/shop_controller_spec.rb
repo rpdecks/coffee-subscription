@@ -232,6 +232,13 @@ RSpec.describe ShopController, type: :controller do
       expect(cart_item['quantity']).to eq('1')
     end
 
+    it 'defaults to quantity 1 for non-positive quantity' do
+      post :add_to_cart, params: { product_id: product1.id, quantity: 0 }
+
+      cart_item = session[:cart].find { |item| item['product_id'] == product1.id.to_s }
+      expect(cart_item['quantity']).to eq('1')
+    end
+
     it 'redirects for inactive product' do
       post :add_to_cart, params: { product_id: inactive_product.id }
 
@@ -254,6 +261,7 @@ RSpec.describe ShopController, type: :controller do
       expect(session[:cart]).not_to include(hash_including('product_id' => product1.id.to_s))
       expect(session[:cart]).to include(hash_including('product_id' => product2.id.to_s))
       expect(response).to redirect_to(shop_checkout_path)
+      expect(flash[:notice]).to eq('Item removed from cart')
     end
   end
 
@@ -269,8 +277,21 @@ RSpec.describe ShopController, type: :controller do
       expect(cart_item['quantity']).to eq('5')
     end
 
+    it 'supports decrementing quantity by one' do
+      patch :update_cart, params: { product_id: product1.id, quantity: 1 }
+
+      cart_item = session[:cart].find { |item| item['product_id'] == product1.id.to_s }
+      expect(cart_item['quantity']).to eq('1')
+    end
+
     it 'removes item if quantity is 0' do
       patch :update_cart, params: { product_id: product1.id, quantity: 0 }
+
+      expect(session[:cart]).to be_empty
+    end
+
+    it 'removes item if quantity is negative' do
+      patch :update_cart, params: { product_id: product1.id, quantity: -1 }
 
       expect(session[:cart]).to be_empty
     end
