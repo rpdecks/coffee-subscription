@@ -68,6 +68,13 @@ gem "image_processing", "~> 1.2"
 # CSV support (will be removed from stdlib in Ruby 3.4)
 gem "csv"
 
+# Pin psych to Ruby's default gem version. Without this pin, `bundle update`
+# installs a newer psych alongside Ruby's built-in copy, causing RubyGems to
+# warn "Unresolved or ambiguous specs" during Gem::Specification.reset because
+# rdoc depends on psych (>= 4.0.0) — a non-trivial constraint that trips the
+# multi-version check. Keeping a single psych (the default gem) avoids that.
+gem "psych", "~> 5.1.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
