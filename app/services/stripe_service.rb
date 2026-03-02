@@ -120,9 +120,7 @@ class StripeService
       line_items: line_items,
       success_url: success_url,
       cancel_url: cancel_url,
-      shipping_address_collection: {
-        allowed_countries: [ "US" ]
-      },
+      billing_address_collection: "required",
       metadata: metadata.merge({
         user_id: user.id,
         order_type: "one_time"

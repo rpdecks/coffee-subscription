@@ -116,10 +116,10 @@ class WebhooksController < ApplicationController
     cart_items = JSON.parse(metadata["cart_items"] || "[]")
     return if cart_items.empty?
 
-    # Get shipping address from Stripe session
-    shipping_details = session.shipping_details || session.shipping
-    shipping_address = if shipping_details
-      create_or_find_address(user, shipping_details)
+    # Get billing address from Stripe session (we collect billing, not shipping, since orders are local pickup/delivery)
+    billing_details = session.customer_details
+    shipping_address = if billing_details&.address&.line1.present?
+      create_or_find_address(user, billing_details)
     else
       user.addresses.shipping.first || user.addresses.first
     end

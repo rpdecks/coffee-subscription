@@ -378,8 +378,7 @@ RSpec.describe StripeService do
 
     it 'enables shipping address collection' do
       expect(Stripe::Checkout::Session).to receive(:create) do |params|
-        expect(params[:shipping_address_collection]).to be_present
-        expect(params[:shipping_address_collection][:allowed_countries]).to eq([ 'US' ])
+        expect(params[:billing_address_collection]).to eq("required")
         stripe_checkout_session
       end
 
