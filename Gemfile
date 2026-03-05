@@ -36,7 +36,7 @@ gem "pundit"
 gem "stripe"
 
 # AWS S3 for Active Storage
-gem "aws-sdk-s3", "~> 1.0"
+gem "aws-sdk-s3", "~> 1.214"
 
 # Background jobs
 gem "sidekiq", "~> 8.0"
@@ -73,7 +73,7 @@ gem "csv"
 # warn "Unresolved or ambiguous specs" during Gem::Specification.reset because
 # rdoc depends on psych (>= 4.0.0) — a non-trivial constraint that trips the
 # multi-version check. Keeping a single psych (the default gem) avoids that.
-gem "psych", "~> 5.1.2"
+gem "psych", "~> 5.3.1"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
