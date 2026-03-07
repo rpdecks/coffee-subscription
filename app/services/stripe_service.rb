@@ -81,7 +81,7 @@ class StripeService
     line_items = cart_items.map do |item|
       product_data = {
         name: item[:product].name,
-        description: item[:product].description
+        description: item[:product].description&.truncate(100)
       }
 
       # Add image if available
