@@ -5,6 +5,9 @@ RSpec.describe "Dashboard::PaymentMethods", type: :request do
 
   before do
     sign_in user, scope: :user
+    allow(Rails.configuration).to receive(:stripe).and_return(
+      { publishable_key: "pk_test_stub", secret_key: "sk_test_stub" }
+    )
   end
 
   describe "GET /dashboard/payment_methods" do
