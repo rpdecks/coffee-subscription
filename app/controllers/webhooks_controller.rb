@@ -60,7 +60,7 @@ class WebhooksController < ApplicationController
   def verify_stripe_signature
     payload = request.body.read
     sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
-    endpoint_secret = Rails.application.credentials.dig(:stripe, :webhook_secret)
+    endpoint_secret = ENV["STRIPE_WEBHOOK_SECRET"].presence || Rails.application.credentials.dig(:stripe, :webhook_secret)
 
     # In development/test without webhook secret, parse the event directly
     if endpoint_secret.blank? && (Rails.env.development? || Rails.env.test?)
