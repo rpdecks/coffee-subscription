@@ -2,10 +2,12 @@ class GreenCoffee < ApplicationRecord
   belongs_to :supplier
   has_many :blend_components, dependent: :destroy
   has_many :products, through: :blend_components
+  has_one_attached :fact_sheet
 
   validates :name, presence: true
   validates :quantity_lbs, numericality: { greater_than_or_equal_to: 0 }
   validates :cost_per_lb, numericality: { greater_than: 0 }, allow_nil: true
+  validate :fact_sheet_file_type, :fact_sheet_file_size, if: -> { fact_sheet.attached? }
 
   scope :in_stock, -> { where("quantity_lbs > 0") }
   scope :out_of_stock, -> { where(quantity_lbs: 0) }
@@ -66,5 +68,21 @@ class GreenCoffee < ApplicationRecord
 
   def display_details
     [ variety, process ].compact_blank.join(" / ")
+  end
+
+  private
+
+  def fact_sheet_file_type
+    return unless fact_sheet.attached?
+    return if fact_sheet.content_type == "application/pdf"
+
+    errors.add(:fact_sheet, "must be a PDF")
+  end
+
+  def fact_sheet_file_size
+    return unless fact_sheet.attached?
+    return if fact_sheet.blob.byte_size <= 10.megabytes
+
+    errors.add(:fact_sheet, "must be less than 10 MB")
   end
 end

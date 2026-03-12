@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe "Admin::GreenCoffees", type: :request do
   let(:admin) { create(:admin_user) }
   let(:supplier) { create(:supplier) }
+  let(:fact_sheet) { fixture_file_upload("spec/fixtures/files/test_fact_sheet.pdf", "application/pdf") }
 
   before { sign_in admin, scope: :user }
 
@@ -142,6 +143,12 @@ RSpec.describe "Admin::GreenCoffees", type: :request do
       expect(response).to redirect_to(admin_green_coffee_path(GreenCoffee.last))
     end
 
+    it "attaches a PDF fact sheet" do
+      post admin_green_coffees_path, params: { green_coffee: valid_attributes.merge(fact_sheet: fact_sheet) }
+
+      expect(GreenCoffee.last.fact_sheet).to be_attached
+    end
+
     context "with invalid attributes" do
       it "does not create without a name" do
         expect {
@@ -182,6 +189,12 @@ RSpec.describe "Admin::GreenCoffees", type: :request do
     it "redirects to green coffee show page" do
       patch admin_green_coffee_path(green_coffee), params: { green_coffee: { name: "Updated Name" } }
       expect(response).to redirect_to(admin_green_coffee_path(green_coffee))
+    end
+
+    it "updates the fact sheet attachment" do
+      patch admin_green_coffee_path(green_coffee), params: { green_coffee: { fact_sheet: fact_sheet } }
+
+      expect(green_coffee.reload.fact_sheet).to be_attached
     end
 
     context "with invalid attributes" do
