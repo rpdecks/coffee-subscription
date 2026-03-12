@@ -1,0 +1,131 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex items-center gap-4">
+    <%= link_to admin_orders_path, class: "text-gray-600 hover:text-gray-900" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Record Manual Sale</h1>
+      <p class="text-gray-600 mt-1">Import a Stripe transaction or record an off-site sale and decrement inventory.</p>
+    </div>
+  </div>
+
+  <% if @manual_sale_errors.any? %>
+    <div class="rounded-lg bg-red-50 border border-red-200 p-4">
+      <h2 class="text-sm font-medium text-red-800">Unable to record sale</h2>
+      <ul class="mt-2 list-disc pl-5 text-sm text-red-700 space-y-1">
+        <% @manual_sale_errors.each do |error| %>
+          <li><%= error %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with url: admin_orders_path, scope: :manual_sale, class: "space-y-6" do |f| %>
+    <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Payment</h2>
+        <p class="text-sm text-gray-500 mt-1">Paste a Stripe payment intent or charge ID to link this order to an existing transaction.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= f.label :transaction_reference, "Stripe Reference", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :transaction_reference, value: @manual_sale["transaction_reference"], placeholder: "pi_... or ch_...", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :status, "Order Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :status, options_for_select(Order.statuses.keys.map { |status| [status.titleize, status] }, @manual_sale["status"] || "delivered"), {}, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Customer</h2>
+        <p class="text-sm text-gray-500 mt-1">These fields can be left blank if Stripe already has the billing details.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= f.label :customer_name, "Full Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :customer_name, value: @manual_sale["customer_name"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :customer_email, "Email", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.email_field :customer_email, value: @manual_sale["customer_email"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :customer_phone, "Phone", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.telephone_field :customer_phone, value: @manual_sale["customer_phone"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Product</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= f.label :product_id, "Product", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :product_id, options_from_collection_for_select(@products, :id, :name, @manual_sale["product_id"]), { prompt: "Select a product" }, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :quantity, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.number_field :quantity, value: @manual_sale["quantity"] || 1, min: 1, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Address</h2>
+        <p class="text-sm text-gray-500 mt-1">Used if Stripe does not already provide billing details for the transaction.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <%= f.label :street_address, "Street Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :street_address, value: @manual_sale["street_address"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div class="md:col-span-2">
+          <%= f.label :street_address_2, "Street Address 2", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :street_address_2, value: @manual_sale["street_address_2"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :city, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :city, value: @manual_sale["city"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :state, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :state, value: @manual_sale["state"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :zip_code, "ZIP Code", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :zip_code, value: @manual_sale["zip_code"], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div>
+          <%= f.label :country, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :country, value: @manual_sale["country"] || "US", class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <%= f.submit "Record Sale", class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer" %>
+      <%= link_to "Cancel", admin_orders_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium" %>
+    </div>
+  <% end %>
+</div>
