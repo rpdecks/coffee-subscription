@@ -174,7 +174,7 @@ end
 def seed_payment_methods!(users)
   users.each_with_index do |user, index|
     payment_method = user.payment_methods.find_or_initialize_by(stripe_payment_method_id: "pm_seed_#{index + 1}")
-    payment_method.card_brand = ["Visa", "Mastercard", "Amex"][index % 3]
+    payment_method.card_brand = [ "Visa", "Mastercard", "Amex" ][index % 3]
     payment_method.last_four = format("%04d", 4242 + index)
     payment_method.exp_month = 12
     payment_method.exp_year = 2029
@@ -220,6 +220,8 @@ def attach_seed_fact_sheet!(green_coffee)
     filename: "#{green_coffee.name.parameterize}-fact-sheet.pdf",
     content_type: "application/pdf"
   )
+rescue StandardError => error
+  puts "Skipping fact sheet attachment for #{green_coffee.name}: #{error.class} - #{error.message}"
 end
 
 def seed_green_coffees!(suppliers)
@@ -444,11 +446,11 @@ def create_order_with_items!(user:, order_number:, order_type:, status:, shippin
   order.delivered_at = created_at + 4.days if status.to_s == "delivered"
   order.save!
 
-  existing_keys = order.order_items.map { |item| [item.product_id, item.quantity] }
+  existing_keys = order.order_items.map { |item| [ item.product_id, item.quantity ] }
   items.each do |item_attrs|
     product = item_attrs.fetch(:product)
     quantity = item_attrs.fetch(:quantity)
-    next if existing_keys.include?([product.id, quantity])
+    next if existing_keys.include?([ product.id, quantity ])
 
     order.order_items.create!(product: product, quantity: quantity, price_cents: product.price_cents)
   end
