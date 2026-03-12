@@ -20,6 +20,48 @@ class Product < ApplicationRecord
   scope :coffee, -> { where(product_type: :coffee) }
   scope :merch, -> { where(product_type: :merch) }
   scope :in_stock, -> { where("inventory_count IS NULL OR inventory_count > 0") }
+  scope :admin_in_stock, lambda {
+    where(<<~SQL.squish, coffee_type: product_types[:coffee], packaged_state: InventoryItem.states[:packaged])
+      CASE
+      WHEN products.product_type = :coffee_type AND COALESCE(products.weight_oz, 0) > 0
+        THEN FLOOR(
+          (
+            COALESCE(
+              (
+                SELECT SUM(inventory_items.quantity)
+                FROM inventory_items
+                WHERE inventory_items.product_id = products.id
+                  AND inventory_items.state = :packaged_state
+              ),
+              0
+            ) * 16.0
+          ) / NULLIF(products.weight_oz, 0)
+        ) > 0
+      ELSE products.inventory_count IS NULL OR products.inventory_count > 0
+      END
+    SQL
+  }
+  scope :admin_out_of_stock, lambda {
+    where(<<~SQL.squish, coffee_type: product_types[:coffee], packaged_state: InventoryItem.states[:packaged])
+      CASE
+      WHEN products.product_type = :coffee_type AND COALESCE(products.weight_oz, 0) > 0
+        THEN FLOOR(
+          (
+            COALESCE(
+              (
+                SELECT SUM(inventory_items.quantity)
+                FROM inventory_items
+                WHERE inventory_items.product_id = products.id
+                  AND inventory_items.state = :packaged_state
+              ),
+              0
+            ) * 16.0
+          ) / NULLIF(products.weight_oz, 0)
+        ) <= 0
+      ELSE products.inventory_count IS NOT NULL AND products.inventory_count <= 0
+      END
+    SQL
+  }
 
   def price
     return 0.0 if price_cents.nil?
@@ -53,6 +95,38 @@ class Product < ApplicationRecord
     return 0 if packaged_lbs <= 0
 
     ((packaged_lbs * 16.0) / bag_size_oz).floor
+  end
+
+  def admin_inventory_display
+    if coffee?
+      bags = sellable_bag_count
+      return "Not configured" if bags.nil?
+      return "Out of Stock" if bags <= 0
+
+      return "#{bags} #{'bag'.pluralize(bags)}"
+    end
+
+    return "Unlimited" if inventory_count.nil?
+    return "Out of Stock" if inventory_count <= 0
+
+    inventory_count.to_s
+  end
+
+  def admin_inventory_display_class
+    if coffee?
+      bags = sellable_bag_count
+      return "text-sm text-gray-500" if bags.nil?
+      return "text-sm text-red-600 font-medium" if bags <= 0
+      return "text-sm text-green-600 font-medium" if bags > 10
+
+      return "text-sm text-yellow-600 font-medium"
+    end
+
+    return "text-sm text-gray-500" if inventory_count.nil?
+    return "text-sm text-green-600 font-medium" if inventory_count > 10
+    return "text-sm text-yellow-600 font-medium" if inventory_count > 0
+
+    "text-sm text-red-600 font-medium"
   end
 
   # New inventory management methods
