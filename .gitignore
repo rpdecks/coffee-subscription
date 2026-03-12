@@ -53,5 +53,8 @@ node_modules/
 # macOS specific files
 .DS_Store
 
+# Playwright MCP artifacts
+.playwright-mcp/
+
 # Test coverage reports
 /coverage/
