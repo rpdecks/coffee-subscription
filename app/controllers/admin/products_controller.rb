@@ -19,9 +19,9 @@ class Admin::ProductsController < Admin::BaseController
       when "inactive"
         @products = @products.where(active: false)
       when "in_stock"
-        @products = @products.where("inventory_count IS NULL OR inventory_count > 0")
+        @products = @products.admin_in_stock
       when "out_of_stock"
-        @products = @products.where("inventory_count IS NOT NULL AND inventory_count <= 0")
+        @products = @products.admin_out_of_stock
       end
     end
 

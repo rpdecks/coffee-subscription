@@ -36,14 +36,8 @@
         </div>
         <div class="border-l border-gray-200 pl-6">
           <div class="text-sm text-gray-500 mb-1">Inventory</div>
-          <div class="text-lg font-semibold text-gray-900">
-            <% if @product.inventory_count.nil? %>
-              <span class="text-gray-600">Unlimited</span>
-            <% elsif @product.inventory_count > 0 %>
-              <%= @product.inventory_count %>
-            <% else %>
-              <span class="text-red-600">Out of Stock</span>
-            <% end %>
+          <div class="text-lg font-semibold <%= @product.admin_inventory_display_class.sub('text-sm ', '') %>">
+            <%= @product.admin_inventory_display %>
           </div>
         </div>
         <% if @product.weight_oz %>

@@ -61,6 +61,38 @@ RSpec.describe "Admin::Products", type: :request do
         expect(response.body).to include(inactive_product.name)
       end
     end
+
+    context "with inventory display and stock filters" do
+      let!(:coffee_product) { create(:product, :coffee, name: "Palmatum Blend", inventory_count: 40, weight_oz: 12) }
+      let!(:merch_product) { create(:product, :merch, name: "Coffee Mug", inventory_count: 30) }
+      let!(:sold_out_coffee) { create(:product, :coffee, name: "Empty Roast", inventory_count: 40, weight_oz: 12) }
+
+      before do
+        create(:inventory_item, :packaged, product: coffee_product, quantity: 1.94)
+      end
+
+      it "shows computed bag counts for coffee products" do
+        get admin_products_path
+
+        expect(response.body).to include("2 bags")
+        expect(response.body).not_to include(">40<")
+      end
+
+      it "filters in-stock using packaged coffee inventory" do
+        get admin_products_path, params: { status: "in_stock" }
+
+        expect(response.body).to include(coffee_product.name)
+        expect(response.body).to include(merch_product.name)
+        expect(response.body).not_to include(sold_out_coffee.name)
+      end
+
+      it "filters out-of-stock using packaged coffee inventory" do
+        get admin_products_path, params: { status: "out_of_stock" }
+
+        expect(response.body).to include(sold_out_coffee.name)
+        expect(response.body).not_to include(coffee_product.name)
+      end
+    end
   end
 
   describe "GET /admin/products/:id" do

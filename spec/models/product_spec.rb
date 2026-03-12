@@ -62,6 +62,32 @@ RSpec.describe Product, type: :model do
         expect(Product.in_stock).not_to include(out_of_stock)
       end
     end
+
+    describe '.admin_in_stock' do
+      it 'uses packaged coffee inventory for coffee products' do
+        in_stock_coffee = create(:product, :coffee, inventory_count: 40, weight_oz: 12)
+        out_of_stock_coffee = create(:product, :coffee, inventory_count: 40, weight_oz: 12)
+        merch = create(:product, :merch, inventory_count: 3)
+
+        create(:inventory_item, :packaged, product: in_stock_coffee, quantity: 1.0)
+
+        expect(Product.admin_in_stock).to include(in_stock_coffee, merch)
+        expect(Product.admin_in_stock).not_to include(out_of_stock_coffee)
+      end
+    end
+
+    describe '.admin_out_of_stock' do
+      it 'uses packaged coffee inventory for coffee products' do
+        in_stock_coffee = create(:product, :coffee, inventory_count: 0, weight_oz: 12)
+        out_of_stock_coffee = create(:product, :coffee, inventory_count: 40, weight_oz: 12)
+        merch = create(:product, :merch, inventory_count: 0)
+
+        create(:inventory_item, :packaged, product: in_stock_coffee, quantity: 1.0)
+
+        expect(Product.admin_out_of_stock).to include(out_of_stock_coffee, merch)
+        expect(Product.admin_out_of_stock).not_to include(in_stock_coffee)
+      end
+    end
   end
 
   describe '#price' do
@@ -117,6 +143,30 @@ RSpec.describe Product, type: :model do
         product = create(:product, :merch, inventory_count: 0)
         expect(product.in_stock?).to be false
       end
+    end
+  end
+
+  describe '#admin_inventory_display' do
+    it 'shows bag counts for coffee products' do
+      product = create(:product, :coffee, weight_oz: 12, inventory_count: 40)
+      create(:inventory_item, :packaged, product: product, quantity: 1.94)
+
+      expect(product.admin_inventory_display).to eq('2 bags')
+      expect(product.admin_inventory_display_class).to eq('text-sm text-yellow-600 font-medium')
+    end
+
+    it 'shows not configured for coffee products without bag sizing' do
+      product = create(:product, :coffee, weight_oz: nil, inventory_count: 40)
+
+      expect(product.admin_inventory_display).to eq('Not configured')
+      expect(product.admin_inventory_display_class).to eq('text-sm text-gray-500')
+    end
+
+    it 'shows inventory_count for merch products' do
+      product = create(:product, :merch, inventory_count: 30)
+
+      expect(product.admin_inventory_display).to eq('30')
+      expect(product.admin_inventory_display_class).to eq('text-sm text-green-600 font-medium')
     end
   end
 end

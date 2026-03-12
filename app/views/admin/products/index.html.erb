@@ -101,15 +101,7 @@
                   <%= product.weight_oz ? format_ounces(product.weight_oz) : 'N/A' %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <% if product.inventory_count.nil? %>
-                    <span class="text-sm text-gray-500">Unlimited</span>
-                  <% elsif product.inventory_count > 10 %>
-                    <span class="text-sm text-green-600 font-medium"><%= product.inventory_count %></span>
-                  <% elsif product.inventory_count > 0 %>
-                    <span class="text-sm text-yellow-600 font-medium"><%= product.inventory_count %></span>
-                  <% else %>
-                    <span class="text-sm text-red-600 font-medium">Out of Stock</span>
-                  <% end %>
+                  <span class="<%= product.admin_inventory_display_class %>"><%= product.admin_inventory_display %></span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <%= product.active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
