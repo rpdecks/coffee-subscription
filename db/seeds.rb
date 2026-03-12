@@ -358,6 +358,8 @@ def seed_product_images!(products)
       filename: File.basename(image_path),
       content_type: "image/jpeg"
     )
+  rescue StandardError => error
+    puts "Skipping product image attachment for #{product.name}: #{error.class} - #{error.message}"
   end
 end
 
