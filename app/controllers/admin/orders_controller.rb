@@ -2,6 +2,7 @@ class Admin::OrdersController < Admin::BaseController
   include CsvExportable
 
   before_action :set_order, only: [ :show, :update_status ]
+  before_action :load_manual_sale_form, only: [ :new, :create ]
 
   def index
     orders = build_orders_query
@@ -15,6 +16,21 @@ class Admin::OrdersController < Admin::BaseController
 
   def export
     export_orders_csv
+  end
+
+  def new
+  end
+
+  def create
+    @manual_sale = manual_sale_params.to_h
+    result = ManualSaleRecorder.new(params: manual_sale_params).call
+
+    if result.success?
+      redirect_to admin_order_path(result.order), notice: "Manual sale recorded successfully."
+    else
+      @manual_sale_errors = result.errors
+      render :new, status: :unprocessable_content
+    end
   end
 
   def show
@@ -55,6 +71,12 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   private
+
+  def load_manual_sale_form
+    @products = Product.active.order(:name)
+    @manual_sale ||= { "status" => "delivered", "country" => "US" }
+    @manual_sale_errors ||= []
+  end
 
   def build_orders_query
     orders = Order.includes(:user, :subscription, :shipping_address).order(created_at: :desc)
@@ -114,6 +136,24 @@ class Admin::OrdersController < Admin::BaseController
     @order = Order.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to admin_orders_path, alert: "Order not found."
+  end
+
+  def manual_sale_params
+    params.fetch(:manual_sale, {}).permit(
+      :transaction_reference,
+      :product_id,
+      :quantity,
+      :status,
+      :customer_name,
+      :customer_email,
+      :customer_phone,
+      :street_address,
+      :street_address_2,
+      :city,
+      :state,
+      :zip_code,
+      :country
+    )
   end
 
   def order_params

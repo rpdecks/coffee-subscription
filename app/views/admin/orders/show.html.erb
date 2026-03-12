@@ -136,6 +136,12 @@
               <p class="text-sm text-gray-900"><%= @order.user.phone %></p>
             </div>
           <% end %>
+          <% if @order.stripe_payment_intent_id.present? %>
+            <div>
+              <p class="text-sm font-medium text-gray-500">Stripe Reference</p>
+              <p class="text-sm font-mono text-gray-900"><%= @order.stripe_payment_intent_id %></p>
+            </div>
+          <% end %>
           <%= link_to "View Customer", admin_customer_path(@order.user), class: "block mt-4 text-sm text-blue-600 hover:text-blue-800" %>
         </div>
       </div>
