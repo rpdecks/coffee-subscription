@@ -82,6 +82,35 @@ flyctl deploy --config fly.staging.toml
 # Or use the parity helper: staging deploy
 ```
 
+## Staging Seed Data
+
+Regular staging seed:
+
+```bash
+flyctl ssh console --app coffee-staging -C "/rails/bin/rails db:seed"
+```
+
+This now seeds a usable staging dataset without wiping the database:
+
+- admin users
+- sample customers
+- suppliers and green coffees
+- blend components
+- green, roasted, and packaged inventory items
+- sample subscription and one-time orders
+
+Full staging reset seed:
+
+```bash
+flyctl ssh console --app coffee-staging -C "cd /rails && SEED_RESET=1 bin/rails db:seed"
+```
+
+Seeded admin accounts after reset:
+
+- `rp@acercoffee.com / ChangeMe123!`
+- `kp@acercoffee.com / ChangeMe123!`
+- `admin@acercoffee.com / ChangeMe123!`
+
 **Via GitHub Actions:**
 
 - Push to `main` → auto-deploy to production
