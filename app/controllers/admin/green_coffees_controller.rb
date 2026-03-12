@@ -100,7 +100,7 @@ class Admin::GreenCoffeesController < Admin::BaseController
     params.require(:green_coffee).permit(
       :supplier_id, :name, :origin_country, :region, :variety,
       :process, :harvest_date, :arrived_on, :cost_per_lb,
-      :quantity_lbs, :lot_number, :notes
+      :quantity_lbs, :lot_number, :notes, :fact_sheet
     )
   end
 end

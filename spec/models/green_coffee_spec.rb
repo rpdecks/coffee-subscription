@@ -7,6 +7,32 @@ RSpec.describe GreenCoffee, type: :model do
     it { should have_many(:products).through(:blend_components) }
   end
 
+  describe "fact sheet validations" do
+    let(:green_coffee) { create(:green_coffee) }
+
+    it "accepts a PDF fact sheet" do
+      green_coffee.fact_sheet.attach(
+        io: StringIO.new("%PDF-1.4\nvalid pdf"),
+        filename: "fact-sheet.pdf",
+        content_type: "application/pdf"
+      )
+
+      expect(green_coffee).to be_valid
+    end
+
+    it "rejects non-PDF fact sheets" do
+      green_coffee.fact_sheet.attach(
+        io: StringIO.new("not a pdf"),
+        filename: "fact-sheet.txt",
+        content_type: "text/plain"
+      )
+
+      green_coffee.validate
+
+      expect(green_coffee.errors[:fact_sheet]).to include("must be a PDF")
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
     it { should validate_numericality_of(:quantity_lbs).is_greater_than_or_equal_to(0) }
