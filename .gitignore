@@ -42,6 +42,7 @@
 !.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
+!.vscode/mcp.json
 
 # Ignore node modules
 node_modules/

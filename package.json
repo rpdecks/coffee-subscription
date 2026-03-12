@@ -4,6 +4,7 @@
   "description": "Coffee subscription business MVP",
   "private": true,
   "scripts": {
+    "mcp:coffee-tools": "node scripts/mcp/coffee-tools.mjs",
     "build": "echo 'No build needed - Tailwind is handled by Ruby gem'",
     "postinstall": "echo 'Node.js buildpack satisfied'"
   },
@@ -28,6 +29,9 @@
   },
   "homepage": "https://github.com/rpdecks/coffee-subscription#readme",
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "jsonc-parser": "^3.3.1",
+    "prettier": "^3.7.4",
+    "zod": "^4.1.11"
   }
 }

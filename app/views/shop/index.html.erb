@@ -69,7 +69,11 @@
                     <div class="flex h-full w-full" data-product-carousel-target="track">
                       <% carousel_images.each do |img| %>
                         <div class="h-full w-full flex-none">
-                          <%= image_tag img, class: "w-full h-full object-contain p-4" %>
+                          <%= shop_product_image_tag(
+                            img,
+                            alt: product.name,
+                            class_name: "w-full h-full object-contain p-4"
+                          ) %>
                         </div>
                       <% end %>
                     </div>
