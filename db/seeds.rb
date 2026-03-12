@@ -1,28 +1,38 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+# This file seeds safe baseline data in every environment and richer preview/demo
+# data in staging and development. Use SEED_RESET=1 for a destructive reset.
 
-# PRODUCTION DATABASE PROTECTION
-# Prevent accidental seeding of production database with test data
-if Rails.env.production?
+ADMIN_PASSWORD = ENV.fetch("SEED_ADMIN_PASSWORD", "ChangeMe123!")
+CUSTOMER_PASSWORD = ENV.fetch("SEED_CUSTOMER_PASSWORD", "TestPass123!")
+RESET_SEED = ActiveModel::Type::Boolean.new.cast(ENV["DEMO_SEED"] || ENV["SEED_RESET"])
+PREVIEW_ENV = Rails.env.development? || Rails.env.staging?
+
+def confirm_production_reset!
+  return unless Rails.env.production?
+  return if RESET_SEED
+
+  puts "Production seeding is disabled unless SEED_RESET=1 is set."
+  exit 1
+end
+
+def confirm_destructive_seed!
+  return unless RESET_SEED
+  return unless Rails.env.production?
+
   puts "\n" + ("=" * 80)
-  puts "WARNING: You are about to seed the PRODUCTION database!"
-  puts "This will DELETE ALL existing data and create test/demo records."
+  puts "WARNING: You are about to reset the PRODUCTION database with demo data!"
   puts ("=" * 80)
   print "\nType 'DELETE ALL PRODUCTION DATA' (exactly) to continue: "
 
-  confirmation = STDIN.gets.chomp
+  confirmation = STDIN.gets&.chomp
 
   unless confirmation == "DELETE ALL PRODUCTION DATA"
-    puts "\n❌ Seeding cancelled. Production database was NOT modified."
+    puts "\nSeeding cancelled."
     exit 0
   end
-
-  puts "\n⚠️  Proceeding with production database seed..."
 end
 
 def seed_subscription_plans!
-  plans = [
+  [
     {
       name: "Weekly - 1 Bag",
       description: "One 12oz bag delivered every week. Perfect for daily coffee drinkers.",
@@ -78,27 +88,28 @@ def seed_subscription_plans!
       bags_per_delivery: 4,
       price_cents: 6000,
       active: true
+    },
+    {
+      name: "Legacy Plan",
+      description: "Old plan no longer offered to new customers.",
+      frequency: :monthly,
+      bags_per_delivery: 1,
+      price_cents: 1500,
+      active: false
     }
-  ]
-
-  plans.each do |attrs|
+  ].each do |attrs|
     plan = SubscriptionPlan.find_or_initialize_by(name: attrs[:name])
     plan.assign_attributes(attrs)
     plan.save!
   end
 end
 
-def seed_dev_preview_user_with_order_history!
-  return unless Rails.env.development?
-
-  email = "rp@acercoffee.com"
-  password = ENV.fetch("DEV_SEED_PASSWORD", "ChangeMe123!")
-
-  user = User.find_or_initialize_by(email: email)
-  user.first_name ||= "Robert"
-  user.last_name ||= "Phillips"
-  user.phone ||= "555-234-5678"
-  user.role = :admin
+def create_or_update_user!(attrs, password:, role: :customer)
+  user = User.find_or_initialize_by(email: attrs[:email])
+  user.first_name = attrs[:first_name]
+  user.last_name = attrs[:last_name]
+  user.phone = attrs[:phone]
+  user.role = role
 
   if user.new_record? || user.encrypted_password.blank?
     user.password = password
@@ -107,557 +118,473 @@ def seed_dev_preview_user_with_order_history!
 
   user.skip_confirmation! if user.respond_to?(:skip_confirmation!)
   user.save!
+  user
+end
 
-  address = user.addresses.find_or_create_by!(
-    address_type: :shipping,
-    street_address: "123 Maple St",
-    city: "Knoxville",
-    state: "TN",
-    zip_code: "37902",
-    country: "US"
-  ) do |a|
-    a.is_default = true
+def seed_admin_users!
+  [
+    { email: "rp@acercoffee.com", first_name: "Robert", last_name: "Phillips", phone: "555-234-5678" },
+    { email: "kp@acercoffee.com", first_name: "Katie", last_name: "Phillips", phone: "555-234-5679" },
+    { email: "admin@acercoffee.com", first_name: "Acer", last_name: "Admin", phone: "555-234-5680" }
+  ].map do |attrs|
+    create_or_update_user!(attrs, password: ADMIN_PASSWORD, role: :admin)
   end
+end
 
-  plan = SubscriptionPlan.active.order(:price_cents).first
-  return unless plan
+def seed_customers!
+  [
+    { email: "test1@example.com", first_name: "Emma", last_name: "Johnson", phone: "555-100-0001" },
+    { email: "test2@example.com", first_name: "Liam", last_name: "Williams", phone: "555-100-0002" },
+    { email: "test3@example.com", first_name: "Olivia", last_name: "Brown", phone: "555-100-0003" }
+  ].map do |attrs|
+    create_or_update_user!(attrs, password: CUSTOMER_PASSWORD, role: :customer)
+  end
+end
 
-  subscription = user.subscriptions.active.first
-  if subscription.present?
-    subscription.update!(subscription_plan: plan, shipping_address: address) if subscription.subscription_plan_id != plan.id
-  else
-    subscription = user.subscriptions.create!(
-      subscription_plan: plan,
-      shipping_address: address,
-      status: :active,
-      next_delivery_date: Date.current.to_date + plan.frequency_in_days.days,
-      quantity: 1
+def find_or_create_address!(user, attrs)
+  address = user.addresses.find_or_initialize_by(
+    address_type: attrs[:address_type],
+    street_address: attrs[:street_address],
+    city: attrs[:city],
+    state: attrs[:state],
+    zip_code: attrs[:zip_code],
+    country: attrs[:country]
+  )
+  address.street_address_2 = attrs[:street_address_2]
+  address.is_default = attrs.fetch(:is_default, true)
+  address.save!
+  address
+end
+
+def seed_addresses!(users)
+  address_book = {
+    "rp@acercoffee.com" => { address_type: :shipping, street_address: "123 Maple St", city: "Knoxville", state: "TN", zip_code: "37902", country: "US", is_default: true },
+    "kp@acercoffee.com" => { address_type: :shipping, street_address: "456 Walnut Ave", city: "Knoxville", state: "TN", zip_code: "37902", country: "US", is_default: true },
+    "admin@acercoffee.com" => { address_type: :shipping, street_address: "789 Roaster Rd", city: "Knoxville", state: "TN", zip_code: "37920", country: "US", is_default: true },
+    "test1@example.com" => { address_type: :shipping, street_address: "45 Market St", city: "Irmo", state: "SC", zip_code: "29063", country: "US", is_default: true },
+    "test2@example.com" => { address_type: :shipping, street_address: "88 River Dr", city: "Columbia", state: "SC", zip_code: "29201", country: "US", is_default: true },
+    "test3@example.com" => { address_type: :shipping, street_address: "19 Oak Leaf Ln", city: "Lexington", state: "SC", zip_code: "29072", country: "US", is_default: true }
+  }
+
+  users.index_with do |user|
+    find_or_create_address!(user, address_book.fetch(user.email))
+  end
+end
+
+def seed_payment_methods!(users)
+  users.each_with_index do |user, index|
+    payment_method = user.payment_methods.find_or_initialize_by(stripe_payment_method_id: "pm_seed_#{index + 1}")
+    payment_method.card_brand = ["Visa", "Mastercard", "Amex"][index % 3]
+    payment_method.last_four = format("%04d", 4242 + index)
+    payment_method.exp_month = 12
+    payment_method.exp_year = 2029
+    payment_method.is_default = true
+    payment_method.save!
+  end
+end
+
+def seed_coffee_preferences!(users)
+  preferences = {
+    "test1@example.com" => { roast_level: :medium_roast, grind_type: :whole_bean },
+    "test2@example.com" => { roast_level: :light, grind_type: :medium_grind },
+    "test3@example.com" => { roast_level: :dark, grind_type: :espresso }
+  }
+
+  users.each do |user|
+    attrs = preferences[user.email]
+    next unless attrs
+
+    preference = user.coffee_preference || user.build_coffee_preference
+    preference.assign_attributes(attrs)
+    preference.save!
+  end
+end
+
+def seed_suppliers!
+  [
+    { name: "Genuine Origin", contact_email: "sales@genuineorigin.com", contact_name: "Origin Team", url: "https://www.genuineorigin.com" },
+    { name: "Cafe Imports", contact_email: "hello@cafeimports.com", contact_name: "Imports Team", url: "https://www.cafeimports.com" }
+  ].map do |attrs|
+    supplier = Supplier.find_or_initialize_by(name: attrs[:name])
+    supplier.assign_attributes(attrs)
+    supplier.save!
+    supplier
+  end
+end
+
+def attach_seed_fact_sheet!(green_coffee)
+  return if green_coffee.fact_sheet.attached?
+
+  green_coffee.fact_sheet.attach(
+    io: StringIO.new("%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n"),
+    filename: "#{green_coffee.name.parameterize}-fact-sheet.pdf",
+    content_type: "application/pdf"
+  )
+end
+
+def seed_green_coffees!(suppliers)
+  supplier_map = suppliers.index_by(&:name)
+  [
+    {
+      supplier: "Genuine Origin",
+      name: "Guatemala Huehuetenango",
+      origin_country: "Guatemala",
+      region: "Huehuetenango",
+      variety: "Bourbon / Caturra",
+      process: "Washed",
+      harvest_date: Date.new(2025, 11, 1),
+      arrived_on: Date.new(2026, 2, 10),
+      cost_per_lb: 5.85,
+      quantity_lbs: 120.0,
+      lot_number: "GUA-2025-01",
+      notes: "Chocolate-forward base coffee for Palmatum and Arakawa."
+    },
+    {
+      supplier: "Genuine Origin",
+      name: "Costa Rica Tarrazu",
+      origin_country: "Costa Rica",
+      region: "Tarrazu",
+      variety: "Catuai",
+      process: "Honey",
+      harvest_date: Date.new(2025, 10, 15),
+      arrived_on: Date.new(2026, 2, 10),
+      cost_per_lb: 6.1,
+      quantity_lbs: 95.0,
+      lot_number: "CRC-2025-02",
+      notes: "Adds syrupy sweetness and structure."
+    },
+    {
+      supplier: "Cafe Imports",
+      name: "Ethiopia Sidama",
+      origin_country: "Ethiopia",
+      region: "Sidama",
+      variety: "Heirloom",
+      process: "Washed",
+      harvest_date: Date.new(2025, 12, 1),
+      arrived_on: Date.new(2026, 2, 22),
+      cost_per_lb: 6.75,
+      quantity_lbs: 70.0,
+      lot_number: "ETH-2025-03",
+      notes: "Floral top note coffee for Deshojo."
+    }
+  ].map do |attrs|
+    supplier = supplier_map.fetch(attrs.delete(:supplier))
+    green_coffee = GreenCoffee.find_or_initialize_by(name: attrs[:name])
+    green_coffee.supplier = supplier
+    green_coffee.assign_attributes(attrs)
+    green_coffee.save!
+    attach_seed_fact_sheet!(green_coffee)
+    green_coffee
+  end
+end
+
+def seed_products!
+  [
+    {
+      name: "Palmatum Blend",
+      description: "A syrupy, bittersweet espresso-forward coffee with dark chocolate, toasted almond, and citrus peel.",
+      product_type: :coffee,
+      roast_type: :signature,
+      price_cents: 1500,
+      weight_oz: 12,
+      inventory_count: 40,
+      active: true,
+      visible_in_shop: true
+    },
+    {
+      name: "Deshojo Blend",
+      description: "A vivid, fruit-forward roast with dark cherry, cocoa, and cedar.",
+      product_type: :coffee,
+      roast_type: :light,
+      price_cents: 1700,
+      weight_oz: 12,
+      inventory_count: 24,
+      active: true,
+      visible_in_shop: true
+    },
+    {
+      name: "Arakawa Blend",
+      description: "Balanced and versatile with caramel sweetness and a structured finish.",
+      product_type: :coffee,
+      roast_type: :medium,
+      price_cents: 1600,
+      weight_oz: 12,
+      inventory_count: 18,
+      active: true,
+      visible_in_shop: true
+    },
+    {
+      name: "Acer Coffee Mug",
+      description: "Ceramic mug with Acer Coffee branding.",
+      product_type: :merch,
+      price_cents: 1200,
+      inventory_count: 24,
+      active: true,
+      visible_in_shop: true
+    },
+    {
+      name: "Acer Coffee T-Shirt",
+      description: "Cotton t-shirt with Acer Coffee logo.",
+      product_type: :merch,
+      price_cents: 2400,
+      inventory_count: 18,
+      active: true,
+      visible_in_shop: true
+    }
+  ].map do |attrs|
+    product = Product.find_or_initialize_by(name: attrs[:name])
+    product.assign_attributes(attrs)
+    product.save!
+    product
+  end
+end
+
+def seed_product_images!(products)
+  image_map = {
+    "Palmatum Blend" => "app/assets/images/products/palmatum.jpeg",
+    "Deshojo Blend" => "app/assets/images/products/palmatum_03.jpg"
+  }
+
+  products.each do |product|
+    image_path = image_map[product.name]
+    next if image_path.blank?
+    next unless File.exist?(Rails.root.join(image_path))
+    next if product.image.attached?
+
+    product.image.attach(
+      io: File.open(Rails.root.join(image_path)),
+      filename: File.basename(image_path),
+      content_type: "image/jpeg"
     )
   end
+end
 
-  products = Product.coffee.active.to_a
-  if products.empty?
-    products << Product.find_or_create_by!(name: "Seed Coffee") do |p|
-      p.product_type = :coffee
-      p.roast_type = :signature
-      p.description = "Development seed product for email previews."
-      p.price_cents = 1500
-      p.weight_oz = 12
-      p.inventory_count = 100
-      p.active = true
-      p.visible_in_shop = false
-    end
-  end
+def seed_blend_components!(products, green_coffees)
+  product_map = products.index_by(&:name)
+  green_map = green_coffees.index_by(&:name)
 
-  seed_orders = [
-    { number: "SEED-RP-0001", status: :delivered, created_at: 40.days.ago, shipped_at: 38.days.ago, delivered_at: 36.days.ago },
-    { number: "SEED-RP-0002", status: :delivered, created_at: 25.days.ago, shipped_at: 23.days.ago, delivered_at: 21.days.ago },
-    { number: "SEED-RP-0003", status: :shipped, created_at: 10.days.ago, shipped_at: 8.days.ago },
-    { number: "SEED-RP-0004", status: :roasting, created_at: 3.days.ago },
-    { number: "SEED-RP-0005", status: :processing, created_at: 1.day.ago }
-  ]
+  {
+    "Palmatum Blend" => {
+      "Guatemala Huehuetenango" => 55,
+      "Costa Rica Tarrazu" => 45
+    },
+    "Deshojo Blend" => {
+      "Ethiopia Sidama" => 100
+    },
+    "Arakawa Blend" => {
+      "Guatemala Huehuetenango" => 60,
+      "Costa Rica Tarrazu" => 40
+    }
+  }.each do |product_name, components|
+    product = product_map.fetch(product_name)
 
-  seed_orders.each do |attrs|
-    order = Order.find_or_initialize_by(order_number: attrs[:number])
-    order.user = user
-    order.subscription = subscription
-    order.shipping_address = address
-    order.order_type = :subscription
-    order.status = attrs[:status]
-    order.created_at ||= attrs[:created_at]
-    order.shipped_at = attrs[:shipped_at] if attrs[:shipped_at]
-    order.delivered_at = attrs[:delivered_at] if attrs[:delivered_at]
-    order.tracking_number ||= "TRACK#{attrs[:number].delete("-")}" if order.shipped? || order.delivered?
-    order.save!
-
-    if order.order_items.none?
-      1.upto(plan.bags_per_delivery || 1) do
-        OrderItem.create!(
-          order: order,
-          product: products.sample,
-          quantity: 1
-        )
-      end
-
-      order.calculate_totals
-      order.shipping_cents ||= 500
-      order.tax_cents ||= 0
-      order.total_cents = order.subtotal_cents.to_i + order.shipping_cents.to_i + order.tax_cents.to_i
-      order.save!
+    components.each do |green_name, percentage|
+      component = BlendComponent.find_or_initialize_by(product: product, green_coffee: green_map.fetch(green_name))
+      component.percentage = percentage
+      component.save!
     end
   end
 end
 
-# Default behavior: seed subscription plans without wiping your DB.
-# To run the full demo/reset seed (destructive), set DEMO_SEED=1 (or SEED_RESET=1).
-demo_seed = Rails.env.production? || ActiveModel::Type::Boolean.new.cast(ENV["DEMO_SEED"] || ENV["SEED_RESET"])
+def seed_inventory_items!(products)
+  product_map = products.index_by(&:name)
 
-unless demo_seed
-  puts "Seeding subscription plans (non-destructive)..."
-  seed_subscription_plans!
-  seed_dev_preview_user_with_order_history!
-  puts "✅ Seeded #{SubscriptionPlan.active.count} active subscription plans"
-  if Rails.env.development?
-    puts "✅ Ensured dev preview account: rp@acercoffee.com (subscription + order history)"
-  end
-  puts "\nTip: run full demo seed with DEMO_SEED=1 bin/rails db:seed"
-  return
-end
-
-# Clear existing data in correct order to avoid FK constraints
-puts "Clearing existing data..."
-OrderItem.destroy_all
-Order.destroy_all
-Subscription.destroy_all
-CoffeePreference.destroy_all
-PaymentMethod.destroy_all
-Address.destroy_all
-SubscriptionPlan.destroy_all
-Product.destroy_all
-User.destroy_all
-
-puts "Creating users..."
-
-# Create admin users
-robert_admin = User.create!(
-  email: "rp@acercoffee.com",
-  password: "ChangeMe123!",
-  password_confirmation: "ChangeMe123!",
-  first_name: "Robert",
-  last_name: "Phillips",
-  phone: "555-234-5678",
-  role: :admin
-)
-
-kristin_admin = User.create!(
-  email: "kp@acercoffee.com",
-  password: "ChangeMe123!",
-  password_confirmation: "ChangeMe123!",
-  first_name: "Katie",
-  last_name: "Phillips",
-  phone: "555-234-5679",
-  role: :admin
-)
-
-# Create a few test customers for inner circle testing
-test_customers = [
-  {
-    email: "test1@example.com",
-    first_name: "Emma",
-    last_name: "Johnson",
-    phone: "555-100-0001"
-  },
-  {
-    email: "test2@example.com",
-    first_name: "Liam",
-    last_name: "Williams",
-    phone: "555-100-0002"
-  },
-  {
-    email: "test3@example.com",
-    first_name: "Olivia",
-    last_name: "Brown",
-    phone: "555-100-0003"
-  }
-]
-
-customers = test_customers.map do |attrs|
-  User.create!(
-    email: attrs[:email],
-    password: "TestPass123!",
-    password_confirmation: "TestPass123!",
-    first_name: attrs[:first_name],
-    last_name: attrs[:last_name],
-    phone: attrs[:phone],
-    role: :customer,
-    created_at: rand(30.days.ago..Time.now)
-  )
-end
-
-puts "Created #{User.where(role: 0).count + User.where(role: 1).count} users"
-
-puts "Creating products..."
-
-# Create coffee products
-Product.create!([
-  {
-    name: "Ethiopian Yirgacheffe",
-    description: "Bright and floral with notes of lemon and blueberry. Light to medium roast.",
-    product_type: :coffee,
-    price_cents: 1800,
-    weight_oz: 12,
-    inventory_count: 100,
-    active: true
-  },
-  {
-    name: "Colombian Supremo",
-    description: "Well-balanced with chocolate and caramel notes. Medium roast.",
-    product_type: :coffee,
-    price_cents: 1600,
-    weight_oz: 12,
-    inventory_count: 150,
-    active: true
-  },
-  {
-    name: "Sumatra Mandheling",
-    description: "Full-bodied with earthy and herbal notes. Dark roast.",
-    product_type: :coffee,
-    price_cents: 1900,
-    weight_oz: 12,
-    inventory_count: 80,
-    active: true
-  },
-  {
-    name: "Guatemala Antigua",
-    description: "Smooth and complex with chocolate and spice. Medium-dark roast.",
-    product_type: :coffee,
-    price_cents: 1700,
-    weight_oz: 12,
-    inventory_count: 120,
-    active: true
-  },
-  {
-    name: "Costa Rica Tarrazu",
-    description: "Crisp acidity with citrus and honey notes. Medium roast.",
-    product_type: :coffee,
-    price_cents: 1750,
-    weight_oz: 12,
-    inventory_count: 90,
-    active: true
-  },
-  {
-    name: "Palmatum Blend",
-    description: "A signature offering from Acer Coffee, our Palmatum Blend is a syrupy, bittersweet espresso-forward coffee crafted from an all Central American selection. With notes of high cacao dark chocolate, truffles, molasses, toasted almond, and a subtle lemon peel tang, this blend offers a complex, creamy mouthfeel and lingering finish.\n\nExpect a full-bodied experience with balanced sweetness and moderate acidity — perfect as a straight espresso or in milk drinks.\n\n—\n\n🍁 Story Behind the Name\n\nThe Palmatum Blend draws its name from the Acer palmatum, the elegant Japanese maple that forms the foundation of the maple world.\n\nThis tree is the origin species — the base from which countless cultivars like Deshojo, Arakawa, and Kiyohime have been developed. With hand-shaped leaves that burn with color across the seasons, Acer palmatum symbolizes grace, transformation, and rooted beauty.",
-    product_type: :coffee,
-    price_cents: 1500,
-    weight_oz: 12.0,
-    roast_type: :signature,
-    inventory_count: 40,
-    stripe_product_id: "prod_Tc13m6ZERxkivE",
-    stripe_price_id: "price_1Sen163cVWIql7alRroOVLFt",
-    active: true,
-    visible_in_shop: true
-  },
-  {
-    name: "Deshojo Blend",
-    description: "A deep-hued cultivar of the Japanese maple, the Deshojo Blend celebrates the vibrant crimson energy of spring transformation. This coffee mirrors the leaf's bold character—rich, complex, and full of life. With notes of dark cherry, cocoa, and a whisper of cedar, this medium-dark roast offers a smooth, velvety body with a bright finish. Perfect for espresso or milk-based drinks.",
-    product_type: :coffee,
-    price_cents: 2000,
-    weight_oz: nil,
-    roast_type: :signature,
-    inventory_count: nil,
-    stripe_product_id: "prod_Tc18rUnxODu6tS",
-    stripe_price_id: "price_1Sen6d3cVWIql7alIY3WXP04",
-    active: true,
-    visible_in_shop: true
-  }
-])
-
-# Create merch products
-Product.create!([
-  {
-    name: "Acer Coffee Mug",
-    description: "Ceramic mug with our logo. 12oz capacity.",
-    product_type: :merch,
-    price_cents: 1200,
-    inventory_count: 50,
-    active: true
-  },
-  {
-    name: "Acer Coffee T-Shirt",
-    description: "100% cotton t-shirt with Acer Coffee logo.",
-    product_type: :merch,
-    price_cents: 2400,
-    inventory_count: 30,
-    active: true
-  }
-])
-
-puts "Created #{Product.count} products"
-
-# Attach product images from repo
-puts "Attaching product images..."
-palmatum = Product.find_by(name: "Palmatum Blend")
-deshojo = Product.find_by(name: "Deshojo Blend")
-
-if palmatum && File.exist?(Rails.root.join("app/assets/images/products/palmatum.jpeg"))
-  palmatum.image.attach(io: File.open(Rails.root.join("app/assets/images/products/palmatum.jpeg")), filename: "palmatum.jpeg", content_type: "image/jpeg")
-  puts "✓ Attached image to Palmatum Blend"
-end
-
-if deshojo && File.exist?(Rails.root.join("app/assets/images/products/palmatum_03.jpg"))
-  deshojo.image.attach(io: File.open(Rails.root.join("app/assets/images/products/palmatum_03.jpg")), filename: "palmatum_03.jpg", content_type: "image/jpeg")
-  puts "✓ Attached image to Deshojo Blend"
-end
-
-puts "Creating subscription plans..."
-
-weekly_plan = SubscriptionPlan.create!(
-  name: "Weekly - 1 Bag",
-  description: "One 12oz bag delivered every week. Perfect for daily coffee drinkers.",
-  frequency: :weekly,
-  bags_per_delivery: 1,
-  price_cents: 1800,
-  active: true
-)
-
-biweekly_plan = SubscriptionPlan.create!(
-  name: "Bi-Weekly - 2 Bags",
-  description: "Two 12oz bags delivered every two weeks. Great for couples or heavy drinkers.",
-  frequency: :biweekly,
-  bags_per_delivery: 2,
-  price_cents: 3400,
-  active: true
-)
-
-monthly_plan = SubscriptionPlan.create!(
-  name: "Monthly - 2 Bags",
-  description: "Two 12oz bags delivered monthly. Ideal for moderate coffee consumption.",
-  frequency: :monthly,
-  bags_per_delivery: 2,
-  price_cents: 3200,
-  active: true
-)
-
-monthly_large_plan = SubscriptionPlan.create!(
-  name: "Monthly - 4 Bags",
-  description: "Four 12oz bags delivered monthly. Perfect for families or offices.",
-  frequency: :monthly,
-  bags_per_delivery: 4,
-  price_cents: 6000,
-  active: true
-)
-
-# Inactive plan for testing
-SubscriptionPlan.create!(
-  name: "Legacy Plan",
-  description: "Old plan no longer offered to new customers.",
-  frequency: :monthly,
-  bags_per_delivery: 1,
-  price_cents: 1500,
-  active: false
-)
-
-puts "Created #{SubscriptionPlan.count} subscription plans"
-
-puts "Creating addresses for customers..."
-
-# Give most customers addresses
-customers.sample(25).each do |customer|
-  cities = [
-    [ "Portland", "OR", "97201" ], [ "Seattle", "WA", "98101" ], [ "San Francisco", "CA", "94102" ],
-    [ "Denver", "CO", "80202" ], [ "Austin", "TX", "78701" ], [ "Chicago", "IL", "60601" ],
-    [ "Boston", "MA", "02108" ], [ "New York", "NY", "10001" ], [ "Los Angeles", "CA", "90001" ]
+  inventory_rows = [
+    { product: "Palmatum Blend", state: :green, quantity: 11.70, lot_number: "PAL-2026-02-16g", received_on: Date.new(2026, 2, 10) },
+    { product: "Palmatum Blend", state: :roasted, quantity: 0.95, lot_number: "PAL-2026-02-16a", roasted_on: Date.new(2026, 2, 16), expires_on: Date.new(2026, 3, 17) },
+    { product: "Palmatum Blend", state: :packaged, quantity: 0.97, lot_number: "PAL-2026-02-16b", roasted_on: Date.new(2026, 2, 16), expires_on: Date.new(2026, 4, 1) },
+    { product: "Palmatum Blend", state: :packaged, quantity: 0.97, lot_number: "PAL-2026-02-16c", roasted_on: Date.new(2026, 2, 16), expires_on: Date.new(2026, 4, 1) },
+    { product: "Deshojo Blend", state: :green, quantity: 8.0, lot_number: "DES-2026-02-20g", received_on: Date.new(2026, 2, 22) },
+    { product: "Deshojo Blend", state: :packaged, quantity: 1.50, lot_number: "DES-2026-02-24p", roasted_on: Date.new(2026, 2, 24), expires_on: Date.new(2026, 4, 8) },
+    { product: "Arakawa Blend", state: :green, quantity: 6.0, lot_number: "ARA-2026-02-18g", received_on: Date.new(2026, 2, 18) },
+    { product: "Arakawa Blend", state: :roasted, quantity: 2.0, lot_number: "ARA-2026-02-25r", roasted_on: Date.new(2026, 2, 25), expires_on: Date.new(2026, 4, 10) },
+    { product: "Arakawa Blend", state: :packaged, quantity: 2.25, lot_number: "ARA-2026-02-25p", roasted_on: Date.new(2026, 2, 25), expires_on: Date.new(2026, 4, 10) }
   ]
 
-  city, state, zip = cities.sample
-
-  Address.create!(
-    user: customer,
-    address_type: :shipping,
-    street_address: "#{rand(100..9999)} #{[ 'Main', 'Oak', 'Pine', 'Elm', 'Maple' ].sample} #{[ 'St', 'Ave', 'Rd', 'Ln' ].sample}",
-    city: city,
-    state: state,
-    zip_code: zip,
-    country: "USA",
-    is_default: true,
-    created_at: customer.created_at + rand(1..30).days
-  )
+  inventory_rows.each do |attrs|
+    product = product_map.fetch(attrs.delete(:product))
+    item = InventoryItem.find_or_initialize_by(product: product, lot_number: attrs[:lot_number], state: attrs[:state])
+    item.assign_attributes(attrs.merge(product: product))
+    item.save!
+  end
 end
 
-puts "Created #{Address.count} addresses"
+def seed_subscriptions!(customers, addresses)
+  plans = SubscriptionPlan.active.index_by(&:name)
 
-puts "Creating payment methods..."
-
-# Give customers with addresses payment methods
-Address.all.map(&:user).uniq.each do |customer|
-  PaymentMethod.create!(
-    user: customer,
-    card_brand: [ "Visa", "Mastercard", "Amex" ].sample,
-    last_four: rand(1000..9999).to_s,
-    exp_month: rand(1..12),
-    exp_year: rand(2025..2030),
-    is_default: true,
-    stripe_payment_method_id: "pm_test_#{SecureRandom.hex(12)}",
-    created_at: customer.created_at + rand(1..30).days
-  )
-end
-
-puts "Created #{PaymentMethod.count} payment methods"
-
-puts "Creating coffee preferences..."
-
-# Give most customers coffee preferences
-customers.sample(20).each do |customer|
-  CoffeePreference.create!(
-    user: customer,
-    roast_level: [ :light, :medium_roast, :dark ].sample,
-    grind_type: [ :whole_bean, :coarse, :medium_grind, :fine, :espresso ].sample,
-    created_at: customer.created_at + rand(1..30).days
-  )
-end
-
-puts "Created #{CoffeePreference.count} coffee preferences"
-
-puts "Creating subscriptions..."
-
-# Create subscriptions for customers with payment methods
-subscription_plans = [ weekly_plan, biweekly_plan, monthly_plan, monthly_large_plan ]
-customers_with_payment = PaymentMethod.all.map(&:user).uniq
-
-# Active subscriptions (60%)
-customers_with_payment.sample((customers_with_payment.count * 0.6).to_i).each do |customer|
-  plan = subscription_plans.sample
-  created_date = rand(90.days.ago..30.days.ago)
-
-  Subscription.create!(
-    user: customer,
-    subscription_plan: plan,
-    status: :active,
-    quantity: [ 1, 2 ].sample,
-    next_delivery_date: created_date + plan.frequency_in_days.days,
-    created_at: created_date
-  )
-end
-
-# Paused subscriptions (10%)
-customers_with_payment.sample((customers_with_payment.count * 0.1).to_i).each do |customer|
-  next if customer.subscriptions.any? # Don't duplicate
-
-  plan = subscription_plans.sample
-  created_date = rand(90.days.ago..60.days.ago)
-
-  Subscription.create!(
-    user: customer,
-    subscription_plan: plan,
-    status: :paused,
-    quantity: [ 1, 2 ].sample,
-    next_delivery_date: created_date + plan.frequency_in_days.days,
-    created_at: created_date
-  )
-end
-
-# Cancelled subscriptions (15%)
-customers_with_payment.sample((customers_with_payment.count * 0.15).to_i).each do |customer|
-  next if customer.subscriptions.any?
-
-  plan = subscription_plans.sample
-  created_date = rand(180.days.ago..90.days.ago)
-  cancelled_date = created_date + rand(30..60).days
-
-  Subscription.create!(
-    user: customer,
-    subscription_plan: plan,
-    status: :cancelled,
-    quantity: [ 1, 2 ].sample,
-    next_delivery_date: cancelled_date,
-    cancelled_at: cancelled_date,
-    created_at: created_date
-  )
-end
-
-puts "Created #{Subscription.count} subscriptions (#{Subscription.active.count} active, #{Subscription.paused.count} paused, #{Subscription.cancelled.count} cancelled)"
-
-puts "Creating orders..."
-
-coffee_products = Product.where(product_type: :coffee).to_a
-all_statuses = [ :pending, :processing, :roasting, :shipped, :delivered ]
-
-# Create historical orders for active subscriptions
-Subscription.active.each do |subscription|
-  # Create 3-8 past orders per subscription
-  num_orders = rand(3..8)
-  num_orders.times do |i|
-    order_date = subscription.created_at + (i * subscription.subscription_plan.frequency_in_days).days
-    break if order_date > Date.today
-
-    status = order_date < 14.days.ago ? :delivered : all_statuses.sample
-
-    order = Order.create!(
-      user: subscription.user,
-      subscription: subscription,
-      order_number: "ORD-#{Date.today.year}-#{sprintf('%04d', Order.count + 1)}",
-      order_type: :subscription,
-      status: status,
-      subtotal_cents: subscription.subscription_plan.price_cents,
-      shipping_cents: 500,
-      tax_cents: (subscription.subscription_plan.price_cents * 0.08).to_i,
-      total_cents: subscription.subscription_plan.price_cents + 500 + (subscription.subscription_plan.price_cents * 0.08).to_i,
-      shipping_address_id: subscription.user.addresses.first&.id,
-      created_at: order_date
+  [
+    { email: "test1@example.com", plan: "Weekly - 1 Bag", status: :active, quantity: 1, next_delivery_date: Date.current + 7.days },
+    { email: "test2@example.com", plan: "Monthly - 2 Bags", status: :active, quantity: 1, next_delivery_date: Date.current + 14.days },
+    { email: "test3@example.com", plan: "Bi-Weekly - 2 Bags", status: :paused, quantity: 1, next_delivery_date: Date.current + 21.days }
+  ].map do |attrs|
+    user = customers.find { |customer| customer.email == attrs[:email] }
+    subscription = Subscription.find_or_initialize_by(user: user, subscription_plan: plans.fetch(attrs[:plan]))
+    subscription.assign_attributes(
+      status: attrs[:status],
+      quantity: attrs[:quantity],
+      next_delivery_date: attrs[:next_delivery_date],
+      shipping_address: addresses.fetch(user),
+      payment_method: user.payment_methods.first
     )
-
-    # Add order items
-    subscription.subscription_plan.bags_per_delivery.times do
-      OrderItem.create!(
-        order: order,
-        product: coffee_products.sample,
-        quantity: 1,
-        price_cents: 1800,
-        created_at: order_date
-      )
-    end
+    subscription.save!
+    subscription
   end
 end
 
-# Create some one-time orders (skip for now since subscription_id is required)
-# customers_with_payment.sample(15).each do |customer|
-#   order_date = rand(60.days.ago..Time.now)
-#   status = order_date < 14.days.ago ? :delivered : all_statuses.sample
-#   num_items = rand(1..4)
-#
-#   items_total = num_items * 1800
-#
-#   order = Order.create!(
-#     user: customer,
-#     order_number: "ORD-#{Date.today.year}-#{sprintf('%04d', Order.count + 1)}",
-#     order_type: :one_time,
-#     status: status,
-#     subtotal_cents: items_total,
-#     shipping_cents: 500,
-#     tax_cents: (items_total * 0.08).to_i,
-#     total_cents: items_total + 500 + (items_total * 0.08).to_i,
-#     shipping_address_id: customer.addresses.first&.id,
-#     created_at: order_date
-#   )
-#
-#   num_items.times do
-#     OrderItem.create!(
-#       order: order,
-#       product: coffee_products.sample,
-#       quantity: 1,
-#       price_cents: 1800,
-#       created_at: order_date
-#     )
-#   end
-# end
+def create_order_with_items!(user:, order_number:, order_type:, status:, shipping_address:, items:, subscription: nil, created_at:, stripe_reference: nil)
+  order = Order.find_or_initialize_by(order_number: order_number)
+  order.user = user
+  order.subscription = subscription
+  order.order_type = order_type
+  order.status = status
+  order.shipping_address = shipping_address
+  order.stripe_payment_intent_id = stripe_reference if stripe_reference.present?
+  order.created_at = created_at if order.new_record?
+  order.shipped_at = created_at + 2.days if status.to_s == "shipped"
+  order.delivered_at = created_at + 4.days if status.to_s == "delivered"
+  order.save!
 
-puts "Created #{Order.count} orders with #{OrderItem.count} items"
+  existing_keys = order.order_items.map { |item| [item.product_id, item.quantity] }
+  items.each do |item_attrs|
+    product = item_attrs.fetch(:product)
+    quantity = item_attrs.fetch(:quantity)
+    next if existing_keys.include?([product.id, quantity])
 
-puts "\n✅ Seed data created successfully!"
-puts ""
-puts "=" * 60
-puts "SUMMARY"
-puts "=" * 60
-puts "Users: #{User.count} (#{User.admin.count} admins, #{User.customer.count} customers)"
-puts "Products: #{Product.count} (#{Product.where(product_type: :coffee).count} coffee, #{Product.where(product_type: :merch).count} merch)"
-puts "Subscription Plans: #{SubscriptionPlan.count} (#{SubscriptionPlan.where(active: true).count} active)"
-puts "Subscriptions: #{Subscription.count} (#{Subscription.active.count} active, #{Subscription.paused.count} paused, #{Subscription.cancelled.count} cancelled)"
-puts "Orders: #{Order.count} (#{Order.where(status: :delivered).count} delivered, #{Order.where(status: :shipped).count} shipped, #{Order.where(status: [ :pending, :processing, :roasting ]).count} in progress)"
-puts "Addresses: #{Address.count}"
-puts "Payment Methods: #{PaymentMethod.count}"
-puts "Coffee Preferences: #{CoffeePreference.count}"
-puts ""
-puts "=" * 60
-puts "TEST ACCOUNTS"
-puts "=" * 60
-puts "Admin Accounts:"
-puts "  - rp@acercoffee.com / ChangeMe123!"
-puts "  - kp@acercoffee.com / ChangeMe123!"
-puts "  - admin@acercoffee.com / ChangeMe123!"
-puts ""
-puts "Sample Customers:"
-puts "  - test1@example.com / TestPass123!"
-puts "  - test2@example.com / TestPass123!"
-puts "  - test3@example.com / TestPass123!"
-puts "=" * 60
+    order.order_items.create!(product: product, quantity: quantity, price_cents: product.price_cents)
+  end
+
+  order.calculate_totals
+  order.shipping_cents ||= 0
+  order.tax_cents ||= (order.subtotal_cents * 0.06).round
+  order.total_cents = order.subtotal_cents + order.shipping_cents + order.tax_cents
+  order.save!
+  order
+end
+
+def seed_orders!(customers, addresses, subscriptions, products)
+  product_map = products.index_by(&:name)
+  customer_map = customers.index_by(&:email)
+  subscription_map = subscriptions.index_by { |subscription| subscription.user.email }
+
+  create_order_with_items!(
+    user: customer_map.fetch("test1@example.com"),
+    order_number: "SEED-ORDER-0001",
+    order_type: :subscription,
+    status: :delivered,
+    shipping_address: addresses.fetch(customer_map.fetch("test1@example.com")),
+    subscription: subscription_map.fetch("test1@example.com"),
+    created_at: 35.days.ago,
+    items: [ { product: product_map.fetch("Palmatum Blend"), quantity: 1 } ]
+  )
+
+  create_order_with_items!(
+    user: customer_map.fetch("test2@example.com"),
+    order_number: "SEED-ORDER-0002",
+    order_type: :subscription,
+    status: :processing,
+    shipping_address: addresses.fetch(customer_map.fetch("test2@example.com")),
+    subscription: subscription_map.fetch("test2@example.com"),
+    created_at: 3.days.ago,
+    items: [
+      { product: product_map.fetch("Deshojo Blend"), quantity: 1 },
+      { product: product_map.fetch("Arakawa Blend"), quantity: 1 }
+    ]
+  )
+
+  create_order_with_items!(
+    user: customer_map.fetch("test3@example.com"),
+    order_number: "SEED-ORDER-0003",
+    order_type: :one_time,
+    status: :delivered,
+    shipping_address: addresses.fetch(customer_map.fetch("test3@example.com")),
+    created_at: 10.days.ago,
+    stripe_reference: "pi_seed_manual_123",
+    items: [ { product: product_map.fetch("Acer Coffee Mug"), quantity: 1 } ]
+  )
+end
+
+def clear_demo_data!
+  puts "Clearing existing data..."
+  OrderItem.destroy_all
+  Order.destroy_all
+  Subscription.destroy_all
+  PaymentMethod.destroy_all
+  CoffeePreference.destroy_all
+  InventoryItem.destroy_all
+  BlendComponent.destroy_all
+  Product.destroy_all
+  GreenCoffee.destroy_all
+  Supplier.destroy_all
+  Address.destroy_all
+  User.destroy_all
+  SubscriptionPlan.destroy_all
+end
+
+def seed_preview_dataset!
+  admins = seed_admin_users!
+  customers = seed_customers!
+  all_users = admins + customers
+  addresses = seed_addresses!(all_users)
+  seed_payment_methods!(customers)
+  seed_coffee_preferences!(customers)
+  suppliers = seed_suppliers!
+  green_coffees = seed_green_coffees!(suppliers)
+  products = seed_products!
+  seed_product_images!(products)
+  seed_blend_components!(products, green_coffees)
+  seed_inventory_items!(products)
+  subscriptions = seed_subscriptions!(customers, addresses)
+  seed_orders!(customers, addresses, subscriptions, products)
+end
+
+def print_seed_summary(preview_seeded:)
+  puts "\nSeed data created successfully!"
+  puts ""
+  puts "=" * 60
+  puts "SUMMARY"
+  puts "=" * 60
+  puts "Users: #{User.count} (#{User.admin.count} admins, #{User.customer.count} customers)"
+  puts "Products: #{Product.count} (#{Product.coffee.count} coffee, #{Product.merch.count} merch)"
+  puts "Green Coffees: #{GreenCoffee.count}"
+  puts "Suppliers: #{Supplier.count}"
+  puts "Inventory Items: #{InventoryItem.count}"
+  puts "Subscription Plans: #{SubscriptionPlan.count} (#{SubscriptionPlan.active.count} active)"
+  puts "Subscriptions: #{Subscription.count} (#{Subscription.where(status: :active).count} active)"
+  puts "Orders: #{Order.count}"
+
+  return unless preview_seeded
+
+  puts ""
+  puts "TEST ACCOUNTS"
+  puts "=" * 60
+  puts "Admin Accounts:"
+  puts "  - rp@acercoffee.com / #{ADMIN_PASSWORD}"
+  puts "  - kp@acercoffee.com / #{ADMIN_PASSWORD}"
+  puts "  - admin@acercoffee.com / #{ADMIN_PASSWORD}"
+  puts ""
+  puts "Sample Customers:"
+  puts "  - test1@example.com / #{CUSTOMER_PASSWORD}"
+  puts "  - test2@example.com / #{CUSTOMER_PASSWORD}"
+  puts "  - test3@example.com / #{CUSTOMER_PASSWORD}"
+  puts "=" * 60
+end
+
+confirm_production_reset!
+confirm_destructive_seed!
+
+clear_demo_data! if RESET_SEED
+
+puts RESET_SEED ? "Running reset seed..." : "Running seed..."
+seed_subscription_plans!
+
+if PREVIEW_ENV || RESET_SEED
+  seed_preview_dataset!
+else
+  puts "Seeded subscription plans only."
+end
+
+print_seed_summary(preview_seeded: PREVIEW_ENV || RESET_SEED)
+
+unless RESET_SEED
+  puts "\nTip: run a full reset seed with SEED_RESET=1 bin/rails db:seed"
+end
