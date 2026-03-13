@@ -72,7 +72,7 @@
             <!-- Desktop: Account icon dropdown -->
             <div class="hidden md:block relative">
               <button id="account-menu-button" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors text-gray-700 overflow-hidden bg-gray-200">
-                <% if user_signed_in? && current_user.avatar.attached? %>
+                <% if user_signed_in? && current_user.avatar.attached? && current_user.avatar.attachment&.persisted? && current_user.avatar.blob&.persisted? %>
                   <%= image_tag current_user.avatar.variant(resize_to_fill: [50, 50]), alt: current_user.full_name, class: "w-full h-full object-cover" %>
                 <% else %>
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,30 +1,47 @@
 <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <% persisted_avatar = @user.avatar.attached? && @user.avatar.attachment&.persisted? && @user.avatar.blob&.persisted? %>
+
   <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Edit Profile</h1>
     <p class="text-gray-600">Update your account information and password</p>
   </div>
 
-  <%= form_with model: @user, url: dashboard_profile_path, method: :patch, class: "space-y-8", id: "profile_form" do |form| %>
+  <%= form_with model: @user,
+      url: dashboard_profile_path,
+      method: :patch,
+      class: "space-y-8",
+      id: "profile_form",
+      data: {
+        controller: "avatar-crop",
+        action: "submit->avatar-crop#prepareSubmission",
+        avatar_crop_max_file_size_value: 5242880
+      } do |form| %>
     <!-- Avatar Section -->
     <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-900 mb-4">Profile Photo</h2>
 
       <div class="space-y-4">
         <!-- Current Avatar Display -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-start gap-4">
           <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-            <% if @user.avatar.attached? %>
-              <%= image_tag @user.avatar.variant(resize_to_fill: [96, 96]), alt: @user.full_name, class: "w-full h-full object-cover" %>
-            <% else %>
-              <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-              </svg>
-            <% end %>
+            <div class="w-full h-full" data-avatar-crop-target="existingPreview">
+              <% if persisted_avatar %>
+                <%= image_tag @user.avatar.variant(resize_to_fill: [96, 96]), alt: @user.full_name, class: "w-full h-full object-cover" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center">
+                  <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              <% end %>
+            </div>
+
+            <img alt="Selected profile photo preview" class="hidden w-full h-full object-cover" data-avatar-crop-target="livePreview">
           </div>
 
           <div class="flex-1">
-            <p class="text-sm font-medium text-gray-700 mb-2">
-              <% if @user.avatar.attached? %>
+            <p class="text-sm font-medium text-gray-700 mb-2" data-avatar-crop-target="status">
+              <% if persisted_avatar %>
                 Photo uploaded
               <% else %>
                 No photo yet
@@ -35,14 +52,69 @@
             <%= form.file_field :avatar,
                 class: "block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-espresso file:text-cream hover:file:bg-espresso/90 cursor-pointer",
                 accept: "image/png,image/jpeg,image/webp",
-                data: { max_file_size: 5242880 } %>
+                data: {
+                  action: "change->avatar-crop#fileChanged",
+                  avatar_crop_target: "input"
+                } %>
+
+            <div class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded" data-avatar-crop-target="error">
+              <p class="text-sm text-red-700"></p>
+            </div>
+
+            <div class="hidden mt-4 rounded-xl border border-gray-200 bg-stone-50/70 p-4" data-avatar-crop-target="editor">
+              <div class="grid gap-5 lg:grid-cols-[240px_1fr] lg:items-center">
+                <div class="flex justify-center">
+                  <div class="relative h-60 w-60 overflow-hidden rounded-full bg-gray-900/10 shadow-inner ring-4 ring-white touch-none select-none"
+                       data-avatar-crop-target="cropFrame"
+                       data-action="pointerdown->avatar-crop#startDrag pointermove->avatar-crop#drag pointerup->avatar-crop#endDrag pointercancel->avatar-crop#endDrag">
+                    <img alt="Crop your profile photo" class="absolute left-0 top-0 max-w-none" data-avatar-crop-target="cropImage">
+                    <div class="pointer-events-none absolute inset-0 rounded-full ring-1 ring-black/10"></div>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">Zoom and crop before saving</p>
+                    <p class="mt-1 text-sm text-gray-600">Drag the image to reposition it, then use the zoom control to frame your photo.</p>
+                  </div>
+
+                  <div>
+                    <div class="flex items-center justify-between text-sm text-gray-700">
+                      <label for="avatar_zoom">Zoom</label>
+                      <span data-avatar-crop-target="zoomValue">100%</span>
+                    </div>
+                    <input id="avatar_zoom"
+                           type="range"
+                           min="1"
+                           max="3"
+                           step="0.01"
+                           value="1"
+                           class="mt-2 w-full accent-brown"
+                           data-action="input->avatar-crop#zoomChanged"
+                           data-avatar-crop-target="zoom">
+                  </div>
+
+                  <div class="flex items-center gap-3">
+                    <button type="button"
+                            class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-white"
+                            data-action="avatar-crop#resetCrop">
+                      Reset crop
+                    </button>
+                    <p class="text-xs text-gray-500">The final profile photo is saved as a square image and displayed as a circle across the site.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Remove Photo Option -->
-        <% if @user.avatar.attached? %>
+        <% if persisted_avatar %>
           <div class="pt-2">
-            <%= form.check_box :avatar_remove, {}, "true", "false" %>
+            <%= form.check_box :avatar_remove,
+                { data: { action: "change->avatar-crop#toggleRemove", avatar_crop_target: "removeCheckbox" } },
+                "true",
+                "false" %>
             <%= form.label :avatar_remove, "Remove photo", class: "text-sm text-gray-600 ml-2" %>
           </div>
         <% end %>
@@ -147,23 +219,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const avatarInput = document.querySelector('input[type="file"][name="user[avatar]"]');
-
-  if (avatarInput) {
-    avatarInput.addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      const maxSize = parseInt(avatarInput.dataset.maxFileSize);
-
-      if (file && file.size > maxSize) {
-        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        const maxSizeMB = (maxSize / 1024 / 1024).toFixed(0);
-        alert(`File size (${sizeMB} MB) exceeds the maximum allowed size of ${maxSizeMB} MB. Please choose a smaller file.`);
-        event.target.value = ''; // Clear the input
-      }
-    });
-  }
-});
-</script>

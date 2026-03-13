@@ -10,6 +10,13 @@ RSpec.describe "Dashboard::Profiles", type: :request do
       get edit_dashboard_profile_path
       expect(response).to have_http_status(:success)
     end
+
+    it "renders the avatar crop controls" do
+      get edit_dashboard_profile_path
+
+      expect(response.body).to include('data-controller="avatar-crop"')
+      expect(response.body).to include("Zoom and crop before saving")
+    end
   end
 
   describe "PATCH /dashboard/profile" do
@@ -31,6 +38,14 @@ RSpec.describe "Dashboard::Profiles", type: :request do
         patch dashboard_profile_path, params: { user: { avatar: avatar } }
         expect(response).to redirect_to(edit_dashboard_profile_path)
         expect(flash[:notice]).to eq("Profile updated successfully.")
+      end
+
+      it "does not persist the avatar when the profile update fails" do
+        expect {
+          patch dashboard_profile_path, params: { user: { first_name: "", avatar: avatar } }
+        }.not_to change { user.reload.avatar.attached? }
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
