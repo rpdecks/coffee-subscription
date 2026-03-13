@@ -64,6 +64,48 @@ RSpec.describe WebhooksController, type: :request do
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['status']).to eq('success')
       end
+
+      context 'for a one-time coffee purchase' do
+        let!(:coffee_product) { create(:product, :coffee, weight_oz: 12, inventory_count: 100, price_cents: 1800) }
+        let!(:packaged_inventory) { create(:inventory_item, :packaged, product: coffee_product, quantity: 3.00, lot_number: 'PAL-WEBHOOK-01') }
+
+        let(:stripe_object) do
+          Stripe::Event.construct_from(
+            id: 'cs_live_123',
+            object: 'checkout.session',
+            customer: 'cus_test123',
+            payment_intent: 'pi_live_123',
+            metadata: {
+              'order_type' => 'one_time',
+              'cart_items' => [ { product_id: coffee_product.id, quantity: 2 } ].to_json,
+              'shipping_cents' => '0',
+              'tax_cents' => '0',
+              'newsletter_opt_in' => '0'
+            },
+            customer_details: {
+              address: {
+                line1: '123 Main St',
+                line2: nil,
+                city: 'Portland',
+                state: 'OR',
+                postal_code: '97201',
+                country: 'US'
+              }
+            }
+          )
+        end
+
+        it 'creates the order and decrements packaged coffee inventory' do
+          expect {
+            post '/webhooks/stripe', params: { type: event_type }, as: :json
+          }.to change(Order, :count).by(1)
+
+          expect(response).to have_http_status(:ok)
+          expect(Order.last.stripe_payment_intent_id).to eq('pi_live_123')
+          expect(coffee_product.reload.total_packaged_inventory.to_f).to be_within(0.001).of(1.5)
+          expect(coffee_product.inventory_count).to eq(100)
+        end
+      end
     end
 
     context 'customer.subscription.updated event' do

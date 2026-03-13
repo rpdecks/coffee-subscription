@@ -140,10 +140,8 @@ class WebhooksController < ApplicationController
       quantity = item["quantity"].to_i
       order.order_items.create!(
         product: product,
-        product_name: product.name,
         quantity: quantity,
-        price_cents: product.price_cents,
-        total_cents: product.price_cents * quantity
+        price_cents: product.price_cents
       )
     end
 
@@ -160,10 +158,7 @@ class WebhooksController < ApplicationController
 
     # Update inventory
     order.order_items.each do |item|
-      product = item.product
-      if product.inventory_count.present?
-        product.update!(inventory_count: product.inventory_count - item.quantity)
-      end
+      InventoryDecrementer.call(product: item.product, quantity: item.quantity)
     end
   end
 
