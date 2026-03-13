@@ -458,7 +458,7 @@ DEPENDENCIES
   pagy (~> 43.2)
   parity
   pg (~> 1.1)
-  psych (~> 5.1.2)
+  psych (= 5.1.2)
   puma (>= 5.0)
   pundit
   rack-attack

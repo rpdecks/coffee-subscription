@@ -73,7 +73,8 @@ gem "csv"
 # warn "Unresolved or ambiguous specs" during Gem::Specification.reset because
 # rdoc depends on psych (>= 4.0.0) — a non-trivial constraint that trips the
 # multi-version check. Keeping a single psych (the default gem) avoids that.
-gem "psych", "~> 5.1.2"
+# Update this only when the Ruby version changes and brings a new default psych.
+gem "psych", "= 5.1.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
