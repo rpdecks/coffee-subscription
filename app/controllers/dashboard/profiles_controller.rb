@@ -7,26 +7,11 @@ class Dashboard::ProfilesController < ApplicationController
 
   def update
     @user = current_user
+    remove_avatar = params[:user][:avatar_remove] == "true"
 
-    # Handle avatar removal first if checkbox is checked
-    if params[:user][:avatar_remove] == "true"
-      @user.avatar.purge if @user.avatar.attached?
-    end
-
-    # Handle avatar upload separately BEFORE other updates
-    if params[:user][:avatar].present? && params[:user][:avatar_remove] != "true"
-      uploaded_file = params[:user][:avatar]
-      @user.avatar.attach(
-        io: uploaded_file.open,
-        filename: uploaded_file.original_filename,
-        content_type: uploaded_file.content_type
-      )
-    end
-
-    # Prepare params without avatar
     update_params = user_params
+    update_params = update_params.except(:avatar) if remove_avatar
 
-    # Handle password vs non-password updates
     if params[:user][:password].present?
       password_params = {
         password: params[:user][:password],
@@ -39,6 +24,7 @@ class Dashboard::ProfilesController < ApplicationController
     end
 
     if success
+      @user.avatar.purge if remove_avatar && @user.avatar.attached?
       bypass_sign_in(@user) if params[:user][:password].present?
       redirect_to edit_dashboard_profile_path, notice: "Profile updated successfully."
     else
@@ -49,6 +35,6 @@ class Dashboard::ProfilesController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :phone)
+    params.require(:user).permit(:first_name, :last_name, :email, :phone, :avatar)
   end
 end
