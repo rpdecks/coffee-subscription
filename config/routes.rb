@@ -23,7 +23,9 @@ Rails.application.routes.draw do
   post "contact", to: "pages#create_contact"
 
   # Products
-  resources :products, only: [ :index, :show ]
+  resources :products, only: [ :index, :show ] do
+    resources :customer_reviews, only: [ :create ]
+  end
 
   # Shop - One-time purchases
   get "shop", to: "shop#index", as: :shop
@@ -104,6 +106,12 @@ Rails.application.routes.draw do
       delete "images/:attachment_id", to: "products#destroy_image", as: :destroy_image
       patch "images/:attachment_id/feature", to: "products#make_featured_image", as: :make_featured_image
       resources :blend_components, only: [ :new, :create, :edit, :update, :destroy ]
+    end
+    resources :customer_reviews, except: [ :show ] do
+      member do
+        patch :toggle_approval
+        patch :toggle_about_featured
+      end
     end
     resources :suppliers
     resources :green_coffees

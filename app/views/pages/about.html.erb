@@ -34,4 +34,34 @@
       to make your coffee experience exceptional, one cup at a time.
     </p>
   </div>
+
+  <% if @featured_testimonials.any? %>
+    <div class="mt-8 bg-stone-950 text-stone-50 p-8 rounded-lg shadow">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold">What Customers Say</h2>
+          <p class="text-stone-300 mt-2">A few of the notes customers have shared about Acer Coffee and the experience around it.</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <% @featured_testimonials.each do |review| %>
+          <article class="rounded-lg border border-stone-800 bg-stone-900/70 p-6">
+            <div class="text-sm uppercase tracking-[0.2em] text-stone-400">Rated <%= review.rating %> / 5</div>
+            <h3 class="mt-3 text-xl font-semibold"><%= review.headline.presence || "Acer Coffee customer" %></h3>
+            <p class="mt-4 text-stone-200 leading-relaxed"><%= truncate(review.body, length: 220) %></p>
+            <div class="mt-5 text-sm text-stone-400">
+              <span><%= review.customer_name %></span>
+              <% if review.location.present? %>
+                <span> • <%= review.location %></span>
+              <% end %>
+              <% if review.product.present? %>
+                <div class="mt-2 text-stone-500">Originally shared about <%= review.product.name %></div>
+              <% end %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

@@ -18,6 +18,7 @@
       ["Orders", admin_orders_path, current_page?(admin_orders_path)],
       ["Subscriptions", admin_subscriptions_path, current_page?(admin_subscriptions_path)],
       ["Products", admin_products_path, current_page?(admin_products_path)],
+      ["Reviews", admin_customer_reviews_path, request.path.start_with?("/admin/customer_reviews")],
       ["Customers", admin_customers_path, current_page?(admin_customers_path)]
     ] %>
     <% operations_nav_links = [

@@ -14,6 +14,7 @@ class PagesController < ApplicationController
   end
 
   def about
+    @featured_testimonials = CustomerReview.approved.featured_on_about.display_order.includes(:product).limit(6)
   end
 
   def blog
