@@ -161,39 +161,7 @@ class ManualSaleRecorder
   end
 
   def decrement_inventory!(product, quantity)
-    if product.coffee?
-      decrement_packaged_inventory!(product, quantity)
-    else
-      decrement_merch_inventory!(product, quantity)
-    end
-  end
-
-  def decrement_packaged_inventory!(product, quantity)
-    raise "Coffee bag size must be configured before recording a sale" unless product.weight_oz.to_f.positive?
-
-    pounds_to_decrement = (product.weight_oz.to_d * quantity) / 16
-    packaged_items = product.inventory_items.packaged.available.order(:roasted_on, :created_at)
-    remaining = pounds_to_decrement
-
-    if packaged_items.sum(:quantity).to_d < pounds_to_decrement
-      raise "Not enough packaged inventory available to record this sale"
-    end
-
-    packaged_items.each do |item|
-      break if remaining <= 0
-
-      current_quantity = item.quantity.to_d
-      deduction = [ current_quantity, remaining ].min
-      item.update!(quantity: current_quantity - deduction)
-      remaining -= deduction
-    end
-  end
-
-  def decrement_merch_inventory!(product, quantity)
-    return if product.inventory_count.nil?
-    raise "Not enough inventory available to record this sale" if product.inventory_count < quantity
-
-    product.update!(inventory_count: product.inventory_count - quantity)
+    InventoryDecrementer.call(product:, quantity:)
   end
 
   def split_name(name)
