@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_143026) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -80,6 +80,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_143026) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_coffee_preferences_on_user_id"
+  end
+
+  create_table "customer_reviews", force: :cascade do |t|
+    t.boolean "approved", default: false, null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.string "customer_name", null: false
+    t.boolean "featured_on_about", default: false, null: false
+    t.string "headline"
+    t.string "location"
+    t.bigint "product_id"
+    t.integer "rating", default: 5, null: false
+    t.integer "sort_position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved", "featured_on_about", "sort_position"], name: "index_customer_reviews_on_about_display"
+    t.index ["product_id", "approved", "created_at"], name: "idx_on_product_id_approved_created_at_e209fd7042"
+    t.index ["product_id"], name: "index_customer_reviews_on_product_id"
   end
 
   create_table "green_coffees", force: :cascade do |t|
@@ -270,6 +287,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_143026) do
   add_foreign_key "blend_components", "green_coffees"
   add_foreign_key "blend_components", "products"
   add_foreign_key "coffee_preferences", "users"
+  add_foreign_key "customer_reviews", "products"
   add_foreign_key "green_coffees", "suppliers"
   add_foreign_key "inventory_items", "products"
   add_foreign_key "order_items", "orders"
