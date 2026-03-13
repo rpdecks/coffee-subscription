@@ -27,10 +27,21 @@ export default class extends Controller {
     this.defaultStatus = this.statusTarget.textContent.trim();
     this.submissionPrepared = false;
     this.zoomLevel = 1;
+    this.handleResize = () => {
+      if (!this.sourceImage) {
+        return;
+      }
+
+      this.centerImage();
+      this.refreshCropUi();
+    };
+
+    window.addEventListener("resize", this.handleResize);
     this.updateZoomLabel();
   }
 
   disconnect() {
+    window.removeEventListener("resize", this.handleResize);
     this.revokeObjectUrl();
   }
 
@@ -110,11 +121,21 @@ export default class extends Controller {
     this.refreshCropUi();
   }
 
+  recenterImage() {
+    if (!this.sourceImage) {
+      return;
+    }
+
+    this.centerImage();
+    this.refreshCropUi();
+  }
+
   startDrag(event) {
     if (!this.sourceImage) {
       return;
     }
 
+    event.preventDefault();
     this.dragPointerId = event.pointerId;
     this.dragOriginX = this.offsetX;
     this.dragOriginY = this.offsetY;
@@ -128,6 +149,7 @@ export default class extends Controller {
       return;
     }
 
+    event.preventDefault();
     this.offsetX = this.dragOriginX + event.clientX - this.dragStartX;
     this.offsetY = this.dragOriginY + event.clientY - this.dragStartY;
     this.clampOffsets();
@@ -159,6 +181,36 @@ export default class extends Controller {
     this.statusTarget.textContent = this.defaultStatus;
   }
 
+  zoomIn() {
+    if (!this.sourceImage) {
+      return;
+    }
+
+    this.setZoomLevel(Number(this.zoomTarget.value) + 0.15);
+  }
+
+  zoomOut() {
+    if (!this.sourceImage) {
+      return;
+    }
+
+    this.setZoomLevel(Number(this.zoomTarget.value) - 0.15);
+  }
+
+  nudge(event) {
+    if (!this.sourceImage) {
+      return;
+    }
+
+    const deltaX = Number(event.currentTarget.dataset.avatarCropDeltaX || 0);
+    const deltaY = Number(event.currentTarget.dataset.avatarCropDeltaY || 0);
+
+    this.offsetX += deltaX;
+    this.offsetY += deltaY;
+    this.clampOffsets();
+    this.refreshCropUi();
+  }
+
   zoomChanged() {
     if (!this.sourceImage) {
       this.updateZoomLabel();
@@ -166,15 +218,20 @@ export default class extends Controller {
     }
 
     const previousScale = this.displayScale;
-    const focusX = (this.cropSizeValue / 2 - this.offsetX) / previousScale;
-    const focusY = (this.cropSizeValue / 2 - this.offsetY) / previousScale;
+    const frameSize = this.frameSize;
+    const focusX = (frameSize / 2 - this.offsetX) / previousScale;
+    const focusY = (frameSize / 2 - this.offsetY) / previousScale;
 
     this.zoomLevel = Number(this.zoomTarget.value);
 
-    this.offsetX = this.cropSizeValue / 2 - focusX * this.displayScale;
-    this.offsetY = this.cropSizeValue / 2 - focusY * this.displayScale;
+    this.offsetX = frameSize / 2 - focusX * this.displayScale;
+    this.offsetY = frameSize / 2 - focusY * this.displayScale;
     this.clampOffsets();
     this.refreshCropUi();
+  }
+
+  get frameSize() {
+    return this.cropFrameTarget.clientWidth || this.cropSizeValue;
   }
 
   get displayHeight() {
@@ -195,13 +252,17 @@ export default class extends Controller {
   }
 
   centerImage() {
-    this.offsetX = (this.cropSizeValue - this.displayWidth) / 2;
-    this.offsetY = (this.cropSizeValue - this.displayHeight) / 2;
+    const frameSize = this.frameSize;
+
+    this.offsetX = (frameSize - this.displayWidth) / 2;
+    this.offsetY = (frameSize - this.displayHeight) / 2;
   }
 
   clampOffsets() {
-    this.offsetX = Math.min(0, Math.max(this.cropSizeValue - this.displayWidth, this.offsetX));
-    this.offsetY = Math.min(0, Math.max(this.cropSizeValue - this.displayHeight, this.offsetY));
+    const frameSize = this.frameSize;
+
+    this.offsetX = Math.min(0, Math.max(frameSize - this.displayWidth, this.offsetX));
+    this.offsetY = Math.min(0, Math.max(frameSize - this.displayHeight, this.offsetY));
   }
 
   clearSelection() {
@@ -225,9 +286,10 @@ export default class extends Controller {
   drawToCanvas(size) {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
+    const frameSize = this.frameSize;
     const sourceX = -this.offsetX / this.displayScale;
     const sourceY = -this.offsetY / this.displayScale;
-    const sourceSize = this.cropSizeValue / this.displayScale;
+    const sourceSize = frameSize / this.displayScale;
 
     canvas.width = size;
     canvas.height = size;
@@ -266,8 +328,8 @@ export default class extends Controller {
 
     this.sourceFile = file;
     this.minimumScale = Math.max(
-      this.cropSizeValue / this.sourceImage.naturalWidth,
-      this.cropSizeValue / this.sourceImage.naturalHeight
+      this.frameSize / this.sourceImage.naturalWidth,
+      this.frameSize / this.sourceImage.naturalHeight
     );
     this.zoomLevel = 1;
     this.zoomTarget.value = "1";
@@ -327,6 +389,13 @@ export default class extends Controller {
 
   updateZoomLabel() {
     this.zoomValueTarget.textContent = `${Math.round(Number(this.zoomTarget.value || this.zoomLevel || 1) * 100)}%`;
+  }
+
+  setZoomLevel(level) {
+    const clamped = Math.min(this.maxZoomValue, Math.max(1, level));
+
+    this.zoomTarget.value = clamped.toFixed(2);
+    this.zoomChanged();
   }
 
   validateFile(file) {

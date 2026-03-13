@@ -16,6 +16,7 @@ RSpec.describe "Dashboard::Profiles", type: :request do
 
       expect(response.body).to include('data-controller="avatar-crop"')
       expect(response.body).to include("Zoom and crop before saving")
+      expect(response.body).to include("Recenter photo")
     end
   end
 

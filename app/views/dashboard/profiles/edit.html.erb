@@ -62,9 +62,9 @@
             </div>
 
             <div class="hidden mt-4 rounded-xl border border-gray-200 bg-stone-50/70 p-4" data-avatar-crop-target="editor">
-              <div class="grid gap-5 lg:grid-cols-[240px_1fr] lg:items-center">
+              <div class="grid gap-5 lg:grid-cols-[minmax(0,280px)_1fr] lg:items-center">
                 <div class="flex justify-center">
-                  <div class="relative h-60 w-60 overflow-hidden rounded-full bg-gray-900/10 shadow-inner ring-4 ring-white touch-none select-none"
+                  <div class="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-full bg-gray-900/10 shadow-inner ring-4 ring-white touch-none select-none"
                        data-avatar-crop-target="cropFrame"
                        data-action="pointerdown->avatar-crop#startDrag pointermove->avatar-crop#drag pointerup->avatar-crop#endDrag pointercancel->avatar-crop#endDrag">
                     <img alt="Crop your profile photo" class="absolute left-0 top-0 max-w-none" data-avatar-crop-target="cropImage">
@@ -75,7 +75,7 @@
                 <div class="space-y-4">
                   <div>
                     <p class="text-sm font-semibold text-gray-900">Zoom and crop before saving</p>
-                    <p class="mt-1 text-sm text-gray-600">Drag the image to reposition it, then use the zoom control to frame your photo.</p>
+                    <p class="mt-1 text-sm text-gray-600">Drag the image to reposition it. On mobile, use the zoom buttons and recenter controls for finer adjustments.</p>
                   </div>
 
                   <div>
@@ -83,23 +83,92 @@
                       <label for="avatar_zoom">Zoom</label>
                       <span data-avatar-crop-target="zoomValue">100%</span>
                     </div>
-                    <input id="avatar_zoom"
-                           type="range"
-                           min="1"
-                           max="3"
-                           step="0.01"
-                           value="1"
-                           class="mt-2 w-full accent-brown"
-                           data-action="input->avatar-crop#zoomChanged"
-                           data-avatar-crop-target="zoom">
+                    <div class="mt-2 flex items-center gap-3">
+                      <button type="button"
+                              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 bg-white text-lg font-semibold text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#zoomOut"
+                              aria-label="Zoom out profile photo">
+                        -
+                      </button>
+
+                      <input id="avatar_zoom"
+                             type="range"
+                             min="1"
+                             max="3"
+                             step="0.01"
+                             value="1"
+                             class="w-full accent-brown"
+                             data-action="input->avatar-crop#zoomChanged"
+                             data-avatar-crop-target="zoom">
+
+                      <button type="button"
+                              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 bg-white text-lg font-semibold text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#zoomIn"
+                              aria-label="Zoom in profile photo">
+                        +
+                      </button>
+                    </div>
                   </div>
 
-                  <div class="flex items-center gap-3">
-                    <button type="button"
-                            class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-white"
-                            data-action="avatar-crop#resetCrop">
-                      Reset crop
-                    </button>
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">Recenter image</p>
+                      <p class="mt-1 text-xs text-gray-500">Tap the directional buttons if dragging feels too coarse on your phone.</p>
+                    </div>
+
+                    <div class="grid w-full max-w-[220px] grid-cols-3 gap-2">
+                      <div></div>
+                      <button type="button"
+                              class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#nudge"
+                              data-avatar-crop-delta-x="0"
+                              data-avatar-crop-delta-y="-12">
+                        Up
+                      </button>
+                      <div></div>
+                      <button type="button"
+                              class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#nudge"
+                              data-avatar-crop-delta-x="-12"
+                              data-avatar-crop-delta-y="0">
+                        Left
+                      </button>
+                      <button type="button"
+                              class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#recenterImage">
+                        Center
+                      </button>
+                      <button type="button"
+                              class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#nudge"
+                              data-avatar-crop-delta-x="12"
+                              data-avatar-crop-delta-y="0">
+                        Right
+                      </button>
+                      <div></div>
+                      <button type="button"
+                              class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 transition hover:border-gray-400"
+                              data-action="avatar-crop#nudge"
+                              data-avatar-crop-delta-x="0"
+                              data-avatar-crop-delta-y="12">
+                        Down
+                      </button>
+                      <div></div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                      <button type="button"
+                              class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-white"
+                              data-action="avatar-crop#resetCrop">
+                        Reset crop
+                      </button>
+                      <button type="button"
+                              class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-white"
+                              data-action="avatar-crop#recenterImage">
+                        Recenter photo
+                      </button>
+                    </div>
+
                     <p class="text-xs text-gray-500">The final profile photo is saved as a square image and displayed as a circle across the site.</p>
                   </div>
                 </div>
