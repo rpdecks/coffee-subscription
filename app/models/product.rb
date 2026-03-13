@@ -165,7 +165,7 @@ class Product < ApplicationRecord
     return nil unless coffee?
     case roast_type&.to_sym
     when :signature then "brand/cultivar-icons/palmatum.png"
-    when :light then "brand/cultivar-icons/deshojo.svg"
+    when :light then "brand/cultivar-icons/shin-deshojo.svg"
     when :medium then "brand/cultivar-icons/arakawa.svg"
     when :dark then "brand/cultivar-icons/kiyohime.svg"
     else "brand/cultivar-icons/palmatum.png"
