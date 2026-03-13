@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   has_many :order_items, dependent: :restrict_with_error
   has_many :blend_components, dependent: :destroy
   has_many :green_coffees, through: :blend_components
+  has_many :customer_reviews, dependent: :destroy
 
   after_commit :ensure_image_order_and_featured, on: [ :create, :update ]
 
@@ -210,6 +211,14 @@ class Product < ApplicationRecord
 
   def carousel_images
     ordered_image_attachments
+  end
+
+  def average_rating
+    customer_reviews.approved.average(:rating)&.round(1)
+  end
+
+  def approved_review_count
+    customer_reviews.approved.count
   end
 
   private

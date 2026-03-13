@@ -1,0 +1,17 @@
+<div class="space-y-6">
+  <div class="flex items-center gap-4">
+    <%= link_to admin_customer_reviews_path(product_id: params[:product_id]), class: "text-gray-600 hover:text-gray-900" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">New Review</h1>
+      <p class="text-gray-600 mt-1">Add a product review or a general testimonial manually.</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <%= render "form", customer_review: @customer_review, products: @products %>
+  </div>
+</div>
