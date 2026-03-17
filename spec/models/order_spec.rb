@@ -72,6 +72,49 @@ RSpec.describe Order, type: :model do
         expect(orders).not_to include(shipped_order)
       end
     end
+
+    describe ".delivered_today" do
+      let!(:delivered_today_order) { create(:order, :delivered, delivered_at: Time.zone.now) }
+      let!(:older_delivered_order) { create(:order, :delivered, delivered_at: 2.days.ago) }
+
+      it "includes only orders delivered today" do
+        expect(Order.delivered_today).to include(delivered_today_order)
+        expect(Order.delivered_today).not_to include(older_delivered_order)
+      end
+    end
+  end
+
+  describe "status transitions" do
+    it "allows valid forward transitions" do
+      order = create(:order, :processing)
+
+      order.status = :roasting
+
+      expect(order).to be_valid
+    end
+
+    it "rejects invalid backward transitions" do
+      order = create(:order, :delivered)
+
+      order.status = :processing
+
+      expect(order).not_to be_valid
+      expect(order.errors[:status]).to include("cannot change from Delivered to Processing")
+    end
+  end
+
+  describe "workflow helpers" do
+    it "returns available admin statuses for the current state" do
+      order = create(:order, :roasting)
+
+      expect(order.available_statuses_for_admin).to eq(%w[roasting shipped delivered cancelled])
+    end
+
+    it "describes the next fulfillment step" do
+      order = build(:order, :pending)
+
+      expect(order.next_fulfillment_step).to eq("Review payment and move into processing")
+    end
   end
 
   describe "#total" do

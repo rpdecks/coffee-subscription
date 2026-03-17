@@ -5,6 +5,7 @@ class Admin::OrdersController < Admin::BaseController
   before_action :load_manual_sale_form, only: [ :new, :create ]
 
   def index
+    load_order_summary
     orders = build_orders_query
     @pagy, @orders = pagy(orders, items: 25)
 
@@ -80,7 +81,9 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def build_orders_query
-    orders = Order.includes(:user, :subscription, :shipping_address).order(created_at: :desc)
+    orders = Order.includes(:user, :subscription, :shipping_address)
+
+    orders = apply_queue_filter(orders)
 
     # Filter by status if provided
     if params[:status].present? && Order.statuses.key?(params[:status])
@@ -96,7 +99,7 @@ class Admin::OrdersController < Admin::BaseController
       )
     end
 
-    orders
+    apply_sort(orders)
   end
 
   def export_orders_csv
@@ -139,6 +142,15 @@ class Admin::OrdersController < Admin::BaseController
     redirect_to admin_orders_path, alert: "Order not found."
   end
 
+  def load_order_summary
+    counts = Order.group(:status).count
+    @status_counts = Order.statuses.keys.index_with do |status|
+      counts[status] || counts[status.to_sym] || counts[Order.statuses[status]] || 0
+    end
+    @fulfillment_count = Order.pending_fulfillment.count
+    @delivered_today_count = Order.delivered_today.count
+  end
+
   def manual_sale_params
     params.fetch(:manual_sale, {}).permit(
       :transaction_reference,
@@ -169,5 +181,24 @@ class Admin::OrdersController < Admin::BaseController
     attributes[:tracking_number] = tracking_number if tracking_number.present?
 
     attributes
+  end
+
+  def apply_queue_filter(orders)
+    case params[:queue]
+    when "fulfillment"
+      orders.pending_fulfillment
+    when "delivered_today"
+      orders.delivered_today
+    else
+      orders
+    end
+  end
+
+  def apply_sort(orders)
+    if params[:queue] == "fulfillment"
+      orders.order(created_at: :asc)
+    else
+      orders.order(created_at: :desc)
+    end
   end
 end
