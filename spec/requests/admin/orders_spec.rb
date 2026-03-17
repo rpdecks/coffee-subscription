@@ -317,6 +317,53 @@ RSpec.describe "Admin::Orders", type: :request do
     end
   end
 
+  describe "PATCH /admin/orders/bulk_update_status" do
+    let!(:pending_order) { create(:order, :pending, user: customer, subscription: subscription, shipping_address: address) }
+    let!(:processing_order) { create(:order, :processing, user: customer, subscription: subscription, shipping_address: address) }
+    let!(:delivered_order) { create(:order, :delivered, user: customer, subscription: subscription, shipping_address: address) }
+
+    it "updates multiple selected orders" do
+      patch bulk_update_status_admin_orders_path, params: {
+        bulk: {
+          order_ids: [ pending_order.id, processing_order.id ],
+          status: "roasting"
+        },
+        queue: "fulfillment"
+      }
+
+      expect(pending_order.reload.status).to eq("roasting")
+      expect(processing_order.reload.status).to eq("roasting")
+      expect(flash[:notice]).to include("Updated 2 orders to Roasting")
+      expect(response).to redirect_to(admin_orders_path(queue: "fulfillment"))
+    end
+
+    it "reports failures for invalid transitions while updating valid orders" do
+      patch bulk_update_status_admin_orders_path, params: {
+        bulk: {
+          order_ids: [ pending_order.id, delivered_order.id ],
+          status: "processing"
+        },
+        queue: "fulfillment"
+      }
+
+      expect(pending_order.reload.status).to eq("processing")
+      expect(delivered_order.reload.status).to eq("delivered")
+      expect(flash[:notice]).to include("Updated 1 order to Processing")
+      expect(flash[:alert]).to include(delivered_order.order_number)
+    end
+
+    it "requires at least one selected order" do
+      patch bulk_update_status_admin_orders_path, params: {
+        bulk: {
+          order_ids: [ "" ],
+          status: "processing"
+        }
+      }
+
+      expect(flash[:alert]).to eq("Select at least one order to update.")
+    end
+  end
+
   describe "GET /admin/orders/export" do
     let!(:orders) { create_list(:order, 3, user: customer, subscription: subscription, shipping_address: address) }
 

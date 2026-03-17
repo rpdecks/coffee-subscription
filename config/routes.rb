@@ -80,6 +80,7 @@ Rails.application.routes.draw do
     resources :orders do
       collection do
         get :export
+        patch :bulk_update_status
       end
       member do
         patch :update_status
