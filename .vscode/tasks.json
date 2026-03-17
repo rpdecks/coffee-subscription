@@ -1,5 +1,11 @@
 {
   "version": "2.0.0",
+  "options": {
+    "shell": {
+      "executable": "/bin/zsh",
+      "args": ["-l", "-i", "-c"]
+    }
+  },
   "tasks": [
     {
       "label": "Dev: bin/dev",
