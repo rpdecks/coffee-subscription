@@ -249,6 +249,22 @@ RSpec.describe "Admin::Orders", type: :request do
       expect(flash[:notice]).to be_present
     end
 
+    it "updates order status from nested form params without requiring tracking" do
+      expect {
+        patch update_status_admin_order_path(order), params: { order: { status: "delivered", tracking_number: "" } }
+      }.to change { order.reload.status }.from("pending").to("delivered")
+
+      expect(order.tracking_number).to be_blank
+    end
+
+    it "stores tracking number when provided in nested form params" do
+      patch update_status_admin_order_path(order), params: { order: { status: "shipped", tracking_number: "TRACK123" } }
+
+      order.reload
+      expect(order.status).to eq("shipped")
+      expect(order.tracking_number).to eq("TRACK123")
+    end
+
     context "with email notifications" do
       it "sends confirmation email when processing" do
         expect {
