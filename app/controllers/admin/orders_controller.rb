@@ -39,7 +39,8 @@ class Admin::OrdersController < Admin::BaseController
 
   def update_status
     old_status = @order.status
-    new_status = params[:status]
+    update_attributes = order_status_update_attributes
+    new_status = update_attributes[:status]
 
     if new_status.blank?
       flash[:alert] = "Status parameter is required."
@@ -47,7 +48,7 @@ class Admin::OrdersController < Admin::BaseController
       return
     end
 
-    if @order.update(status: new_status)
+    if @order.update(update_attributes)
       # Send email notifications based on status changes
       case @order.status
       when "processing"
@@ -158,5 +159,15 @@ class Admin::OrdersController < Admin::BaseController
 
   def order_params
     params.require(:order).permit(:status, :tracking_number)
+  end
+
+  def order_status_update_attributes
+    attributes = {}
+    attributes[:status] = params.dig(:order, :status) || params[:status]
+
+    tracking_number = params.dig(:order, :tracking_number) || params[:tracking_number]
+    attributes[:tracking_number] = tracking_number if tracking_number.present?
+
+    attributes
   end
 end
