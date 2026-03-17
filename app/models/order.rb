@@ -1,4 +1,7 @@
 class Order < ApplicationRecord
+  STALE_FULFILLMENT_DAYS = 2
+  CRITICAL_FULFILLMENT_DAYS = 5
+
   ALLOWED_STATUS_TRANSITIONS = {
     "pending" => %w[processing roasting shipped delivered cancelled],
     "processing" => %w[roasting shipped delivered cancelled],
@@ -61,6 +64,28 @@ class Order < ApplicationRecord
 
   def pending_fulfillment?
     pending? || processing? || roasting?
+  end
+
+  def fulfillment_age_in_days
+    return 0 unless pending_fulfillment?
+
+    ((Time.zone.now - created_at) / 1.day).floor
+  end
+
+  def stale_fulfillment?
+    pending_fulfillment? && fulfillment_age_in_days >= STALE_FULFILLMENT_DAYS
+  end
+
+  def critical_fulfillment?
+    pending_fulfillment? && fulfillment_age_in_days >= CRITICAL_FULFILLMENT_DAYS
+  end
+
+  def fulfillment_age_label
+    return "Fresh" unless pending_fulfillment?
+    return "Critical aging" if critical_fulfillment?
+    return "Needs attention" if stale_fulfillment?
+
+    "On track"
   end
 
   def next_fulfillment_step

@@ -115,6 +115,21 @@ RSpec.describe Order, type: :model do
 
       expect(order.next_fulfillment_step).to eq("Review payment and move into processing")
     end
+
+    it "flags stale fulfillment orders" do
+      order = create(:order, :pending, created_at: 3.days.ago)
+
+      expect(order.stale_fulfillment?).to be(true)
+      expect(order.critical_fulfillment?).to be(false)
+      expect(order.fulfillment_age_label).to eq("Needs attention")
+    end
+
+    it "flags critical fulfillment orders" do
+      order = create(:order, :processing, created_at: 6.days.ago)
+
+      expect(order.critical_fulfillment?).to be(true)
+      expect(order.fulfillment_age_label).to eq("Critical aging")
+    end
   end
 
   describe "#total" do

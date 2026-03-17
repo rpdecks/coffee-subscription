@@ -49,27 +49,50 @@ class Admin::OrdersController < Admin::BaseController
       return
     end
 
-    if @order.update(update_attributes)
-      # Send email notifications based on status changes
-      case @order.status
-      when "processing"
-        OrderMailer.order_confirmation(@order).deliver_later
-      when "roasting"
-        OrderMailer.order_roasting(@order).deliver_later
-      when "shipped"
-        @order.update(shipped_at: Time.current) unless @order.shipped_at
-        OrderMailer.order_shipped(@order).deliver_later
-      when "delivered"
-        @order.update(delivered_at: Time.current) unless @order.delivered_at
-        OrderMailer.order_delivered(@order).deliver_later
-      end
-
+    if apply_status_update(@order, update_attributes)
       flash[:notice] = "Order status updated from #{old_status} to #{@order.status}."
       redirect_to admin_order_path(@order)
     else
       flash[:alert] = "Unable to update order status: #{@order.errors.full_messages.join(', ')}"
       redirect_to admin_order_path(@order)
     end
+  end
+
+  def bulk_update_status
+    order_ids = bulk_order_ids
+    target_status = bulk_target_status
+
+    if order_ids.empty?
+      redirect_to admin_orders_path(orders_index_redirect_params), alert: "Select at least one order to update."
+      return
+    end
+
+    if target_status.blank?
+      redirect_to admin_orders_path(orders_index_redirect_params), alert: "Choose a status for the bulk update."
+      return
+    end
+
+    orders = Order.where(id: order_ids).order(:created_at)
+    updated_orders = []
+    failed_orders = []
+
+    orders.each do |order|
+      if apply_status_update(order, status: target_status)
+        updated_orders << order.order_number
+      else
+        failed_orders << "#{order.order_number} (#{order.errors.full_messages.join(', ')})"
+      end
+    end
+
+    if updated_orders.any?
+      flash[:notice] = "Updated #{updated_orders.size} #{'order'.pluralize(updated_orders.size)} to #{target_status.titleize}."
+    end
+
+    if failed_orders.any?
+      flash[:alert] = "Some orders were not updated: #{failed_orders.join('; ')}"
+    end
+
+    redirect_to admin_orders_path(orders_index_redirect_params)
   end
 
   private
@@ -149,6 +172,8 @@ class Admin::OrdersController < Admin::BaseController
     end
     @fulfillment_count = Order.pending_fulfillment.count
     @delivered_today_count = Order.delivered_today.count
+    @stale_fulfillment_count = Order.pending_fulfillment.count(&:stale_fulfillment?)
+    @critical_fulfillment_count = Order.pending_fulfillment.count(&:critical_fulfillment?)
   end
 
   def manual_sale_params
@@ -200,5 +225,45 @@ class Admin::OrdersController < Admin::BaseController
     else
       orders.order(created_at: :desc)
     end
+  end
+
+  def apply_status_update(order, update_attributes)
+    previous_status = order.status
+
+    if order.update(update_attributes)
+      apply_status_side_effects(order, previous_status)
+      true
+    else
+      false
+    end
+  end
+
+  def apply_status_side_effects(order, previous_status)
+    return if previous_status == order.status
+
+    case order.status
+    when "processing"
+      OrderMailer.order_confirmation(order).deliver_later
+    when "roasting"
+      OrderMailer.order_roasting(order).deliver_later
+    when "shipped"
+      order.update(shipped_at: Time.current) unless order.shipped_at
+      OrderMailer.order_shipped(order).deliver_later
+    when "delivered"
+      order.update(delivered_at: Time.current) unless order.delivered_at
+      OrderMailer.order_delivered(order).deliver_later
+    end
+  end
+
+  def bulk_order_ids
+    params.fetch(:bulk, {}).fetch(:order_ids, []).reject(&:blank?)
+  end
+
+  def bulk_target_status
+    params.fetch(:bulk, {})[:status]
+  end
+
+  def orders_index_redirect_params
+    params.permit(:search, :status, :queue, :page).to_h.compact_blank
   end
 end
