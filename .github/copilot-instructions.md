@@ -32,6 +32,7 @@ These are repo-specific rules for automated edits and CLI usage.
 - `fly status`, `fly logs`, `fly releases`
 - `fly apps list`, `fly info`
 - `flyctl apps list ...` (read-only)
+- `fly ssh console --app <app> -C '/bin/bash -lc "cd /rails && bin/rails runner ..."'` for read-only verification only
 
 ### Ask first (destructive / irreversible)
 
@@ -69,6 +70,8 @@ If asked to “fix CI”, prefer inspecting with `gh pr checks` / `gh run view -
 
 - Reproduce first, then locate: route → controller → policy/service → view.
 - If you change behavior, add/adjust an RSpec example when feasible.
+- For staging verification, check in this order: `origin/staging` SHA, recent `gh` deploy runs, Fly release/status, then browser behavior.
+- If browser access is insufficient, read-only Fly SSH + `bin/rails runner` is acceptable for confirming deployed data or seeded users. Any staging data mutation still requires explicit user approval.
 
 ## Output expectations
 
