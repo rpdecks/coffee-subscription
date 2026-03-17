@@ -94,6 +94,22 @@ RSpec.describe "Admin::Orders", type: :request do
       end
     end
 
+    context "with queue filter" do
+      let!(:old_pending_order) { create(:order, :pending, user: customer, subscription: subscription, shipping_address: address, created_at: 3.days.ago, order_number: "ORD-QUEUE-OLD") }
+      let!(:new_processing_order) { create(:order, :processing, user: customer, subscription: subscription, shipping_address: address, created_at: 1.day.ago, order_number: "ORD-QUEUE-NEW") }
+      let!(:shipped_order) { create(:order, :shipped, user: customer, subscription: subscription, shipping_address: address, order_number: "ORD-QUEUE-SHIPPED") }
+
+      it "shows only fulfillment orders oldest first" do
+        get admin_orders_path, params: { queue: "fulfillment" }
+
+        expect(response.body).to include("Fulfillment Queue")
+        expect(response.body).to include("ORD-QUEUE-OLD")
+        expect(response.body).to include("ORD-QUEUE-NEW")
+        expect(response.body).not_to include("ORD-QUEUE-SHIPPED")
+        expect(response.body.index("ORD-QUEUE-OLD")).to be < response.body.index("ORD-QUEUE-NEW")
+      end
+    end
+
     context "when not logged in as admin" do
       before { sign_out admin }
 
@@ -263,6 +279,15 @@ RSpec.describe "Admin::Orders", type: :request do
       order.reload
       expect(order.status).to eq("shipped")
       expect(order.tracking_number).to eq("TRACK123")
+    end
+
+    it "rejects invalid backward status changes" do
+      order.update!(status: :delivered, delivered_at: Time.current)
+
+      patch update_status_admin_order_path(order), params: { order: { status: "processing" } }
+
+      expect(order.reload.status).to eq("delivered")
+      expect(flash[:alert]).to include("cannot change from Delivered to Processing")
     end
 
     context "with email notifications" do
