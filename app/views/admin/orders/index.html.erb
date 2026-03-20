@@ -124,6 +124,7 @@
         <div>
           <p class="text-sm font-medium text-gray-900">Bulk Update</p>
           <p class="text-sm text-gray-500">Selected orders: <span data-bulk-orders-target="count">0</span></p>
+          <p class="mt-1 text-xs text-gray-500">Use the checkboxes in the first column to select pending, processing, or roasting orders. Shipped, delivered, and cancelled orders need individual handling.</p>
         </div>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -146,6 +147,7 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <span class="sr-only">Select order</span>
                 <input
                   type="checkbox"
                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -184,6 +186,8 @@
                           bulk_orders_target: "row",
                           action: "change->bulk-orders#refresh"
                         } %>
+                  <% else %>
+                    <span class="text-xs text-gray-400"><%= order.shipped? ? "Individual" : "Complete" %></span>
                   <% end %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">

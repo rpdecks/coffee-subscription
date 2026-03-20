@@ -92,6 +92,13 @@ RSpec.describe "Admin::Orders", type: :request do
         expect(response.body).to include(shipped_order.order_number)
         expect(response.body).not_to include(delivered_order.order_number)
       end
+
+      it "shows completion language for delivered orders and explains bulk selection" do
+        get admin_orders_path
+
+        expect(response.body).to include("Use the checkboxes in the first column to select pending, processing, or roasting orders.")
+        expect(response.body).to include("Fulfillment complete")
+      end
     end
 
     context "with queue filter" do

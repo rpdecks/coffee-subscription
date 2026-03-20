@@ -146,8 +146,8 @@ RSpec.describe Order, type: :model do
 
   describe "workflow helpers" do
     it "describes the next fulfillment step for an arbitrary status" do
-      expect(Order.next_fulfillment_step_for("delivered")).to eq("Mark this as a completed handoff or delivery")
-      expect(Order.next_fulfillment_step_for("cancelled")).to eq("Close the order without further fulfillment")
+      expect(Order.next_fulfillment_step_for("delivered")).to eq("Fulfillment complete")
+      expect(Order.next_fulfillment_step_for("cancelled")).to eq("Order closed")
     end
 
     it "returns available admin statuses for the current state" do
