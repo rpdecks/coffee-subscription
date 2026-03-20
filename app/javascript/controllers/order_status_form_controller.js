@@ -1,22 +1,60 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["status", "tracking"]
+  static targets = ["status", "tracking", "deliveryNote", "nextStep"]
 
   connect() {
-    this.toggleTracking()
+    this.syncFormState()
   }
 
   toggleTracking() {
-    if (!this.hasTrackingTarget) return
+    this.syncFormState()
+  }
 
-    const showTracking = this.statusTarget.value === "shipped"
+  syncFormState() {
+    const selectedStatus = this.statusTarget.value
 
-    this.trackingTarget.classList.toggle("hidden", !showTracking)
+    if (this.hasTrackingTarget) {
+      const showTracking = selectedStatus === "shipped"
 
-    const trackingInput = this.trackingTarget.querySelector("input")
-    if (trackingInput) {
-      trackingInput.disabled = !showTracking
+      this.trackingTarget.classList.toggle("hidden", !showTracking)
+
+      const trackingInput = this.trackingTarget.querySelector("input")
+      if (trackingInput) {
+        trackingInput.disabled = !showTracking
+      }
     }
+
+    if (this.hasDeliveryNoteTarget) {
+      const showDeliveryNote = selectedStatus === "delivered" && !this.hasExistingTracking()
+
+      this.deliveryNoteTarget.classList.toggle("hidden", !showDeliveryNote)
+
+      const deliveryNoteInput = this.deliveryNoteTarget.querySelector("textarea")
+      if (deliveryNoteInput) {
+        deliveryNoteInput.disabled = !showDeliveryNote
+        deliveryNoteInput.required = showDeliveryNote
+      }
+    }
+
+    if (this.hasNextStepTarget) {
+      this.nextStepTarget.textContent = this.nextStepFor(selectedStatus)
+    }
+  }
+
+  nextStepFor(status) {
+    return this.nextSteps()[status] || "Review order"
+  }
+
+  nextSteps() {
+    try {
+      return JSON.parse(this.statusTarget.dataset.nextSteps || "{}")
+    } catch {
+      return {}
+    }
+  }
+
+  hasExistingTracking() {
+    return this.statusTarget.dataset.hasTracking === "true"
   }
 }

@@ -118,6 +118,8 @@
         <div class="p-6">
           <% available_statuses = @order.available_statuses_for_admin %>
           <% status_locked = available_statuses == [@order.status] %>
+          <% next_steps = Order.statuses.keys.index_with { |status| Order.next_fulfillment_step_for(status) } %>
+          <% manual_delivery_required = @order.delivered? && @order.tracking_number.blank? %>
           <%= form_with model: @order,
               url: update_status_admin_order_path(@order),
               method: :patch,
@@ -130,6 +132,8 @@
                   {},
                   data: {
                     order_status_form_target: "status",
+                    next_steps: next_steps.to_json,
+                    has_tracking: @order.tracking_number.present?.to_json,
                     action: "change->order-status-form#toggleTracking"
                   },
                   disabled: status_locked,
@@ -139,7 +143,7 @@
             <% if status_locked %>
               <p class="text-sm text-gray-500">This order is already closed. No further status updates are available from this page.</p>
             <% else %>
-              <p class="text-sm text-gray-500">Next step: <%= @order.next_fulfillment_step %></p>
+              <p class="text-sm text-gray-500">If you save this change: <span data-order-status-form-target="nextStep"><%= Order.next_fulfillment_step_for(@order.status) %></span></p>
             <% end %>
 
             <div
@@ -152,6 +156,19 @@
                   disabled: !@order.shipped?,
                   class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
             </div>
+
+                <div
+                  data-order-status-form-target="deliveryNote"
+                  class="<%= manual_delivery_required ? "" : "hidden" %>">
+                  <%= f.label :delivery_note, "Delivery Note", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                  <p class="text-sm text-gray-500 mb-2">Required for hand delivery, local pickup, or any delivered order without tracking.</p>
+                  <%= f.text_area :delivery_note,
+                  rows: 3,
+                  placeholder: "Example: Handed directly to customer at market on Friday afternoon.",
+                  required: manual_delivery_required,
+                  disabled: !manual_delivery_required,
+                  class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+                </div>
 
             <% if status_locked %>
               <div class="flex flex-col gap-3 sm:flex-row">
@@ -231,6 +248,17 @@
             <%= link_to "Track Package →", "https://tools.usps.com/go/TrackConfirmAction?tLabels=#{@order.tracking_number}",
                 target: "_blank",
                 class: "block mt-3 text-sm text-blue-600 hover:text-blue-800" %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @order.delivery_note.present? %>
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Delivery Note</h2>
+          </div>
+          <div class="p-6">
+            <p class="text-sm text-gray-900"><%= simple_format(@order.delivery_note) %></p>
           </div>
         </div>
       <% end %>

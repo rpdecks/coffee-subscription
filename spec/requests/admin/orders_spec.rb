@@ -180,7 +180,8 @@ RSpec.describe "Admin::Orders", type: :request do
               transaction_reference: "pi_manual_sale_123",
               product_id: coffee_product.id,
               quantity: 2,
-              status: "delivered"
+              status: "delivered",
+              delivery_note: "Handed to customer after pop-up pickup."
             }
           }
         }.to change(Order, :count).by(1)
@@ -193,7 +194,25 @@ RSpec.describe "Admin::Orders", type: :request do
         expect(order.user.first_name).to eq("Jane")
         expect(order.shipping_address.city).to eq("Columbia")
         expect(order.delivered_at).to be_present
+        expect(order.delivery_note).to eq("Handed to customer after pop-up pickup.")
         expect(coffee_product.reload.total_packaged_inventory.to_f).to be_within(0.001).of(0.44)
+      end
+
+      it "requires a delivery note for delivered manual sales" do
+        expect {
+          post admin_orders_path, params: {
+            manual_sale: {
+              transaction_reference: "pi_manual_sale_123",
+              product_id: coffee_product.id,
+              quantity: 2,
+              status: "delivered",
+              delivery_note: ""
+            }
+          }
+        }.not_to change(Order, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("Delivery note is required when marking an order delivered without tracking")
       end
 
       it "rejects duplicate Stripe transaction imports" do
@@ -267,16 +286,33 @@ RSpec.describe "Admin::Orders", type: :request do
 
     it "updates order status from nested form params without requiring tracking" do
       expect {
-        patch update_status_admin_order_path(order), params: { order: { status: "delivered", tracking_number: "" } }
+        patch update_status_admin_order_path(order), params: { order: { status: "delivered", tracking_number: "", delivery_note: "Handed to customer at the cafe." } }
       }.to change { order.reload.status }.from("pending").to("delivered")
 
       expect(order.tracking_number).to be_blank
+      expect(order.delivery_note).to eq("Handed to customer at the cafe.")
     end
 
     it "sets a completion-focused flash notice when delivered" do
-      patch update_status_admin_order_path(order), params: { order: { status: "delivered" } }
+      patch update_status_admin_order_path(order), params: { order: { status: "delivered", delivery_note: "Customer picked it up at the roastery." } }
 
       expect(flash[:notice]).to eq("Order marked delivered. Fulfillment is complete. Use the fulfillment queue to move on to the next order.")
+    end
+
+    it "requires a delivery note when marking an order delivered without tracking" do
+      patch update_status_admin_order_path(order), params: { order: { status: "delivered", delivery_note: "" } }
+
+      expect(order.reload.status).to eq("pending")
+      expect(flash[:alert]).to include("Delivery note is required when marking an order delivered without tracking")
+    end
+
+    it "allows a shipped order to be marked delivered without a delivery note" do
+      order.update!(status: :shipped, shipped_at: Time.current, tracking_number: "TRACK123")
+
+      patch update_status_admin_order_path(order), params: { order: { status: "delivered", delivery_note: "" } }
+
+      expect(order.reload.status).to eq("delivered")
+      expect(order.delivery_note).to be_blank
     end
 
     it "stores tracking number when provided in nested form params" do
@@ -288,7 +324,7 @@ RSpec.describe "Admin::Orders", type: :request do
     end
 
     it "rejects invalid backward status changes" do
-      order.update!(status: :delivered, delivered_at: Time.current)
+      order.update!(status: :delivered, delivered_at: Time.current, delivery_note: "Delivered directly to customer.")
 
       patch update_status_admin_order_path(order), params: { order: { status: "processing" } }
 
@@ -317,7 +353,7 @@ RSpec.describe "Admin::Orders", type: :request do
 
       it "sends delivered email when delivered" do
         expect {
-          patch update_status_admin_order_path(order), params: { status: "delivered" }
+          patch update_status_admin_order_path(order), params: { status: "delivered", delivery_note: "Customer picked up order at the cafe." }
         }.to have_enqueued_mail(OrderMailer, :order_delivered)
       end
     end
@@ -417,6 +453,15 @@ RSpec.describe "Admin::Orders", type: :request do
       expect(response.body).to include("Back to fulfillment queue")
       expect(response.body).to include("View all orders")
       expect(response.body).to include("No further status updates are available from this page")
+    end
+
+    it "shows the delivery note when present" do
+      order.update!(delivery_note: "Handed to the customer at the farmers market.")
+
+      get admin_order_path(order)
+
+      expect(response.body).to include("Delivery Note")
+      expect(response.body).to include("Handed to the customer at the farmers market.")
     end
   end
 end
