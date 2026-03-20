@@ -49,9 +49,9 @@ class Order < ApplicationRecord
     when "shipped"
       "Waiting for delivery confirmation"
     when "delivered"
-      "Mark this as a completed handoff or delivery"
+      "Fulfillment complete"
     when "cancelled"
-      "Close the order without further fulfillment"
+      "Order closed"
     else
       "Review order"
     end
