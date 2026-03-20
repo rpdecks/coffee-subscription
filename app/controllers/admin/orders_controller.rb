@@ -182,6 +182,7 @@ class Admin::OrdersController < Admin::BaseController
       :product_id,
       :quantity,
       :status,
+      :delivery_note,
       :customer_name,
       :customer_email,
       :customer_phone,
@@ -195,15 +196,22 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def order_params
-    params.require(:order).permit(:status, :tracking_number)
+    params.require(:order).permit(:status, :tracking_number, :delivery_note)
   end
 
   def order_status_update_attributes
     attributes = {}
     attributes[:status] = params.dig(:order, :status) || params[:status]
 
-    tracking_number = params.dig(:order, :tracking_number) || params[:tracking_number]
-    attributes[:tracking_number] = tracking_number if tracking_number.present?
+    if params[:order]&.key?(:tracking_number) || params.key?(:tracking_number)
+      tracking_number = params.dig(:order, :tracking_number) || params[:tracking_number]
+      attributes[:tracking_number] = tracking_number.presence
+    end
+
+    if params[:order]&.key?(:delivery_note) || params.key?(:delivery_note)
+      delivery_note = params.dig(:order, :delivery_note) || params[:delivery_note]
+      attributes[:delivery_note] = delivery_note.presence
+    end
 
     attributes
   end

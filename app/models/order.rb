@@ -24,6 +24,7 @@ class Order < ApplicationRecord
   validates :order_number, :order_type, :status, presence: true
   validates :order_number, uniqueness: true
   validate :status_transition_must_be_allowed, if: :will_save_change_to_status?
+  validate :manual_delivery_note_required, if: :will_save_change_to_status?
 
   before_validation :generate_order_number, on: :create
 
@@ -35,6 +36,25 @@ class Order < ApplicationRecord
 
   def self.allowed_status_transitions_for(status)
     ALLOWED_STATUS_TRANSITIONS.fetch(status.to_s, [])
+  end
+
+  def self.next_fulfillment_step_for(status)
+    case status.to_s
+    when "pending"
+      "Review payment and move into processing"
+    when "processing"
+      "Queue roasting and prepare inventory"
+    when "roasting"
+      "Pack order and finish handoff"
+    when "shipped"
+      "Waiting for delivery confirmation"
+    when "delivered"
+      "Mark this as a completed handoff or delivery"
+    when "cancelled"
+      "Close the order without further fulfillment"
+    else
+      "Review order"
+    end
   end
 
   def total
@@ -91,22 +111,11 @@ class Order < ApplicationRecord
   end
 
   def next_fulfillment_step
-    case status
-    when "pending"
-      "Review payment and move into processing"
-    when "processing"
-      "Queue roasting and prepare inventory"
-    when "roasting"
-      "Pack order and finish handoff"
-    when "shipped"
-      "Waiting for delivery confirmation"
-    when "delivered"
-      "Completed"
-    when "cancelled"
-      "Cancelled"
-    else
-      "Review order"
-    end
+    self.class.next_fulfillment_step_for(status)
+  end
+
+  def manual_delivery?
+    delivered? && tracking_number.blank?
   end
 
   private
@@ -117,6 +126,14 @@ class Order < ApplicationRecord
     return if self.class.allowed_status_transitions_for(previous_status).include?(status)
 
     errors.add(:status, "cannot change from #{previous_status.titleize} to #{status.titleize}")
+  end
+
+  def manual_delivery_note_required
+    return unless delivered?
+    return if tracking_number.present?
+    return if delivery_note.present?
+
+    errors.add(:delivery_note, "is required when marking an order delivered without tracking")
   end
 
   def generate_order_number

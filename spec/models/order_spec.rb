@@ -122,9 +122,34 @@ RSpec.describe Order, type: :model do
       expect(order).not_to be_valid
       expect(order.errors[:status]).to include("cannot change from Delivered to Processing")
     end
+
+    it "requires a delivery note for manual deliveries" do
+      order = create(:order, :pending)
+
+      order.status = :delivered
+      order.tracking_number = nil
+      order.delivery_note = nil
+
+      expect(order).not_to be_valid
+      expect(order.errors[:delivery_note]).to include("is required when marking an order delivered without tracking")
+    end
+
+    it "allows delivered orders without a note when tracking is present" do
+      order = create(:order, :shipped, tracking_number: "TRACK123")
+
+      order.status = :delivered
+      order.delivery_note = nil
+
+      expect(order).to be_valid
+    end
   end
 
   describe "workflow helpers" do
+    it "describes the next fulfillment step for an arbitrary status" do
+      expect(Order.next_fulfillment_step_for("delivered")).to eq("Mark this as a completed handoff or delivery")
+      expect(Order.next_fulfillment_step_for("cancelled")).to eq("Close the order without further fulfillment")
+    end
+
     it "returns available admin statuses for the current state" do
       order = create(:order, :roasting)
 
@@ -135,6 +160,11 @@ RSpec.describe Order, type: :model do
       order = build(:order, :pending)
 
       expect(order.next_fulfillment_step).to eq("Review payment and move into processing")
+    end
+
+    it "identifies manual deliveries" do
+      expect(build(:order, :delivered, tracking_number: nil)).to be_manual_delivery
+      expect(build(:order, :delivered, tracking_number: "TRACK123")).not_to be_manual_delivery
     end
 
     it "flags stale fulfillment orders" do

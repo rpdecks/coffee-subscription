@@ -25,6 +25,7 @@ class ManualSaleRecorder
         order_type: :one_time,
         status: order_status,
         shipping_address: address,
+        delivery_note: delivery_note,
         stripe_payment_intent_id: normalized_transaction_reference
       )
 
@@ -61,6 +62,10 @@ class ManualSaleRecorder
 
   def order_status
     params[:status].presence || "delivered"
+  end
+
+  def delivery_note
+    params[:delivery_note].presence
   end
 
   def stripe_payment_details

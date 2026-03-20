@@ -39,6 +39,16 @@
           <%= f.label :status, "Order Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
           <%= f.select :status, options_for_select(Order.statuses.keys.map { |status| [status.titleize, status] }, @manual_sale["status"] || "delivered"), {}, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
         </div>
+
+        <div class="md:col-span-2">
+          <%= f.label :delivery_note, "Delivery Note", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :delivery_note,
+              value: @manual_sale["delivery_note"],
+              rows: 3,
+              placeholder: "Required when recording a delivered manual sale without tracking. Example: Handed directly to customer at market.",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+          <p class="mt-1 text-sm text-gray-500">Use this to record how the customer received the order when it was delivered manually.</p>
+        </div>
       </div>
     </div>
 
