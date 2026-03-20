@@ -82,6 +82,27 @@ RSpec.describe Order, type: :model do
         expect(Order.delivered_today).not_to include(older_delivered_order)
       end
     end
+
+    describe ".stale_fulfillment" do
+      let!(:stale_order) { create(:order, :pending, created_at: 3.days.ago) }
+      let!(:fresh_order) { create(:order, :processing, created_at: 1.day.ago) }
+      let!(:shipped_order) { create(:order, :shipped, created_at: 6.days.ago) }
+
+      it "includes only stale fulfillment orders" do
+        expect(Order.stale_fulfillment).to include(stale_order)
+        expect(Order.stale_fulfillment).not_to include(fresh_order, shipped_order)
+      end
+    end
+
+    describe ".critical_fulfillment" do
+      let!(:critical_order) { create(:order, :roasting, created_at: 6.days.ago) }
+      let!(:stale_only_order) { create(:order, :pending, created_at: 3.days.ago) }
+
+      it "includes only critical fulfillment orders" do
+        expect(Order.critical_fulfillment).to include(critical_order)
+        expect(Order.critical_fulfillment).not_to include(stale_only_order)
+      end
+    end
   end
 
   describe "status transitions" do

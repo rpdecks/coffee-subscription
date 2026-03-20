@@ -50,7 +50,7 @@ class Admin::OrdersController < Admin::BaseController
     end
 
     if apply_status_update(@order, update_attributes)
-      flash[:notice] = "Order status updated from #{old_status} to #{@order.status}."
+      flash[:notice] = status_update_notice(old_status, @order.status)
       redirect_to admin_order_path(@order)
     else
       flash[:alert] = "Unable to update order status: #{@order.errors.full_messages.join(', ')}"
@@ -172,8 +172,8 @@ class Admin::OrdersController < Admin::BaseController
     end
     @fulfillment_count = Order.pending_fulfillment.count
     @delivered_today_count = Order.delivered_today.count
-    @stale_fulfillment_count = Order.pending_fulfillment.count(&:stale_fulfillment?)
-    @critical_fulfillment_count = Order.pending_fulfillment.count(&:critical_fulfillment?)
+    @stale_fulfillment_count = Order.stale_fulfillment.count
+    @critical_fulfillment_count = Order.critical_fulfillment.count
   end
 
   def manual_sale_params
@@ -253,6 +253,13 @@ class Admin::OrdersController < Admin::BaseController
       order.update(delivered_at: Time.current) unless order.delivered_at
       OrderMailer.order_delivered(order).deliver_later
     end
+  end
+
+  def status_update_notice(previous_status, current_status)
+    return "Order marked delivered. Fulfillment is complete. Use the fulfillment queue to move on to the next order." if current_status == "delivered"
+    return "Order cancelled. No further fulfillment action is needed." if current_status == "cancelled"
+
+    "Order status updated from #{previous_status} to #{current_status}."
   end
 
   def bulk_order_ids

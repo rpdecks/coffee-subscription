@@ -166,7 +166,7 @@
         </div>
         <% if @approved_reviews.any? %>
           <div class="text-right">
-            <div class="text-3xl font-bold text-brown"><%= @product.average_rating || sprintf('%.1f', @approved_reviews.sum(&:rating).to_f / @approved_reviews.size) %></div>
+            <div class="text-3xl font-bold text-brown"><%= sprintf('%.1f', @product.average_rating.to_f) %></div>
             <div class="text-sm text-gray-500">Average rating from <%= pluralize(@approved_reviews.size, "review") %></div>
           </div>
         <% end %>
