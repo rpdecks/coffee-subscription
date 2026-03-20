@@ -49,7 +49,7 @@ class Admin::OrdersController < Admin::BaseController
       return
     end
 
-        if apply_status_update(@order, update_attributes)
+    if apply_status_update(@order, update_attributes)
       flash[:notice] = status_update_notice(old_status, @order.status)
       redirect_to admin_order_path(@order)
     else
