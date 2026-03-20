@@ -273,6 +273,12 @@ RSpec.describe "Admin::Orders", type: :request do
       expect(order.tracking_number).to be_blank
     end
 
+    it "sets a completion-focused flash notice when delivered" do
+      patch update_status_admin_order_path(order), params: { order: { status: "delivered" } }
+
+      expect(flash[:notice]).to eq("Order marked delivered. Fulfillment is complete. Use the fulfillment queue to move on to the next order.")
+    end
+
     it "stores tracking number when provided in nested form params" do
       patch update_status_admin_order_path(order), params: { order: { status: "shipped", tracking_number: "TRACK123" } }
 
@@ -398,6 +404,19 @@ RSpec.describe "Admin::Orders", type: :request do
       shipped_order = create(:order, :shipped, user: customer, subscription: subscription, shipping_address: address)
       get export_admin_orders_path(format: :csv), params: { status: "shipped" }
       expect(response.body).to include(shipped_order.order_number)
+    end
+  end
+
+  describe "closed order guidance" do
+    let(:order) { create(:order, :delivered, user: customer, subscription: subscription, shipping_address: address, delivered_at: Time.current) }
+
+    it "shows completion guidance and queue actions on the order page" do
+      get admin_order_path(order)
+
+      expect(response.body).to include("Fulfillment complete")
+      expect(response.body).to include("Back to fulfillment queue")
+      expect(response.body).to include("View all orders")
+      expect(response.body).to include("No further status updates are available from this page")
     end
   end
 end
