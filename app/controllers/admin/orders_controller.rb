@@ -172,8 +172,8 @@ class Admin::OrdersController < Admin::BaseController
     end
     @fulfillment_count = Order.pending_fulfillment.count
     @delivered_today_count = Order.delivered_today.count
-    @stale_fulfillment_count = Order.pending_fulfillment.count(&:stale_fulfillment?)
-    @critical_fulfillment_count = Order.pending_fulfillment.count(&:critical_fulfillment?)
+    @stale_fulfillment_count = Order.stale_fulfillment.count
+    @critical_fulfillment_count = Order.critical_fulfillment.count
   end
 
   def manual_sale_params

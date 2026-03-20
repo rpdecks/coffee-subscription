@@ -32,6 +32,15 @@ RSpec.describe CustomerReview, type: :model do
 
       expect(review.reload.featured_on_about).to be(false)
     end
+
+    it 'clears about-page highlighting before validation for unapproved reviews' do
+      review = build(:customer_review, approved: false, featured_on_about: true)
+
+      review.validate
+
+      expect(review.featured_on_about).to be(false)
+      expect(review.errors[:featured_on_about]).to be_empty
+    end
   end
 
   describe '#general_testimonial?' do

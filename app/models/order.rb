@@ -30,6 +30,8 @@ class Order < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :pending_fulfillment, -> { where(status: [ :pending, :processing, :roasting ]) }
   scope :delivered_today, -> { where(delivered_at: Time.zone.today.all_day) }
+  scope :stale_fulfillment, -> { pending_fulfillment.where("created_at <= ?", STALE_FULFILLMENT_DAYS.days.ago) }
+  scope :critical_fulfillment, -> { pending_fulfillment.where("created_at <= ?", CRITICAL_FULFILLMENT_DAYS.days.ago) }
 
   def self.allowed_status_transitions_for(status)
     ALLOWED_STATUS_TRANSITIONS.fetch(status.to_s, [])
