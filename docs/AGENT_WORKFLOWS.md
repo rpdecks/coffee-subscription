@@ -4,6 +4,36 @@ This repo is set up so agents can reliably run common workflows via VS Code Task
 
 ## Daily “solo wins”
 
+## PDF Intake Workflow
+
+For repeatable agent-driven ingestion of coffee fact sheets, use a stable local folder:
+
+- Repo-local working folder: `/Users/robertphillips/Development/code/coffee/tmp/agent-inputs`
+
+This folder is already safe for working files because `/tmp/*` is ignored by git.
+
+If you keep source PDFs in Google Drive, that also works as long as the folder is synced to your Mac and available as a normal filesystem path. Example shape:
+
+- `/Users/<you>/Library/CloudStorage/GoogleDrive-.../My Drive/Acer Coffee/Green Coffee Info Sheets`
+
+Recommended flow:
+
+1. Keep your long-term archive in Google Drive if that is where you organize supplier sheets.
+2. Drop the PDFs you want processed into `tmp/agent-inputs` for stable local automation.
+3. Use the `draft_products_from_folder` MCP tool to process all PDFs in that folder into structured product drafts.
+4. Use the `create_product_from_pdf` or `create_product_from_draft` MCP tools to create the local product record.
+
+## Roast + Package Workflow
+
+Once a coffee product exists, shop stock comes from packaged inventory, not from the green coffee lot.
+
+Recommended flow:
+
+1. Keep the source bean tracked in Green Coffee inventory.
+2. Use the `record_roast_and_package_inventory` MCP tool when you roast and bag coffee.
+3. Pass the product ID, optional green coffee ID, roast date, roasted pounds, and packaged pounds.
+4. The tool will record roasted output, create packaged inventory, debit roasted inventory used for packaging, and optionally reduce the GreenCoffee lot quantity.
+
 ### 1) One command quality gate
 
 Run the default Build task:

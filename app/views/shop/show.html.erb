@@ -6,9 +6,9 @@
 
     <!-- Hero Section with Image and Basic Info -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] gap-6 lg:gap-8">
         <!-- Product Image -->
-        <div class="bg-gray-100 flex items-center justify-center overflow-hidden relative">
+        <div class="bg-gray-100 flex items-center justify-center overflow-hidden relative min-h-[360px] sm:min-h-[460px] xl:min-h-0">
           <% carousel_images = @product.carousel_images %>
 
           <% if carousel_images.any? %>
@@ -64,8 +64,8 @@
         </div>
 
         <!-- Product Details -->
-        <div class="p-8">
-          <h1 class="text-4xl font-bold text-gray-900 mb-4"><%= @product.name %></h1>
+        <div class="p-6 sm:p-8 lg:p-10 xl:p-8 2xl:p-10">
+          <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"><%= @product.name %></h1>
 
           <div class="text-3xl font-bold text-amber-600 mb-6">
             $<%= '%.2f' % @product.price %>
@@ -73,7 +73,9 @@
 
           <% if @product.description.present? %>
             <div class="mb-8">
-              <p class="text-gray-700 leading-relaxed"><%= @product.description %></p>
+              <div class="text-gray-700 leading-relaxed text-base sm:text-lg [&>p]:mb-4 [&>p:last-child]:mb-0">
+                <%= simple_format(@product.description) %>
+              </div>
             </div>
           <% end %>
 

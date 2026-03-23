@@ -8,9 +8,9 @@
     <% end %>
 
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div class="md:flex">
+      <div class="xl:flex">
         <!-- Product Image -->
-        <div class="md:w-1/2 bg-gradient-to-br from-amber-50 via-orange-50 to-brown/5 flex items-center justify-center relative overflow-hidden" style="min-height: 500px;">
+        <div class="xl:w-1/2 bg-gradient-to-br from-amber-50 via-orange-50 to-brown/5 flex items-center justify-center relative overflow-hidden min-h-[360px] sm:min-h-[460px] xl:min-h-[500px]">
           <% carousel_images = @product.carousel_images %>
 
           <% if carousel_images.any? %>
@@ -85,7 +85,7 @@
         </div>
 
         <!-- Product Details -->
-        <div class="md:w-1/2 p-8 lg:p-12">
+        <div class="xl:w-1/2 p-6 sm:p-8 lg:p-10 xl:p-12">
           <div class="flex justify-between items-start mb-6">
             <h1 class="text-4xl font-bold text-gray-900"><%= @product.name %></h1>
             <span class="text-3xl font-bold text-brown whitespace-nowrap ml-4">$<%= sprintf('%.2f', @product.price_cents / 100.0) %></span>
@@ -93,7 +93,9 @@
 
           <div class="mb-8">
             <h2 class="text-xl font-semibold text-gray-900 mb-3">Description</h2>
-            <p class="text-gray-700 leading-relaxed text-lg"><%= @product.description %></p>
+            <div class="text-gray-700 leading-relaxed text-base sm:text-lg [&>p]:mb-4 [&>p:last-child]:mb-0">
+              <%= simple_format(@product.description) %>
+            </div>
           </div>
 
           <% if @product.coffee? %>
